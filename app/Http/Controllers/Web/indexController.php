@@ -12,7 +12,7 @@ class indexController extends Controller
 {
     public function Index(Request $request){
 
-         /*   $contextKey = $request->contextKey;
+           $contextKey = $request->contextKey;
             if ($contextKey == null) {
                 return view("main.dump");
             }
@@ -20,10 +20,7 @@ class indexController extends Controller
             $employee = $vendorAPI->context($contextKey);
             $accountId = $employee->accountId;
 
-        $isAdmin = $employee->permissions->admin->view;*/
-
-        $accountId = "1dd";
-        $isAdmin = "ALL";
+        $isAdmin = $employee->permissions->admin->view;
 
         return to_route('main', [
             'accountId' => $accountId,
