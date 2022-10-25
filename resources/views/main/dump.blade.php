@@ -12,32 +12,27 @@
  </style>
 <body class="">
 
-<div class="row gradient rounded p-2">
-    <div class="col-12 text-center">
-        <div class="mx-2"> <img src="https://app.rekassa.kz/static/logo.png" width="50" height="50"  alt="">
-            <span class="text-white"> Данная интеграция находиться в МоемСкладе </span>
+<div class="gradient rounded p-2">
+        <div class="row">
+            <div class="col-3"></div>
+            <div class="col-2"> <img src="https://test.ukassa.kz/_nuxt/img/d2b49fb.svg" width="100%" height="100%"  alt=""></div>
+            <span class="col-6 mt-2"> Данная интеграция находиться в МоемСкладе </span>
         </div>
-    </div>
 </div>
 
+</body>
+
 <style>
-
-
     body {
         font-family: 'Helvetica', 'Arial', sans-serif;
         color: #444444;
         font-size: 18pt;
         background-color: #ffffff;
     }
-
     .gradient{
-        /* background: rgb(145,0,253);
-         background: linear-gradient(34deg, rgba(145,0,253,1) 0%, rgba(232,0,141,1) 100%);*/
-        background-image: radial-gradient( circle farthest-corner at 10% 20%,  rgba(14,174,87,1) 0%, rgba(12,116,117,1) 90% );
+        background-image: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
     }
-
 </style>
 
-</body>
 </html>
 
