@@ -1,8 +1,8 @@
 <?php
 
 return [
-    'appId' => 'ae75a400-6677-4b47-a9d7-a92a216ee489',
-    'appUid' => 'rekassa.smartinnovations',
-    'secretKey' => '9j3XnrRgYOByB3Ugp5nwC0y44eYFJLnQvgh4xEEMssUPEuGJ0dUfHRfXx7WeBHT29q9WhvWOBwWqteEuMxBrqWImrIz16TBB3ML8EVLxG45IFgAdakKQeeqGi3C3tQFA',
-    'appBaseUrl' => 'https://smartrekassa.kz/',
+    'appId' => '7bd5e7ce-8d4b-4225-9d8a-4a2568690121',
+    'appUid' => 'ukassa.smartinnovations',
+    'secretKey' => 'kh4M8ESbQmphrLVsYDqHO3qPVGi6MQexOWmu20QQVZia854ExZzcLdfTWuwiI3n0Ca3MoaFcF7HGPQWgn4DgMwjVz6JaisTsQ23xf56FSc3G1tE8oooTPiRjmrSZTKGn',
+    'appBaseUrl' => 'https://smarttis.kz/',
 ];
