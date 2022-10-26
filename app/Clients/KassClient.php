@@ -10,22 +10,19 @@ use Illuminate\Support\Str;
 class KassClient
 {
 
-    private $email;
-    private $password;
-    private $hashline;
+
+    private $authtoken;
 
     private Client $client;
 
-    public function __construct($email,$password,$hashline)
+    public function __construct($authtoken)
     {
-        $this->email = $email;
-        $this->password = $password;
-        $this->hashline = $hashline;
+        $this->authtoken = $authtoken;
 
         $this->client = new Client([
-            'base_uri' => 'https://test.ukassa.kz/api/auth/login/',
+            'base_uri' => 'https://test.ukassa.kz/api/',
             'headers' => [
-                'Authorization' => $apiKey,
+                'Authorization' => $authtoken,
                 'Content-Type' => 'application/json',
             ]
         ]);

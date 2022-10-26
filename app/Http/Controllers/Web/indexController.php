@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Web;
 
 use App\Clients\MsClient;
+use App\Http\Controllers\BD\getPersonal;
+use App\Http\Controllers\Config\getSettingVendorController;
 use App\Http\Controllers\Config\Lib\VendorApiController;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\getData\getSetting;
@@ -30,9 +32,15 @@ class indexController extends Controller
 
     public function indexShow($accountId, Request $request){
         $isAdmin = $request->isAdmin;
+        $getPersonal = new getPersonal($accountId);
+        if ($getPersonal->status == "деактивированный" or $getPersonal->status == null){
+            $hideOrShow = "show";
+        } else  $hideOrShow = "hide";
+
         return view("main.index" , [
             'accountId' => $accountId,
             'isAdmin' => $isAdmin,
+            'hideOrShow' => $hideOrShow,
         ] );
     }
 
