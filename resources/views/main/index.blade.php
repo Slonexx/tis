@@ -2,7 +2,8 @@
 
 @section('content')
     <script>
-        let url = 'https://tus/';
+        //let url = 'https://tus/';
+        let url = 'https://smarttis.kz/';
         let accountId = '{{ $accountId }}'
 
     </script>

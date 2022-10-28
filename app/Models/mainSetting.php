@@ -7,5 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class mainSetting extends Model
 {
+
+    protected $fillable = [
+        'accountId',
+        'tokenMs',
+        'authtoken',
+    ];
+
     use HasFactory;
 }

@@ -9,23 +9,36 @@ use Illuminate\Support\Str;
 
 class KassClient
 {
-
-
-    private $authtoken;
-
     private Client $client;
 
-    public function __construct($authtoken)
+    public function __construct($authToken)
     {
-        $this->authtoken = $authtoken;
-
         $this->client = new Client([
             'base_uri' => 'https://test.ukassa.kz/api/',
             'headers' => [
-                'Authorization' => $authtoken,
+                'Authorization' => 'Token '.$authToken,
                 'Content-Type' => 'application/json',
             ]
         ]);
+    }
+
+    /**
+     * @throws GuzzleException
+     */
+    public function GETClient($url){
+        $res = $this->client->get($url);
+        return json_decode($res->getBody());
+    }
+
+    /**
+     * @throws GuzzleException
+     */
+    public function POSTClient($url, $body){
+        $res = $this->client->post($url,[
+            'body' => json_encode($body),
+        ]);
+
+        return json_decode($res->getBody());
     }
 
 }
