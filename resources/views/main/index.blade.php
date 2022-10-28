@@ -76,11 +76,16 @@
                     let json = JSON.parse(this.responseText);
                     document.getElementById('message').innerText =  json.message
                     document.getElementById('message').style.display = 'block'
+                    $('#sendCollectionOfPersonalInformation').modal('hide');
+                    sendCollection('hide')
                 });
                 xmlHttpRequest.open("GET", final);
                 xmlHttpRequest.send();
 
-                sendCollection('hide')
+            $('#sendCollectionOfPersonalInformation').modal('hide');
+            sendCollection('hide')
+            $('.close').click();
+
 
         }
     </script>
