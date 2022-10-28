@@ -23,7 +23,7 @@
 
         <div id="mainMessage" class="mt-2 alert alert-warning alert-dismissible fade show in text-center" style="display: none">  </div>
 
-        <form class="mt-3" action="" method="post">
+        <form class="mt-3" action="/Setting/createAuthToken/{{ $accountId }}?isAdmin={{ $isAdmin }}" method="post">
         @csrf <!-- {{ csrf_field() }} -->
             <div class="mb-3 row">
                 <label for="token" class="col-3 col-form-label"> Токен учет онлайн кассы </label>
