@@ -5,6 +5,9 @@ use App\Http\Controllers\Config\DeleteVendorApiController;
 use App\Http\Controllers\Web\indexController;
 use App\Http\Controllers\Web\Setting\documentController;
 use App\Http\Controllers\Web\Setting\mainController;
+use App\Http\Controllers\Widget\customerorderEditController;
+use App\Http\Controllers\Widget\demandEditController;
+use App\Http\Controllers\Widget\salesreturnEditController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('delete/{accountId}/', [DeleteVendorApiController::class, 'delete']);
@@ -25,8 +28,14 @@ Route::get('/Setting/Document/{accountId}', [documentController::class, 'getDocu
 Route::post('/Setting/Document/{accountId}', [documentController::class, 'postDocument']);
 
 
-
 Route::get('/get/createAuthToken/{accountId}', [mainController::class, 'createAuthToken']);
 
+
+
+Route::get('/widget/InfoAttributes/', [indexController::class, 'widgetInfoAttributes']);
+
+Route::get('/widget/customerorder', [customerorderEditController::class, 'customerorder']);
+Route::get('/widget/demand', [demandEditController::class, 'demand']);
+Route::get('/widget/salesreturn', [salesreturnEditController::class, 'salesreturn']);
 
 
