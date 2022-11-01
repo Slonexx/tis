@@ -20,7 +20,7 @@
                                             <div class="dropdown-container">
                                                 <a href="/Setting/createAuthToken/{{$accountId}}?isAdmin={{ request()->isAdmin }}"> Основное </a>
                                                 <a href="/Setting/Document/{{$accountId}}?isAdmin={{ request()->isAdmin }}"> Документ </a>
-                                                <a href="/Setting/Worker/{{$accountId}}?isAdmin={{ request()->isAdmin }}"> Сотрудники </a>
+                                                {{--<a href="/Setting/Worker/{{$accountId}}?isAdmin={{ request()->isAdmin }}"> Сотрудники </a>--}}
                                             </div>
                                     @endif
                                 @endif

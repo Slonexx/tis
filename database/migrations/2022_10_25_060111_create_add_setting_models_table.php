@@ -15,6 +15,9 @@ return new class extends Migration
     {
         Schema::create('add_setting_models', function (Blueprint $table) {
             $table->id();
+            $table->string('accountId');
+            $table->foreign('accountId')->references('accountId')->on('main_settings')->cascadeOnDelete();
+            $table->string('paymentDocument')->nullable();
             $table->timestamps();
         });
     }

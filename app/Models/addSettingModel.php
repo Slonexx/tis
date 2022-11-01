@@ -7,5 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class addSettingModel extends Model
 {
+
+    protected $fillable = [
+        'accountId',
+        'paymentDocument',
+    ];
+
     use HasFactory;
 }

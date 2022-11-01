@@ -11,6 +11,7 @@ class getMainSettingBD extends Controller
     var $accountId;
     var $tokenMs;
     var $authtoken;
+    var $paymentDocument;
 
     /**
      * @param $accountId
@@ -23,6 +24,10 @@ class getMainSettingBD extends Controller
         $this->accountId = $BD['accountId'];
         $this->tokenMs = $BD['tokenMs'];
         $this->authtoken = $BD['authtoken'];
+
+
+        $json = DataBaseService::showDocumentSetting($accountId);
+        $this->paymentDocument = $json['paymentDocument'];
 
     }
 

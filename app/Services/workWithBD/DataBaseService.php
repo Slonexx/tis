@@ -3,6 +3,7 @@
 namespace App\Services\workWithBD;
 
 
+use App\Models\addSettingModel;
 use App\Models\mainSetting;
 use App\Models\userLoadModel;
 
@@ -57,5 +58,24 @@ class DataBaseService
             'tokenMs' => $tokenMs,
             'authtoken' => $authtoken,
         ]);
+    }
+
+    public static function createDocumentSetting($accountId, $paymentDocument){
+        addSettingModel::create([
+            'accountId' => $accountId,
+            'paymentDocument' => $paymentDocument,
+        ]);
+    }
+    public static function showDocumentSetting($accountId){
+        $find = addSettingModel::query()->where('accountId', $accountId)->first();
+        try {
+            $result = $find->getAttributes();
+        } catch (\Throwable $e) {
+            $result = [
+                'accountId' => $accountId,
+                'paymentDocument' => null,
+            ];
+        }
+        return $result;
     }
 }

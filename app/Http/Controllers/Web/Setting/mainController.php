@@ -65,7 +65,7 @@ class mainController extends Controller
             $vendorAPI = new VendorApiController();
             $vendorAPI->updateAppStatus($cfg->appId, $accountId, $app->getStatusName());
             $app->persist();
-            return to_route('main', ['accountId' => $accountId, 'isAdmin' => $isAdmin]);
+            return to_route('getDocument', ['accountId' => $accountId, 'isAdmin' => $isAdmin]);
         } catch (\Throwable $e){
             return view('setting.authToken', [
                 'accountId' => $accountId,
