@@ -136,25 +136,6 @@
             }
             return true;
         }
-        function isNumberKeyMobile(evt){
-            var charCode = (evt.which) ? evt.which : event.keyCode
-            if (charCode == 46){
-                var inputValue = $("#mobile").val();
-                var count = (inputValue.match(/'.'/g) || []).length;
-                if(count<1){
-                    if (inputValue.indexOf('.') < 1){
-                        return true;
-                    }
-                    return false;
-                }else{
-                    return false;
-                }
-            }
-            if (charCode != 46 && charCode > 31 && (charCode < 48 || charCode > 57)){
-                return false;
-            }
-            return true;
-        }
 
         function sendKKM(pay_type){
             let button_hide = '';
@@ -166,7 +147,6 @@
 
             let money_card = window.document.getElementById('card').value;
             let money_cash = window.document.getElementById('cash').value;
-            let money_mobile = window.document.getElementById('mobile').value;
             let SelectorInfo = document.getElementById('valueSelector');
             let option = SelectorInfo.options[SelectorInfo.selectedIndex];
 
@@ -184,15 +164,15 @@
                     modalShowHide = 'hide'
                 }
             }
-            if (option.value == 2){
+           /* if (option.value == 2){
                 if (!money_mobile){
                     window.document.getElementById('messageAlert').innerText = 'Вы не ввели сумму мобильных';
                     window.document.getElementById('message').style.display = "block";
                     modalShowHide = 'hide'
-                }
+                }*/
             }
-            if (option.value == 3){
-                if (!money_card && !money_cash && !money_mobile){
+            if (option.value == 2){
+                if (!money_card && !money_cash){
                     window.document.getElementById('messageAlert').innerText = 'Вы не ввели сумму';
                     window.document.getElementById('message').style.display = "block";
                     modalShowHide = 'hide'
@@ -215,7 +195,7 @@
                     entity_type: entity_type,
                     money_card: money_card,
                     money_cash: money_cash,
-                    money_mobile: money_mobile,
+                    //money_mobile: money_mobile,
                     pay_type: pay_type,
                     position: JSON.stringify(products),
                 };
@@ -298,17 +278,14 @@ let final = url + formatParams(params);
         function SelectorSum(Selector){
             window.document.getElementById("cash").value = ''
             window.document.getElementById("card").value = ''
-            window.document.getElementById("mobile").value = ''
             let option = Selector.options[Selector.selectedIndex];
             if (option.value === "0") {
                 document.getElementById('Visibility_Cash').style.display = 'block';
                 document.getElementById('Visibility_Card').style.display = 'none';
-                //document.getElementById('Visibility_Mobile').style.display = 'none';
             }
             if (option.value === "1") {
                 document.getElementById('Visibility_Card').style.display = 'block';
                 document.getElementById('Visibility_Cash').style.display = 'none';
-                //document.getElementById('Visibility_Mobile').style.display = 'none';
                 let card =  window.document.getElementById("card");
                 card.value = window.document.getElementById("sum").innerText
                 window.document.getElementById("card").disabled = true
