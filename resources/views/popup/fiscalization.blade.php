@@ -64,7 +64,6 @@
                             window.document.getElementById("getKKM").style.display = "block";
                         }
                     } else  window.document.getElementById("getKKM").style.display = "block";
-                    window.document.getElementById("closeButtonId").style.display = "block";
                 });
                 xmlHttpRequest.open("GET", final);
                 xmlHttpRequest.send();
@@ -363,7 +362,6 @@ let final = url + formatParams(params);
 
             window.document.getElementById("message").style.display = "none"
             window.document.getElementById("messageGood").style.display = "none"
-            window.document.getElementById("closeButtonId").style.display = "none"
 
             window.document.getElementById("refundCheck").style.display = "none"
             window.document.getElementById("getKKM").style.display = "none"
