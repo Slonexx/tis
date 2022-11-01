@@ -294,23 +294,6 @@ let final = url + formatParams(params);
             xmlHttpRequest.send();
         }
 
-        function updatePopup(){
-            let params = {
-                object_Id: object_Id,
-                accountId: accountId,
-            };
-            let final = url + formatParams(params);
-
-            let xmlHttpRequest = new XMLHttpRequest();
-            xmlHttpRequest.addEventListener("load", function () {
-
-                let json = JSON.parse(this.responseText);
-
-
-            });
-            xmlHttpRequest.open("GET", final);
-            xmlHttpRequest.send();
-        }
 
         function SelectorSum(Selector){
             window.document.getElementById("cash").value = ''
@@ -392,23 +375,13 @@ let final = url + formatParams(params);
     <div class="main-container">
         <div class="row gradient rounded p-2">
             <div class="col-3">
-                <div class="mx-2"> <img src="https://test.ukassa.kz/_nuxt/img/d2b49fb.svg" width="90%"  alt="">
-                </div>
+                <div class="mx-2"> <img src="https://test.ukassa.kz/_nuxt/img/d2b49fb.svg" width="90%"  alt=""></div>
             </div>
-            <div class="col-6">
-                <span class="mx-5 text-white">Заказ покупателя №</span>
+            <div class="col-6 text-black " style="font-size: 22px; margin-top: 1.2rem !important;">
+                <span> Заказ покупателя № </span>
                 <span id="numberOrder" class="text-white"></span>
             </div>
-            <div class="col-3">
-                <div class="row">
-                    <div class="col-8">
-
-                    </div>
-                    <div class="col-3 text-right">
-                        <button type="submit" onclick="updatePopup()" class="myButton btn "> <i class="fa-solid fa-arrow-rotate-right"></i> </button>
-                    </div>
-                </div>
-            </div>
+            <div class="col-3"></div>
         </div>
         <div id="message" class="mt-2 row" style="display:none;" >
             <div class="col-12">
@@ -427,15 +400,15 @@ let final = url + formatParams(params);
                 <div id="main" class="row p-3">
                     <div class="col-12">
                         <div class="row">
-                            <div class="col-1 text-success">№</div>
-                            <div class="col-5 text-success">Наименование</div>
-                            <div class="col-1 text-success">Кол-во</div>
-                            <div class="col-1 text-success">Цена</div>
-                            <div class="col-1 text-success">НДС</div>
-                            <div class="col-1 text-success">Скидка</div>
-                            <div class="col-1 text-success">Сумма</div>
-                            <div class="col-1 text-success">Учитывать </div>
-                            <hr class="mt-1 text-success" style="background-color: #0c7d70; height: 3px; border: 0;">
+                            <div class="col-1 text-black">№</div>
+                            <div class="col-5 text-black">Наименование</div>
+                            <div class="col-1 text-black">Кол-во</div>
+                            <div class="col-1 text-black">Цена</div>
+                            <div class="col-1 text-black">НДС</div>
+                            <div class="col-1 text-black">Скидка</div>
+                            <div class="col-1 text-black">Сумма</div>
+                            <div class="col-1 text-black">Учитывать </div>
+                            <div class="buttons-container-head mt-1"></div>
                         </div>
                     </div>
                     <div id="products" class="col-12 text-black">
@@ -467,8 +440,8 @@ let final = url + formatParams(params);
                 <div class="col-7 row">
                     <div class="row">
                         <div class="col-12 mx-2 ">
-                            <div class="col-5 bg-success text-white p-1 rounded">
-                                <span> Итого: </span>
+                            <div class="col-5 bg-info text-white p-1 rounded">
+                                <span class="mx-2"> Итого: </span>
                                 <span id="sum"></span>
                             </div>
 
@@ -608,7 +581,7 @@ let final = url + formatParams(params);
         flex-grow: 1;
     }
     .buttons-container-head{
-        background-color: rgba(12, 125, 112, 0.27);
+        background-color: rgba(76, 175, 237, 0.86);
         padding-top: 3px;
         min-height: 3px;
     }
@@ -617,23 +590,4 @@ let final = url + formatParams(params);
         min-height: 100px;
     }
 
-    .myButton {
-        box-shadow: 0px 4px 5px 0px #5d5d5d !important;
-        background-image: radial-gradient( circle farthest-corner at 10% 20%,  rgba(14,174,87,1) 0%, rgba(12,116,117,1) 90% ) !important;
-        color: white !important;
-        border-radius:50px !important;
-        display:inline-block !important;
-        cursor:pointer !important;
-        padding:5px 5px !important;
-        text-decoration:none !important;
-    }
-    .myButton:hover {
-        filter: invert(1);
-
-        color: #111111 !important;
-    }
-    .myButton:active {
-        position: relative !important;
-        top: 1px !important;
-    }
 </style>
