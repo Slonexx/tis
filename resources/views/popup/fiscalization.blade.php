@@ -303,28 +303,28 @@ let final = url + formatParams(params);
             if (option.value === "0") {
                 document.getElementById('Visibility_Cash').style.display = 'block';
                 document.getElementById('Visibility_Card').style.display = 'none';
-                document.getElementById('Visibility_Mobile').style.display = 'none';
+                //document.getElementById('Visibility_Mobile').style.display = 'none';
             }
             if (option.value === "1") {
                 document.getElementById('Visibility_Card').style.display = 'block';
                 document.getElementById('Visibility_Cash').style.display = 'none';
-                document.getElementById('Visibility_Mobile').style.display = 'none';
+                //document.getElementById('Visibility_Mobile').style.display = 'none';
                 let card =  window.document.getElementById("card");
                 card.value = window.document.getElementById("sum").innerText
                 window.document.getElementById("card").disabled = true
             }
-            if (option.value === "2") {
+            /*if (option.value === "2") {
                 document.getElementById('Visibility_Cash').style.display = 'none';
                 document.getElementById('Visibility_Card').style.display = 'none';
-                document.getElementById('Visibility_Mobile').style.display = 'block';
+                //document.getElementById('Visibility_Mobile').style.display = 'block';
                 let mobile =  window.document.getElementById("mobile");
                 mobile.value = window.document.getElementById("sum").innerText
                 window.document.getElementById("mobile").disabled = true
-            }
-            if (option.value === "3") {
+            }*/
+            if (option.value === "2") {
                 document.getElementById('Visibility_Cash').style.display = 'block';
                 document.getElementById('Visibility_Card').style.display = 'block';
-                document.getElementById('Visibility_Mobile').style.display = 'block';
+                //document.getElementById('Visibility_Mobile').style.display = 'block';
                 window.document.getElementById("card").disabled = false
                 window.document.getElementById("mobile").disabled = false
             }
@@ -379,7 +379,7 @@ let final = url + formatParams(params);
             </div>
             <div class="col-6 text-black " style="font-size: 22px; margin-top: 1.2rem !important;">
                 <span> Заказ покупателя № </span>
-                <span id="numberOrder" class="text-white"></span>
+                <span id="numberOrder" class="text-black"></span>
             </div>
             <div class="col-3"></div>
         </div>
@@ -469,8 +469,8 @@ let final = url + formatParams(params);
                                 <select onchange="SelectorSum(valueSelector)" id="valueSelector" class="form-select">
                                     <option selected value="0">Наличными</option>
                                     <option value="1">Картой</option>
-                                    <option value="2">Мобильная</option>
-                                    <option value="3">Смешанная</option>
+                                    {{--<option value="2">Мобильная</option>--}}
+                                    <option value="2">Смешанная</option>
                                 </select>
                             </div>
                         </div>
@@ -485,10 +485,10 @@ let final = url + formatParams(params);
                                     <input id="card" type="number" step="0.1"  placeholder="Сумма картой" onkeypress="return isNumberKeyCard(event)"
                                            class="form-control float" required maxlength="255" value="">
                                 </div> </div>
-                            <div class="col-4"> <div id="Visibility_Mobile" class="mx-2" style="display: none">
+                           {{-- <div class="col-4"> <div id="Visibility_Mobile" class="mx-2" style="display: none">
                                     <input id="mobile" type="number" step="0.1"  placeholder="Сумма мобильных" onkeypress="return isNumberKeyMobile(event)"
                                            class="form-control float" required maxlength="255" value="">
-                                </div> </div>
+                                </div> </div>--}}
                         </div>
                     </div>
                     <div class="col-1"></div>
