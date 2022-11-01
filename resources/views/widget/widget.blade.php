@@ -31,7 +31,7 @@
     }
 
     .gradient{
-        background-image: radial-gradient( circle farthest-corner at 10% 20%,  rgba(14,174,87,1) 0%, rgba(12,116,117,1) 90% );
+        background-image: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
     }
 
 </style>

@@ -82,11 +82,11 @@
 
 
         <div class="row gradient rounded p-2">
-            <div class="col-10">
-                <div class="mx-2"> <img src="https://test.ukassa.kz/_nuxt/img/d2b49fb.svg" width="90%"   alt=""> </div>
+            <div class="col-6">
+                <div class="mx-2"> <img src="https://test.ukassa.kz/_nuxt/img/d2b49fb.svg" width="80%"   alt=""> </div>
             </div>
             <div class="col-2 ">
-                <button type="submit" onclick="" class="myButton btn "> <i class="fa-solid fa-arrow-rotate-right"></i> </button>
+
             </div>
         </div>
         <div id="workerAccess_yes" class="row mt-2 rounded bg-white" style="display:none;">
