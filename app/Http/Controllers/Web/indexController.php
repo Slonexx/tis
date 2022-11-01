@@ -52,13 +52,13 @@ class indexController extends Controller
         $objectId = $request->objectId;
 
         $url = $this->getUrlEntity($entity_type, $objectId);
-        $Setting = new getSetting($accountId);
-        $Client = new MsClient($Setting->tokenMs);
+        $Setting = new getSettingVendorController($accountId);
+        $Client = new MsClient($Setting->TokenMoySklad);
         $body = $Client->get($url);
 
         if (property_exists($body, 'attributes')){
             foreach ($body->attributes as $item){
-                if ($item->name == 'id-билета (ReKassa)'){
+                if ($item->name == 'id (Ukassa)'){
                     if ($item->value != null) $ticket_id = $item->value;
                     break;
                 }
