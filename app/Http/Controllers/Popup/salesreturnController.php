@@ -130,7 +130,7 @@ class salesreturnController extends Controller
         ];
 
         $Client = new Client();
-        $url = 'https://smartrekassa.kz/api/ticket';
+        $url = 'https://smarttis.kz/api/ticket';
         //$url = 'http://rekassa/api/ticket';
         try {
             $ClinetPost = $Client->post( $url, [

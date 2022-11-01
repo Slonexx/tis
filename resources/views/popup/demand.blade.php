@@ -7,7 +7,7 @@
 
         //const url = 'http://rekassa/Popup/customerorder/show';
 
-        const url = 'https://smartrekassa.kz/Popup/demand/show';
+        const url = 'https://smarttis.kz/Popup/demand/show';
         let object_Id = '';
         let accountId = '';
         let entity_type = '';
@@ -198,7 +198,7 @@
                 }
             }
 
-            let url = 'https://smartrekassa.kz/Popup/demand/send';
+            let url = 'https://smarttis.kz/Popup/demand/send';
 
             if (modalShowHide === 'show'){
                 $('#downL').modal('toggle');
@@ -250,7 +250,7 @@
 
         function ShowCheck(){
             let urlrekassa = 'https://app.rekassa.kz/'
-            let url = 'https://smartrekassa.kz/api/ticket';
+            let url = 'https://smarttis.kz/api/ticket';
             let params = {
                 accountId: accountId,
                 id_ticket: id_ticket,

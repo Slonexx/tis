@@ -29,7 +29,7 @@ switch ($method) {
             $app->persist();
 
         }
-    /*    $url = 'https://smartrekassa.kz/setAttributes/' . $accountId . '/' . $accessToken;
+    /*    $url = 'https://smarttis.kz/setAttributes/' . $accountId . '/' . $accessToken;
         $install = file_get_contents($url);*/
         break;
     case 'GET':

@@ -7,7 +7,7 @@
 
         //const url = 'http://rekassa/Popup/customerorder/show';
 
-        const url = 'https://smartrekassa.kz/Popup/customerorder/show';
+        const url = 'https://smarttis.kz/Popup/customerorder/show';
         let object_Id = '';
         let accountId = '';
         let entity_type = '';
@@ -200,7 +200,7 @@
                 }
             }
 
-            let url = 'https://smartrekassa.kz/Popup/customerorder/send';
+            let url = 'https://smarttis.kz/Popup/customerorder/send';
 
             if (modalShowHide === 'show'){
                 $('#downL').modal('toggle');
@@ -257,7 +257,7 @@
                 pincode: pinCode,
             };
             //let url = 'http://rekassa/Popup/customerorder/closeShift';
-            let url = 'https://smartrekassa.kz/Popup/customerorder/closeShift';
+            let url = 'https://smarttis.kz/Popup/customerorder/closeShift';
 let final = url + formatParams(params);
 
             console.log("final = " + final);
@@ -281,7 +281,7 @@ let final = url + formatParams(params);
         function ShowCheck(){
             let urlrekassa = 'https://app.rekassa.kz/'
             //let url = 'http://rekassa/Popup/customerorder/closeShift';
-            let url = 'https://smartrekassa.kz/api/ticket';
+            let url = 'https://smarttis.kz/api/ticket';
             let params = {
                 accountId: accountId,
                 id_ticket: id_ticket,
@@ -393,21 +393,18 @@ let final = url + formatParams(params);
 
     <div class="main-container">
         <div class="row gradient rounded p-2">
-            <div class="col-9">
-                <div class="mx-2"> <img src="https://app.rekassa.kz/static/logo.png" width="35" height="35"  alt="">
-                    <span class="text-white"> re:Kassa </span>
-                    <span class="mx-5 text-white">Заказ покупателя №</span>
-                    <span id="numberOrder" class="text-white"></span>
+            <div class="col-3">
+                <div class="mx-2"> <img src="https://test.ukassa.kz/_nuxt/img/d2b49fb.svg" width="90%"  alt="">
                 </div>
+            </div>
+            <div class="col-6">
+                <span class="mx-5 text-white">Заказ покупателя №</span>
+                <span id="numberOrder" class="text-white"></span>
             </div>
             <div class="col-3">
                 <div class="row">
-                    <div class="col-3">
+                    <div class="col-8">
 
-                    </div>
-                    <div class="col-6">
-                        <button id="closeButtonId" type="button" class="btn btn-danger"
-                                data-bs-toggle="modal" data-bs-target="#modal" >Закрыть смену</button>
                     </div>
                     <div class="col-3 text-right">
                         <button type="submit" onclick="updatePopup()" class="myButton btn "> <i class="fa-solid fa-arrow-rotate-right"></i> </button>
