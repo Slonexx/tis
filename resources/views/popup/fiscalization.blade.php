@@ -70,72 +70,7 @@
             }
              });
 
-            function formatParams(params) {
-                return "?" + Object
-                    .keys(params)
-                    .map(function (key) {
-                        return key + "=" + encodeURIComponent(params[key])
-                    })
-                    .join("&")
-            }
-            function deleteBTNClick(Object){
 
-
-                let sum = document.getElementById("sum").innerHTML;
-                let final = document.getElementById('productFinal_' + Object).innerHTML;
-                window.document.getElementById("sum").innerHTML = sum-final;
-
-
-                window.document.getElementById('productName_' + Object).innerHTML = '';
-                window.document.getElementById('productQuantity_' + Object).innerHTML = '';
-                window.document.getElementById('productPrice_' + Object).innerHTML = '';
-                window.document.getElementById('productVat_' + Object).innerHTML = '';
-                window.document.getElementById('productDiscount_' + Object).innerHTML = '';
-                window.document.getElementById('productFinal_' + Object).innerHTML = '';
-                window.document.getElementById(Object).style.display = "none";
-            }
-
-        function roundToTwo(num) {
-            return +(Math.round(num + "e+2")  + "e-2");
-        }
-        function isNumberKeyCash(evt){
-            var charCode = (evt.which) ? evt.which : event.keyCode
-            if (charCode == 46){
-                var inputValue = $("#cash").val();
-                var count = (inputValue.match(/'.'/g) || []).length;
-                if(count<1){
-                    if (inputValue.indexOf('.') < 1){
-                        return true;
-                    }
-                    return false;
-                }else{
-                    return false;
-                }
-            }
-            if (charCode != 46 && charCode > 31 && (charCode < 48 || charCode > 57)){
-                return false;
-            }
-            return true;
-        }
-        function isNumberKeyCard(evt){
-            var charCode = (evt.which) ? evt.which : event.keyCode
-            if (charCode == 46){
-                var inputValue = $("#card").val();
-                var count = (inputValue.match(/'.'/g) || []).length;
-                if(count<1){
-                    if (inputValue.indexOf('.') < 1){
-                        return true;
-                    }
-                    return false;
-                }else{
-                    return false;
-                }
-            }
-            if (charCode != 46 && charCode > 31 && (charCode < 48 || charCode > 57)){
-                return false;
-            }
-            return true;
-        }
 
         function sendKKM(pay_type){
             let button_hide = '';
@@ -163,13 +98,6 @@
                     window.document.getElementById('message').style.display = "block";
                     modalShowHide = 'hide'
                 }
-            }
-           /* if (option.value == 2){
-                if (!money_mobile){
-                    window.document.getElementById('messageAlert').innerText = 'Вы не ввели сумму мобильных';
-                    window.document.getElementById('message').style.display = "block";
-                    modalShowHide = 'hide'
-                }*/
             }
             if (option.value == 2){
                 if (!money_card && !money_cash){
@@ -224,37 +152,7 @@
                 xmlHttpRequest.send();
                 modalShowHide = 'hide';
             }
-            else window.document.getElementById(button_hide).style.display = "block";
-        }
-
-        function closeShift(){
-
-            let pinCode = window.document.getElementById('pin_code').value;
-
-            let params = {
-                accountId: accountId,
-                pincode: pinCode,
-            };
-            //let url = 'http://rekassa/Popup/customerorder/closeShift';
-            let url = 'https://smarttis.kz/Popup/customerorder/closeShift';
-let final = url + formatParams(params);
-
-            console.log("final = " + final);
-
-            let xmlHttpRequest = new XMLHttpRequest();
-            xmlHttpRequest.addEventListener("load", function () {
-                let json = JSON.parse(this.responseText);
-                if (json.statusCode === 200){
-                    window.document.getElementById('messageAlert').innerText = json.message;
-                    window.document.getElementById('message').style.display = "block";
-                } else {
-                    console.log(' Error = ' + url + ' message = ' + JSON.stringify(json.message))
-                    window.document.getElementById('messageAlert').innerText = "ошибка";
-                    window.document.getElementById('message').style.display = "block";
-                }
-            });
-            xmlHttpRequest.open("GET", final);
-            xmlHttpRequest.send();
+            else window.document.getElementById(button_hide).style.display = "block"
         }
 
         function ShowCheck(){
@@ -274,7 +172,6 @@ let final = url + formatParams(params);
             xmlHttpRequest.send();
         }
 
-
         function SelectorSum(Selector){
             window.document.getElementById("cash").value = ''
             window.document.getElementById("card").value = ''
@@ -290,62 +187,16 @@ let final = url + formatParams(params);
                 card.value = window.document.getElementById("sum").innerText
                 window.document.getElementById("card").disabled = true
             }
-            /*if (option.value === "2") {
-                document.getElementById('Visibility_Cash').style.display = 'none';
-                document.getElementById('Visibility_Card').style.display = 'none';
-                //document.getElementById('Visibility_Mobile').style.display = 'block';
-                let mobile =  window.document.getElementById("mobile");
-                mobile.value = window.document.getElementById("sum").innerText
-                window.document.getElementById("mobile").disabled = true
-            }*/
             if (option.value === "2") {
                 document.getElementById('Visibility_Cash').style.display = 'block';
                 document.getElementById('Visibility_Card').style.display = 'block';
                 //document.getElementById('Visibility_Mobile').style.display = 'block';
                 window.document.getElementById("card").disabled = false
-                window.document.getElementById("mobile").disabled = false
             }
 
         }
-        function openDown(){
-            $('#lDown').modal('show');
-        }
-        function closeDown(){
-            $('#lDown').modal('hide');
-            $('#downL').modal('hide');
-        }
 
 
-
-        function newPopup(){
-            window.document.getElementById("sum").innerHTML = ''
-
-            window.document.getElementById("message").style.display = "none"
-            window.document.getElementById("messageGood").style.display = "none"
-
-            window.document.getElementById("refundCheck").style.display = "none"
-            window.document.getElementById("getKKM").style.display = "none"
-            window.document.getElementById("ShowCheck").style.display = "none"
-
-            window.document.getElementById("cash").value = ''
-            window.document.getElementById("card").value = ''
-            window.document.getElementById("mobile").value = ''
-
-            window.document.getElementById("cash").style.display = "block"
-            let thisSelectorSum = window.document.getElementById("valueSelector")
-            thisSelectorSum.value = 0;
-            SelectorSum(thisSelectorSum)
-
-            for (var i = 0; i < 20; i++) {
-                window.document.getElementById(i).style.display = "none"
-                window.document.getElementById('productName_' + i).innerHTML = ''
-                window.document.getElementById('productQuantity_' + i).innerHTML = ''
-                window.document.getElementById('productPrice_' + i).innerHTML = ''
-                window.document.getElementById('productVat_' + i).innerHTML = ''
-                window.document.getElementById('productDiscount_' + i).innerHTML = ''
-                window.document.getElementById('productFinal_' + i).innerHTML = ''
-            }
-        }
     </script>
 
 
@@ -413,30 +264,7 @@ let final = url + formatParams(params);
         <div class="buttons-container-head"></div>
         <div class="buttons-container">
             <div class="row">
-
-                <div class="col-7 row">
-                    <div class="row">
-                        <div class="col-12 mx-2 ">
-                            <div class="col-5 bg-info text-white p-1 rounded">
-                                <span class="mx-2"> Итого: </span>
-                                <span id="sum"></span>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-                <div class="col-1">
-
-                    </div>
-                <div class="col-2">
-
-                </div>
-                <div class="col-2 d-flex justify-content-end">
-                    <button onclick="sendKKM('return')" id="refundCheck" class="btn btn-danger">возврат</button>
-                    <button onclick="sendKKM('sell')" id="getKKM" class="btn btn-success">Отправить в ККМ</button>
-                </div>
-
-                <div class="row mt-2">
+                <div class="row">
                     <div class="col-3">
                         <div class="row">
                             <div class="col-5">
@@ -462,10 +290,6 @@ let final = url + formatParams(params);
                                     <input id="card" type="number" step="0.1"  placeholder="Сумма картой" onkeypress="return isNumberKeyCard(event)"
                                            class="form-control float" required maxlength="255" value="">
                                 </div> </div>
-                           {{-- <div class="col-4"> <div id="Visibility_Mobile" class="mx-2" style="display: none">
-                                    <input id="mobile" type="number" step="0.1"  placeholder="Сумма мобильных" onkeypress="return isNumberKeyMobile(event)"
-                                           class="form-control float" required maxlength="255" value="">
-                                </div> </div>--}}
                         </div>
                     </div>
                     <div class="col-1"></div>
@@ -473,38 +297,29 @@ let final = url + formatParams(params);
                         <button onclick="ShowCheck()" id="ShowCheck" class="btn btn-success">Показать чек</button>
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
-
-
-
-    <div class="modal fade" id="modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title"> Закрытие смены
-                        <i class="fa-solid fa-circle-question text-danger"></i>
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                        <div class="row mt-2">
-                            <div class="col-1"></div>
-                            <div class="col-10">
-                                <label> Введите пин код для закрытия смены</label>
-                                <input id="pin_code" type="number" placeholder="PIN code"
-                                  class="form-control float" required maxlength="10" value="">
+                <div class="col-7 row mt-2">
+                    <div class="row">
+                        <div class="col-12 mx-2 ">
+                            <div class="col-5 bg-info text-white p-1 rounded">
+                                <span class="mx-2"> Итого: </span>
+                                <span id="sum"></span>
                             </div>
+
                         </div>
+                    </div>
                 </div>
-                <div class="modal-footer">
-                    <button  onclick="closeShift()" id="closeShift"
-                             data-bs-dismiss="modal" class="btn btn-danger">Закрыть смену</button>
+                <div class="col-3"></div>
+                <div class="col-2 d-flex justify-content-end">
+                    <button onclick="sendKKM('return')" id="refundCheck" class="btn btn-danger">возврат</button>
+                    <button onclick="sendKKM('sell')" id="getKKM" class="btn btn-success">Отправить в ККМ</button>
                 </div>
+
+
             </div>
         </div>
     </div>
+
+
     <div id="downL" class="modal fade bd-example-modal-sm" data-bs-keyboard="false" data-bs-backdrop="static"
          tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-sm">
@@ -539,6 +354,111 @@ let final = url + formatParams(params);
             </div>
         </div>
     </div>
+
+
+    <script>
+        function newPopup(){
+            window.document.getElementById("sum").innerHTML = ''
+
+            window.document.getElementById("message").style.display = "none"
+            window.document.getElementById("messageGood").style.display = "none"
+
+            window.document.getElementById("refundCheck").style.display = "none"
+            window.document.getElementById("getKKM").style.display = "none"
+            window.document.getElementById("ShowCheck").style.display = "none"
+
+            window.document.getElementById("cash").value = ''
+            window.document.getElementById("card").value = ''
+
+            window.document.getElementById("cash").style.display = "block"
+            let thisSelectorSum = window.document.getElementById("valueSelector")
+            thisSelectorSum.value = 0;
+            SelectorSum(thisSelectorSum)
+
+            for (var i = 0; i < 20; i++) {
+                window.document.getElementById(i).style.display = "none"
+                window.document.getElementById('productName_' + i).innerHTML = ''
+                window.document.getElementById('productQuantity_' + i).innerHTML = ''
+                window.document.getElementById('productPrice_' + i).innerHTML = ''
+                window.document.getElementById('productVat_' + i).innerHTML = ''
+                window.document.getElementById('productDiscount_' + i).innerHTML = ''
+                window.document.getElementById('productFinal_' + i).innerHTML = ''
+            }
+        }
+
+        function openDown(){
+            $('#lDown').modal('show');
+        }function closeDown(){
+            $('#lDown').modal('hide');
+            $('#downL').modal('hide');
+        }
+
+        function formatParams(params) {
+            return "?" + Object
+                .keys(params)
+                .map(function (key) {
+                    return key + "=" + encodeURIComponent(params[key])
+                })
+                .join("&")
+        }
+        function deleteBTNClick(Object){
+
+
+            let sum = document.getElementById("sum").innerHTML;
+            let final = document.getElementById('productFinal_' + Object).innerHTML;
+            window.document.getElementById("sum").innerHTML = sum-final;
+
+
+            window.document.getElementById('productName_' + Object).innerHTML = '';
+            window.document.getElementById('productQuantity_' + Object).innerHTML = '';
+            window.document.getElementById('productPrice_' + Object).innerHTML = '';
+            window.document.getElementById('productVat_' + Object).innerHTML = '';
+            window.document.getElementById('productDiscount_' + Object).innerHTML = '';
+            window.document.getElementById('productFinal_' + Object).innerHTML = '';
+            window.document.getElementById(Object).style.display = "none";
+        }
+
+        function roundToTwo(num) {
+            return +(Math.round(num + "e+2")  + "e-2");
+        }
+        function isNumberKeyCash(evt){
+            var charCode = (evt.which) ? evt.which : event.keyCode
+            if (charCode == 46){
+                var inputValue = $("#cash").val();
+                var count = (inputValue.match(/'.'/g) || []).length;
+                if(count<1){
+                    if (inputValue.indexOf('.') < 1){
+                        return true;
+                    }
+                    return false;
+                }else{
+                    return false;
+                }
+            }
+            if (charCode != 46 && charCode > 31 && (charCode < 48 || charCode > 57)){
+                return false;
+            }
+            return true;
+        }function isNumberKeyCard(evt){
+            var charCode = (evt.which) ? evt.which : event.keyCode
+            if (charCode == 46){
+                var inputValue = $("#card").val();
+                var count = (inputValue.match(/'.'/g) || []).length;
+                if(count<1){
+                    if (inputValue.indexOf('.') < 1){
+                        return true;
+                    }
+                    return false;
+                }else{
+                    return false;
+                }
+            }
+            if (charCode != 46 && charCode > 31 && (charCode < 48 || charCode > 57)){
+                return false;
+            }
+            return true;
+        }
+    </script>
 
 @endsection
 
