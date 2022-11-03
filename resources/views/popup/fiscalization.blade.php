@@ -4,6 +4,243 @@
 @section('content')
 
 
+    <script>
+
+        //const url = 'http://tus/Popup/customerorder/show';
+
+        const url = 'https://smarttis.kz/Popup/customerorder/show';
+        let object_Id = '';
+        let accountId = '';
+        let entity_type = '';
+        let id_ticket = '';
+
+        window.addEventListener("message", function(event) { openDown();
+
+            /*var receivedMessage = {
+                "name":"OpenPopup","messageId":1,"popupName":"fiscalizationPopup","popupParameters":
+                    {"object_Id":"4f4a2e5a-4f6c-11ed-0a80-09be0003f312","accountId":"1dd5bd55-d141-11ec-0a80-055600047495"}
+            }; */
+            var receivedMessage = event.data;
+            newPopup();
+            if (receivedMessage.name === 'OpenPopup') {
+                object_Id = receivedMessage.popupParameters.object_Id;
+                accountId = receivedMessage.popupParameters.accountId;
+                entity_type = receivedMessage.popupParameters.entity_type;
+                let params = {
+                    object_Id: object_Id,
+                    accountId: accountId,
+                };
+                let final = url + formatParams(params);
+
+                let xmlHttpRequest = new XMLHttpRequest();
+                xmlHttpRequest.addEventListener("load", function () { $('#lDown').modal('hide');
+                    let json = JSON.parse(this.responseText);
+                    id_ticket = json.attributes.ticket_id;
+                    window.document.getElementById("numberOrder").innerHTML = json.name;
+
+                    let products = json.products;
+                    for (var i = 0; i < products.length; i++) {
+
+                        if (products[i].propety === true) {
+                            window.document.getElementById('productId_' + i).innerHTML = products[i].position;
+                            window.document.getElementById('productName_' + i).innerHTML = products[i].name;
+                            window.document.getElementById('productQuantity_' + i).innerHTML = products[i].quantity;
+                            window.document.getElementById('productPrice_' + i).innerHTML = products[i].price;
+                            if (products[i].vat === 0)  window.document.getElementById('productVat_' + i).innerHTML = "без НДС";
+                            else window.document.getElementById('productVat_' + i).innerHTML = products[i].vat + '%';
+                            window.document.getElementById('productDiscount_' + i).innerHTML = products[i].discount + '%';
+                            window.document.getElementById('productFinal_' + i).innerHTML = products[i].final;
+
+                            let sum = window.document.getElementById("sum").innerHTML;
+                            if (!sum) sum = 0;
+                            window.document.getElementById("sum").innerHTML = roundToTwo(parseFloat(sum) + parseFloat(products[i].final));
+                            window.document.getElementById(i).style.display = "block";
+                        } else {
+                            window.document.getElementById("messageAlert").innerText = "Позиции у которых нет ед. изм. не добавились ";
+                            window.document.getElementById("message").style.display = "block";
+                        }
+                    }
+
+                    if (json.attributes != null){
+                        if (json.attributes.ticket_id != null){
+                            window.document.getElementById("ShowCheck").style.display = "block";
+                            window.document.getElementById("refundCheck").style.display = "block";
+                        } else {
+                            window.document.getElementById("getKKM").style.display = "block";
+                        }
+                    } else  window.document.getElementById("getKKM").style.display = "block";
+                });
+                xmlHttpRequest.open("GET", final);
+                xmlHttpRequest.send();
+            }
+        });
+
+
+
+        function sendKKM(pay_type){
+            let button_hide = ''
+            if (pay_type == 'return') button_hide = 'refundCheck'
+            if (pay_type == 'sell') button_hide = 'getKKM'
+
+            window.document.getElementById(button_hide).style.display = "none"
+            let modalShowHide = 'show'
+
+            let total = window.document.getElementById('sum').innerText
+            let money_card = window.document.getElementById('card').value
+            let money_cash = window.document.getElementById('cash').value
+            let SelectorInfo = document.getElementById('valueSelector')
+            let option = SelectorInfo.options[SelectorInfo.selectedIndex]
+
+            if (option.value == 0){if (!money_cash) {
+                window.document.getElementById('messageAlert').innerText = 'Вы не ввели сумму наличных'
+                window.document.getElementById('message').style.display = "block"
+                modalShowHide = 'hide'
+            }
+                if (money_cash <= parseFloat(window.document.getElementById('sum').innerText)){
+                    window.document.getElementById('messageAlert').innerText = 'Введите сумму больше !'
+                    window.document.getElementById('message').style.display = "block"
+                    modalShowHide = 'hide'
+                }
+            }
+            if (option.value == 1){if (!money_card) {
+                window.document.getElementById('messageAlert').innerText = 'Вы не ввели сумму карты'
+                window.document.getElementById('message').style.display = "block"
+                modalShowHide = 'hide'
+            }
+            }
+            if (option.value == 2){if (!money_card && !money_cash){
+                window.document.getElementById('messageAlert').innerText = 'Вы не ввели сумму'
+                window.document.getElementById('message').style.display = "block"
+                modalShowHide = 'hide'
+                if (money_card + money_cash < parseFloat(window.document.getElementById('sum').innerText)){
+                    window.document.getElementById('messageAlert').innerText = 'Введите сумму больше !'
+                    window.document.getElementById('message').style.display = "block"
+                    modalShowHide = 'hide'
+                }
+            }
+            }
+
+            //let url = 'https://tus/Popup/customerorder/send'
+            let url = 'https://smarttis.kz/Popup/customerorder/send'
+
+            if (modalShowHide === 'show'){
+                $('#downL').modal('toggle')
+                let products = []
+                for (let i = 0; i < 20; i++) {
+                    if ( window.document.getElementById(i).style.display === 'block' ) {
+                        products[i] = {
+                            id:window.document.getElementById('productId_'+i).innerText,
+                            name:window.document.getElementById('productName_'+i).innerText,
+                            quantity:window.document.getElementById('productQuantity_'+i).innerText,
+                            price:window.document.getElementById('productPrice_'+i).innerText,
+                            is_nds:window.document.getElementById('productVat_'+i).innerText,
+                            discount:window.document.getElementById('productDiscount_'+i).innerText
+                        }
+                    }
+                }
+                let params = {
+                    accountId: accountId,
+                    object_Id: object_Id,
+                    entity_type: entity_type,
+                    money_card: money_card,
+                    money_cash: money_cash,
+                    //money_mobile: money_mobile,
+                    pay_type: pay_type,
+                    total: total,
+                    position: JSON.stringify(products),
+                };
+                let final = url + formatParams(params);
+                console.log('send to kkm = ' + final);
+                let xmlHttpRequest = new XMLHttpRequest();
+                xmlHttpRequest.addEventListener("load", function () {
+                    $('#downL').modal('hide');
+                    let json = JSON.parse(this.responseText);
+                    if (json.message === 'Ticket created!'){
+                        window.document.getElementById("messageGoodAlert").innerText = "Чек создан";
+                        window.document.getElementById("messageGood").style.display = "block";
+                        window.document.getElementById("ShowCheck").style.display = "block";
+                        window.document.getElementById("closeShift").style.display = "block";
+                        modalShowHide = 'hide';
+                        let response = json.response;
+                        id_ticket = response.id;
+                    } else {
+                        window.document.getElementById('messageAlert').innerText = "Ошибка 400";
+                        window.document.getElementById('message').style.display = "block";
+                        window.document.getElementById(button_hide).style.display = "block";
+                        modalShowHide = 'hide';
+                    }
+                });
+                xmlHttpRequest.open("GET", final);
+                xmlHttpRequest.send();
+                modalShowHide = 'hide';
+            }
+            else window.document.getElementById(button_hide).style.display = "block"
+        }
+
+        function ShowCheck(){
+            let urlrekassa = 'https://app.rekassa.kz/'
+            //let url = 'http://rekassa/Popup/customerorder/closeShift';
+            let url = 'https://smarttis.kz/api/ticket';
+            let params = {
+                accountId: accountId,
+                id_ticket: id_ticket,
+            };
+            let final = url + formatParams(params);
+            let xmlHttpRequest = new XMLHttpRequest();
+            xmlHttpRequest.addEventListener("load", function () {
+                window.open(urlrekassa + this.responseText);
+            });
+            xmlHttpRequest.open("GET", final);
+            xmlHttpRequest.send();
+        }
+
+        function SelectorSum(Selector){
+            window.document.getElementById("cash").value = ''
+            window.document.getElementById("card").value = ''
+            let option = Selector.options[Selector.selectedIndex];
+            if (option.value === "0") {
+                document.getElementById('Visibility_Cash').style.display = 'block';
+                document.getElementById('Visibility_Card').style.display = 'none';
+            }
+            if (option.value === "1") {
+                document.getElementById('Visibility_Card').style.display = 'block';
+                document.getElementById('Visibility_Cash').style.display = 'none';
+                let card =  window.document.getElementById("card");
+                card.value = window.document.getElementById("sum").innerText
+                window.document.getElementById("card").disabled = true
+            }
+            if (option.value === "2") {
+                document.getElementById('Visibility_Cash').style.display = 'block';
+                document.getElementById('Visibility_Card').style.display = 'block';
+                //document.getElementById('Visibility_Mobile').style.display = 'block';
+                window.document.getElementById("card").disabled = false
+            }
+
+        }
+
+        function updateQuantity(id, params){
+            let object_Quantity = window.document.getElementById('productQuantity_'+id);
+            let Quantity = parseInt(object_Quantity.innerText)
+
+            let object_price = window.document.getElementById('productPrice_'+id).innerText;
+            let object_Final = window.document.getElementById('productFinal_'+id);
+
+            let object_sum = window.document.getElementById('sum');
+            let sum = parseFloat(object_sum.innerText - object_Final.innerText)
+
+            if (params === 'plus'){
+                object_Quantity.innerText = Quantity + 1
+                object_Final.innerText = object_Quantity.innerText * object_price
+                object_sum.innerText = parseFloat(sum + object_Final.innerText)
+            }
+            if (params === 'minus'){
+                object_Quantity.innerText = Quantity - 1
+                object_Final.innerText = object_Quantity.innerText * object_price
+                object_sum.innerText = parseFloat(sum + object_Final.innerText)
+            }
+        }
+
+    </script>
 
 
     <div class="main-container">
@@ -274,243 +511,6 @@
 
 
 
-    <script>
-
-        const url = 'http://tus/Popup/customerorder/show';
-
-        //const url = 'https://smarttis.kz/Popup/customerorder/show';
-        let object_Id = '';
-        let accountId = '';
-        let entity_type = '';
-        let id_ticket = '';
-
-        //window.addEventListener("message", function(event) {// openDown();
-
-        var receivedMessage = {
-            "name":"OpenPopup","messageId":1,"popupName":"fiscalizationPopup","popupParameters":
-                {"object_Id":"4f4a2e5a-4f6c-11ed-0a80-09be0003f312","accountId":"1dd5bd55-d141-11ec-0a80-055600047495"}
-        }; /*event.data;*/
-        //var receivedMessage = event.data;
-        newPopup();
-        if (receivedMessage.name === 'OpenPopup') {
-            object_Id = receivedMessage.popupParameters.object_Id;
-            accountId = receivedMessage.popupParameters.accountId;
-            entity_type = receivedMessage.popupParameters.entity_type;
-            let params = {
-                object_Id: object_Id,
-                accountId: accountId,
-            };
-            let final = url + formatParams(params);
-
-            let xmlHttpRequest = new XMLHttpRequest();
-            xmlHttpRequest.addEventListener("load", function () { $('#lDown').modal('hide');
-                let json = JSON.parse(this.responseText);
-                id_ticket = json.attributes.ticket_id;
-                window.document.getElementById("numberOrder").innerHTML = json.name;
-
-                let products = json.products;
-                for (var i = 0; i < products.length; i++) {
-
-                    if (products[i].propety === true) {
-                        window.document.getElementById('productId_' + i).innerHTML = products[i].position;
-                        window.document.getElementById('productName_' + i).innerHTML = products[i].name;
-                        window.document.getElementById('productQuantity_' + i).innerHTML = products[i].quantity;
-                        window.document.getElementById('productPrice_' + i).innerHTML = products[i].price;
-                        if (products[i].vat === 0)  window.document.getElementById('productVat_' + i).innerHTML = "без НДС";
-                        else window.document.getElementById('productVat_' + i).innerHTML = products[i].vat + '%';
-                        window.document.getElementById('productDiscount_' + i).innerHTML = products[i].discount + '%';
-                        window.document.getElementById('productFinal_' + i).innerHTML = products[i].final;
-
-                        let sum = window.document.getElementById("sum").innerHTML;
-                        if (!sum) sum = 0;
-                        window.document.getElementById("sum").innerHTML = roundToTwo(parseFloat(sum) + parseFloat(products[i].final));
-                        window.document.getElementById(i).style.display = "block";
-                    } else {
-                        window.document.getElementById("messageAlert").innerText = "Позиции у которых нет ед. изм. не добавились ";
-                        window.document.getElementById("message").style.display = "block";
-                    }
-                }
-
-                if (json.attributes != null){
-                    if (json.attributes.ticket_id != null){
-                        window.document.getElementById("ShowCheck").style.display = "block";
-                        window.document.getElementById("refundCheck").style.display = "block";
-                    } else {
-                        window.document.getElementById("getKKM").style.display = "block";
-                    }
-                } else  window.document.getElementById("getKKM").style.display = "block";
-            });
-            xmlHttpRequest.open("GET", final);
-            xmlHttpRequest.send();
-        }
-        // });
-
-
-
-        function sendKKM(pay_type){
-            let button_hide = ''
-            if (pay_type == 'return') button_hide = 'refundCheck'
-            if (pay_type == 'sell') button_hide = 'getKKM'
-
-            window.document.getElementById(button_hide).style.display = "none"
-            let modalShowHide = 'show'
-
-            let total = window.document.getElementById('sum').innerText
-            let money_card = window.document.getElementById('card').value
-            let money_cash = window.document.getElementById('cash').value
-            let SelectorInfo = document.getElementById('valueSelector')
-            let option = SelectorInfo.options[SelectorInfo.selectedIndex]
-
-            if (option.value == 0){if (!money_cash) {
-                    window.document.getElementById('messageAlert').innerText = 'Вы не ввели сумму наличных'
-                    window.document.getElementById('message').style.display = "block"
-                    modalShowHide = 'hide'
-                }
-                if (money_cash <= parseFloat(window.document.getElementById('sum').innerText)){
-                    window.document.getElementById('messageAlert').innerText = 'Введите сумму больше !'
-                    window.document.getElementById('message').style.display = "block"
-                    modalShowHide = 'hide'
-                }
-            }
-            if (option.value == 1){if (!money_card) {
-                    window.document.getElementById('messageAlert').innerText = 'Вы не ввели сумму карты'
-                    window.document.getElementById('message').style.display = "block"
-                    modalShowHide = 'hide'
-                }
-            }
-            if (option.value == 2){if (!money_card && !money_cash){
-                    window.document.getElementById('messageAlert').innerText = 'Вы не ввели сумму'
-                    window.document.getElementById('message').style.display = "block"
-                    modalShowHide = 'hide'
-                if (money_card + money_cash < parseFloat(window.document.getElementById('sum').innerText)){
-                    window.document.getElementById('messageAlert').innerText = 'Введите сумму больше !'
-                    window.document.getElementById('message').style.display = "block"
-                    modalShowHide = 'hide'
-                }
-                }
-            }
-
-            let url = 'https://tus/Popup/customerorder/send'
-            //let url = 'https://smarttis.kz/Popup/customerorder/send'
-
-            if (modalShowHide === 'show'){
-                $('#downL').modal('toggle')
-                let products = []
-                for (let i = 0; i < 20; i++) {
-                    if ( window.document.getElementById(i).style.display === 'block' ) {
-                        products[i] = {
-                            id:window.document.getElementById('productId_'+i).innerText,
-                            name:window.document.getElementById('productName_'+i).innerText,
-                            quantity:window.document.getElementById('productQuantity_'+i).innerText,
-                            price:window.document.getElementById('productPrice_'+i).innerText,
-                            is_nds:window.document.getElementById('productVat_'+i).innerText,
-                            discount:window.document.getElementById('productDiscount_'+i).innerText
-                        }
-                    }
-                }
-                let params = {
-                    accountId: accountId,
-                    object_Id: object_Id,
-                    entity_type: entity_type,
-                    money_card: money_card,
-                    money_cash: money_cash,
-                    //money_mobile: money_mobile,
-                    pay_type: pay_type,
-                    total: total,
-                    position: JSON.stringify(products),
-                };
-                let final = url + formatParams(params);
-                console.log('send to kkm = ' + final);
-                let xmlHttpRequest = new XMLHttpRequest();
-                xmlHttpRequest.addEventListener("load", function () {
-                    $('#downL').modal('hide');
-                    let json = JSON.parse(this.responseText);
-                    if (json.message === 'Ticket created!'){
-                        window.document.getElementById("messageGoodAlert").innerText = "Чек создан";
-                        window.document.getElementById("messageGood").style.display = "block";
-                        window.document.getElementById("ShowCheck").style.display = "block";
-                        window.document.getElementById("closeShift").style.display = "block";
-                        modalShowHide = 'hide';
-                        let response = json.response;
-                        id_ticket = response.id;
-                    } else {
-                        window.document.getElementById('messageAlert').innerText = "Ошибка 400";
-                        window.document.getElementById('message').style.display = "block";
-                        window.document.getElementById(button_hide).style.display = "block";
-                        modalShowHide = 'hide';
-                    }
-                });
-                xmlHttpRequest.open("GET", final);
-                xmlHttpRequest.send();
-                modalShowHide = 'hide';
-            }
-            else window.document.getElementById(button_hide).style.display = "block"
-        }
-
-        function ShowCheck(){
-            let urlrekassa = 'https://app.rekassa.kz/'
-            //let url = 'http://rekassa/Popup/customerorder/closeShift';
-            let url = 'https://smarttis.kz/api/ticket';
-            let params = {
-                accountId: accountId,
-                id_ticket: id_ticket,
-            };
-            let final = url + formatParams(params);
-            let xmlHttpRequest = new XMLHttpRequest();
-            xmlHttpRequest.addEventListener("load", function () {
-                window.open(urlrekassa + this.responseText);
-            });
-            xmlHttpRequest.open("GET", final);
-            xmlHttpRequest.send();
-        }
-
-        function SelectorSum(Selector){
-            window.document.getElementById("cash").value = ''
-            window.document.getElementById("card").value = ''
-            let option = Selector.options[Selector.selectedIndex];
-            if (option.value === "0") {
-                document.getElementById('Visibility_Cash').style.display = 'block';
-                document.getElementById('Visibility_Card').style.display = 'none';
-            }
-            if (option.value === "1") {
-                document.getElementById('Visibility_Card').style.display = 'block';
-                document.getElementById('Visibility_Cash').style.display = 'none';
-                let card =  window.document.getElementById("card");
-                card.value = window.document.getElementById("sum").innerText
-                window.document.getElementById("card").disabled = true
-            }
-            if (option.value === "2") {
-                document.getElementById('Visibility_Cash').style.display = 'block';
-                document.getElementById('Visibility_Card').style.display = 'block';
-                //document.getElementById('Visibility_Mobile').style.display = 'block';
-                window.document.getElementById("card").disabled = false
-            }
-
-        }
-
-        function updateQuantity(id, params){
-            let object_Quantity = window.document.getElementById('productQuantity_'+id);
-            let Quantity = parseInt(object_Quantity.innerText)
-
-            let object_price = window.document.getElementById('productPrice_'+id).innerText;
-            let object_Final = window.document.getElementById('productFinal_'+id);
-
-            let object_sum = window.document.getElementById('sum');
-            let sum = parseFloat(object_sum.innerText - object_Final.innerText)
-
-            if (params === 'plus'){
-                object_Quantity.innerText = Quantity + 1
-                object_Final.innerText = object_Quantity.innerText * object_price
-                object_sum.innerText = parseFloat(sum + object_Final.innerText)
-            }
-            if (params === 'minus'){
-                object_Quantity.innerText = Quantity - 1
-                object_Final.innerText = object_Quantity.innerText * object_price
-                object_sum.innerText = parseFloat(sum + object_Final.innerText)
-            }
-        }
-
-    </script>
 @endsection
 
 <style>
