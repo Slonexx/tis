@@ -18,14 +18,18 @@ class TicketController extends Controller
         $this->ticketService = $ticketService;
     }
 
-    public function initTicket(Request $request){
+    public function initTicket(Request $request): \Illuminate\Http\Response|\Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory
+    {
         $data = $request->validate([
             "accountId" => "required|string",
             "id_entity" => "required||string",
             "entity_type" => "required|string",
+
             "money_card" => "required",
             "money_cash" => "required",
             "pay_type" => "required|string",
+            "total" => "required|string",
+
             "positions" => "required|array",
         ]);
 

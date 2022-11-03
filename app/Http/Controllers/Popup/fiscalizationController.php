@@ -5,8 +5,6 @@ namespace App\Http\Controllers\Popup;
 use App\Clients\MsClient;
 use App\Http\Controllers\Config\getSettingVendorController;
 use App\Http\Controllers\Controller;
-use App\Http\Controllers\getData\getSetting;
-use App\Http\Controllers\getData\getWorkerID;
 use App\Http\Controllers\TicketController;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
