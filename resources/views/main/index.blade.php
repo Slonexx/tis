@@ -21,18 +21,18 @@
             <div class="row gradient rounded p-2 pb-3">
                 <div class="col-2"><img src="https://test.ukassa.kz/_nuxt/img/d2b49fb.svg" width="90%" height="90%"  alt=""></div>
                 <div class="col-8" style="margin-top: 0.9rem"> <span class="text-black" style="font-size: 18px"> Возможности интеграции </span></div>
-                <div class="col-2 mt-2">
+                {{--<div class="col-2 mt-2">
                     <button onclick="sendCollection('show')" type="button" class="btn btn-outline-info text-black" data-toggle="modal">
                         Сбор информации
                     </button>
-                </div>
+                </div>--}}
             </div>
 
 
 
 
             <!-- Modal -->
-            <div class="modal fade bd-example-modal-sm" id="sendCollectionOfPersonalInformation" data-bs-keyboard="false" data-bs-backdrop="static"
+            {{--<div class="modal fade bd-example-modal-sm" id="sendCollectionOfPersonalInformation" data-bs-keyboard="false" data-bs-backdrop="static"
                  tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content">
@@ -49,7 +49,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div>--}}
 
     </div>
     <script>
@@ -60,11 +60,11 @@
 
         function sendCollection(hideOrShow){
             if (hideOrShow === 'show') {
-                $('#sendCollectionOfPersonalInformation').modal('show');
+                sendCollectionPersonal()
             }
 
             if (hideOrShow === 'hide') {
-                $('#sendCollectionOfPersonalInformation').modal('hide');
+                //('#sendCollectionOfPersonalInformation').modal('hide');
             }
 
         }
@@ -74,18 +74,9 @@
                 let xmlHttpRequest = new XMLHttpRequest();
                 xmlHttpRequest.addEventListener("load", function () {
                     let json = JSON.parse(this.responseText);
-                    document.getElementById('message').innerText =  json.message
-                    document.getElementById('message').style.display = 'block'
-                    $('#sendCollectionOfPersonalInformation').modal('hide');
-                    sendCollection('hide')
                 });
                 xmlHttpRequest.open("GET", final);
                 xmlHttpRequest.send();
-
-            $('#sendCollectionOfPersonalInformation').modal('hide');
-            sendCollection('hide')
-            $('.close').click();
-
 
         }
     </script>
