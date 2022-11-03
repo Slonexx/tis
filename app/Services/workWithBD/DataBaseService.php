@@ -60,9 +60,11 @@ class DataBaseService
         ]);
     }
 
-    public static function createDocumentSetting($accountId, $paymentDocument){
+    public static function createDocumentSetting($accountId, $idKassa, $idDepartment, $paymentDocument){
         addSettingModel::create([
             'accountId' => $accountId,
+            'idKassa' => $idKassa,
+            'idDepartment' => $idDepartment,
             'paymentDocument' => $paymentDocument,
         ]);
     }
@@ -73,6 +75,8 @@ class DataBaseService
         } catch (\Throwable $e) {
             $result = [
                 'accountId' => $accountId,
+                'idKassa' => null,
+                'idDepartment' => null,
                 'paymentDocument' => null,
             ];
         }

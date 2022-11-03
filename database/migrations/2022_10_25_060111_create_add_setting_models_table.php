@@ -17,6 +17,8 @@ return new class extends Migration
             $table->id();
             $table->string('accountId');
             $table->foreign('accountId')->references('accountId')->on('main_settings')->cascadeOnDelete();
+            $table->string('idKassa')->nullable();
+            $table->string('idDepartment')->nullable();
             $table->string('paymentDocument')->nullable();
             $table->timestamps();
         });

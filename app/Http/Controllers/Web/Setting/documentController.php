@@ -38,8 +38,11 @@ class documentController extends Controller
 
     public function postDocument(Request $request, $accountId){
         $isAdmin = $request->isAdmin;
+
+        $SettingBD = new getMainSettingBD($accountId);
+
         try {
-            DataBaseService::createDocumentSetting($accountId, $request->paymentDocument);
+            DataBaseService::createDocumentSetting($accountId,$SettingBD->idKassa, $SettingBD->idDepartment, $request->paymentDocument);
             $message["alert"] = " alert alert-success alert-dismissible fade show in text-center ";
             $message["message"] = "Настройки сохранились!";
         } catch (\Throwable $e){

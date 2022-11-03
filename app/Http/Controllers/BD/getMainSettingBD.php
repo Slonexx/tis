@@ -8,10 +8,12 @@ use Illuminate\Http\Request;
 
 class getMainSettingBD extends Controller
 {
-    var $accountId;
-    var $tokenMs;
-    var $authtoken;
-    var $paymentDocument;
+    public $accountId;
+    public $tokenMs;
+    public $authtoken;
+    public $idKassa;
+    public $idDepartment;
+    public $paymentDocument;
 
     /**
      * @param $accountId
@@ -27,6 +29,8 @@ class getMainSettingBD extends Controller
 
 
         $json = DataBaseService::showDocumentSetting($accountId);
+        $this->idKassa = $json['idKassa'];
+        $this->idDepartment = $json['idDepartment'];
         $this->paymentDocument = $json['paymentDocument'];
 
     }

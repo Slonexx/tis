@@ -5,6 +5,8 @@ use App\Http\Controllers\Config\DeleteVendorApiController;
 use App\Http\Controllers\Popup\fiscalizationController;
 use App\Http\Controllers\Web\indexController;
 use App\Http\Controllers\Web\Setting\documentController;
+use App\Http\Controllers\Web\Setting\errorSettingController;
+use App\Http\Controllers\Web\Setting\KassaController;
 use App\Http\Controllers\Web\Setting\mainController;
 use App\Http\Controllers\Widget\customerorderEditController;
 use App\Http\Controllers\Widget\demandEditController;
@@ -22,8 +24,13 @@ Route::get('/', [indexController::class, 'index']);
 Route::get('/{accountId}/', [indexController::class, 'indexShow'])->name('main');
 
 
+Route::get('/Setting/error/{accountId}', [errorSettingController::class, 'getError'])->name('errorSetting');
+
 Route::get('/Setting/createAuthToken/{accountId}', [mainController::class, 'getMain']);
 Route::post('/Setting/createAuthToken/{accountId}', [mainController::class, 'postMain']);
+
+Route::get('/Setting/Kassa/{accountId}', [KassaController::class, 'getKassa'])->name('getKassa');
+Route::post('/Setting/Kassa/{accountId}', [KassaController::class, 'postKassa']);
 
 Route::get('/Setting/Document/{accountId}', [documentController::class, 'getDocument'])->name('getDocument');
 Route::post('/Setting/Document/{accountId}', [documentController::class, 'postDocument']);

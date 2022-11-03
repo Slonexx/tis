@@ -16,6 +16,7 @@ class globalObjectController extends Controller
     {
         $this->URL_ukassa = 'https://test.ukassa.kz/';
         $this->apiURL_ukassa = 'https://test.ukassa.kz/api/';
+
     }
 
 

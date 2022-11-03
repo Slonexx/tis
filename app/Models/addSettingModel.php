@@ -10,6 +10,8 @@ class addSettingModel extends Model
 
     protected $fillable = [
         'accountId',
+        'idKassa',
+        'idDepartment',
         'paymentDocument',
     ];
 
