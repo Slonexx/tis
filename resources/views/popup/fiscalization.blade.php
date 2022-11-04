@@ -20,7 +20,7 @@
                 "name":"OpenPopup","messageId":1,"popupName":"fiscalizationPopup","popupParameters":
                     {"object_Id":"4f4a2e5a-4f6c-11ed-0a80-09be0003f312","accountId":"1dd5bd55-d141-11ec-0a80-055600047495"}
             }; */
-            //var receivedMessage = event.data;
+            var receivedMessage = event.data;
             newPopup();
             if (receivedMessage.name === 'OpenPopup') {
                 object_Id = receivedMessage.popupParameters.object_Id;
