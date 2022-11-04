@@ -3,6 +3,7 @@
 namespace App\Services\ticket;
 
 use App\Clients\KassClient;
+use App\Clients\MsClient;
 use App\Http\Controllers\BD\getMainSettingBD;
 use App\Http\Controllers\globalObjectController;
 use App\Services\AdditionalServices\DocumentService;
@@ -71,6 +72,7 @@ class TicketService
         $operation = $this->getOperation($payType);
         $payments = $this->getPayments($money_card, $money_cash, $total);
         $items = $this->getItems($Setting, $positions, $id_entity, $entity_type);
+        $customer = $this->getCustomer($Setting, $id_entity, $entity_type);
 
         if ($operation == '') return ['Status' => false, 'Message' => 'не выбран тип продажи'];
         if ($Setting->idKassa == null) return ['Status' => false, 'Message' => 'Не были пройдены настройки !'];
@@ -83,6 +85,7 @@ class TicketService
             'payments' => $payments,
             'items' => $items,
             "total_amount" => (float) $total,
+            "customer" => (float) $total,
         ];
     }
 
@@ -137,6 +140,7 @@ class TicketService
                 'name' => (string) $item['name'],
                 'price' => (float) $item['price'],
                 'quantity' => (float) $item['quantity'],
+                'quantity_type' => (int) $item['UOM'],
                 'total_amount' => (float) ($item['price'] * $item['quantity']),
                 'is_nds' => $is_nds,
                 'discount' =>(float) $discount,
@@ -149,5 +153,13 @@ class TicketService
 
         }
         return $result;
+    }
+
+    private function getCustomer($Setting, $id_entity, $entity_type)
+    {
+        $Client = new MsClient($Setting->tokenMs);
+        $body = $Client->get('https://online.moysklad.ru/api/remap/1.2/entity/'.$entity_type.'/'.$id_entity);
+        dd($body);
+
     }
 }

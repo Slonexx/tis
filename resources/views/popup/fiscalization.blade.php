@@ -46,8 +46,8 @@
                             window.document.getElementById('productName_' + i).innerHTML = products[i].name;
                             window.document.getElementById('productQuantity_' + i).innerHTML = products[i].quantity;
 
-                            window.document.getElementById('productUOM_' + i).innerHTML = products[i].uom['id'];
-                            window.document.getElementById('productIDUOM_' + i).innerHTML = products[i].uom['name']
+                            window.document.getElementById('productUOM_' + i).innerHTML = products[i].uom['name']
+                            window.document.getElementById('productIDUOM_' + i).innerHTML = products[i].uom['id'];
 
                             window.document.getElementById('productPrice_' + i).innerHTML = products[i].price;
                             if (products[i].vat === 0)  window.document.getElementById('productVat_' + i).innerHTML = "без НДС";
@@ -136,6 +136,7 @@
                             id:window.document.getElementById('productId_'+i).innerText,
                             name:window.document.getElementById('productName_'+i).innerText,
                             quantity:window.document.getElementById('productQuantity_'+i).innerText,
+                            UOM:window.document.getElementById('productIDUOM_'+i).innerText,
                             price:window.document.getElementById('productPrice_'+i).innerText,
                             is_nds:window.document.getElementById('productVat_'+i).innerText,
                             discount:window.document.getElementById('productDiscount_'+i).innerText
