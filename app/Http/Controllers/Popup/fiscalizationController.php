@@ -100,13 +100,15 @@ class fiscalizationController extends Controller
         $accountId = $request->accountId;
         $object_Id = $request->object_Id;
         $entity_type = $request->entity_type;
+
         if ($request->money_card === null) $money_card = 0;
         else $money_card = $request->money_card;
-
         if ($request->money_cash === null) $money_cash = 0;
         else $money_cash = $request->money_cash;
-
         $pay_type = $request->pay_type;
+
+        $total = $request->total;
+
         $position = json_decode($request->position);
         $positions = [];
         foreach ($position as $item){
@@ -119,15 +121,21 @@ class fiscalizationController extends Controller
             'accountId' => $accountId,
             'id_entity' => $object_Id,
             'entity_type' => $entity_type,
+
             'money_card' => $money_card,
             'money_cash' => $money_cash,
             'pay_type' => $pay_type,
+
+            'total' => $total,
+
             'positions' => $positions,
         ];
 
+        dd(($body));
+
         $Client = new Client();
-        $url = 'https://smarttis.kz/api/ticket';
-        //$url = 'http://rekassa/api/ticket';
+        //$url = 'https://smarttis.kz/api/create/ticket';
+        $url = 'http://tus/api/create/ticket';
         try {
             $ClinetPost = $Client->post( $url, [
                 'headers' => [

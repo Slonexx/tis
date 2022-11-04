@@ -35,7 +35,7 @@ class TicketController extends Controller
 
         $serviceRes =  $this->ticketService->createTicket($data);
 
-        return response($serviceRes["res"],$serviceRes["code"]);
+        return response($serviceRes);
 
     }
 

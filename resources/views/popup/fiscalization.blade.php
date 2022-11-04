@@ -31,7 +31,7 @@
                     accountId: accountId,
                 };
                 let final = url + formatParams(params);
-
+                console.log('receivedMessage = ' + final);
                 let xmlHttpRequest = new XMLHttpRequest();
                 xmlHttpRequest.addEventListener("load", function () { $('#lDown').modal('hide');
                     let json = JSON.parse(this.responseText);
@@ -272,8 +272,9 @@
                     <div class="col-12">
                         <div class="row">
                             <div class="col-1 text-black">№</div>
-                            <div class="col-5 text-black">Наименование</div>
+                            <div class="col-4 text-black">Наименование</div>
                             <div class="col-1 text-black">Кол-во</div>
+                            <div class="col-1 text-black">Ед. изм.</div>
                             <div class="col-1 text-black">Цена</div>
                             <div class="col-1 text-black">НДС</div>
                             <div class="col-1 text-black">Скидка</div>
@@ -288,12 +289,13 @@
                                 <div class="row">
                                     <div class="col-1">{{ $i + 1 }}</div>
                                     <div id="{{'productId_'.$i}}" style="display:none;"></div>
-                                    <div id="{{ 'productName_'.$i }}"  class="col-5"></div>
+                                    <div id="{{ 'productName_'.$i }}"  class="col-4"></div>
                                     <div class="col-1 text-center row">
                                         <div class="col-4"><i onclick="updateQuantity( '{{ $i }}', 'minus')" class="fa-solid fa-circle-minus text-danger" style="cursor: pointer"></i></div>
                                         <div id="{{ 'productQuantity_'.$i }}" class="col-4"></div>
                                         <div class="col-4"><i onclick="updateQuantity( '{{ $i }}', 'plus')" class="fa-solid fa-circle-plus text-success" style="cursor: pointer"></i></div>
                                     </div>
+                                    <div id="{{ 'productUOM_'.$i }}"  class="col-1 text-center"></div>
                                     <div id="{{ 'productPrice_'.$i }}"  class="col-1 text-center"></div>
                                     <div id="{{ 'productVat_'.$i }}"  class="col-1 text-center"></div>
                                     <div id="{{ 'productDiscount_'.$i }}"  class="col-1 text-center"></div>

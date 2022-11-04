@@ -50,14 +50,16 @@ class TicketService
 
         $Body = $this->setBodyToPostClient($Setting, $id_entity, $entity_type, $money_card, $money_cash, $payType, $total, $positions);
 
-        if (array_key_exists($Body['Status'])) {
+
+
+        if (isset($Body['Status'])) {
             return response()->json($Body['Message']);
         }
 
         try {
             $postTicket = $ClientTIS->POSTClient($Config->apiURL_ukassa.'v2/operation/ticket/', $Body);
         } catch (\Throwable $e){
-            return response()->json(['code' => $e->getCode(), 'message'=> $e->getMessage()]);
+           return response()->json(['code' => $e->getCode(), 'message'=> $e->getMessage()]);
         }
         return response()->json($postTicket);
     }
@@ -76,11 +78,11 @@ class TicketService
 
 
         return [
-            'operation' => $operation,
+            'operation' => (int) $operation,
             'kassa' => (int) $Setting->idKassa,
             'payments' => $payments,
             'items' => $items,
-            "total_amount" => $total,
+            "total_amount" => (float) $total,
         ];
     }
 
@@ -96,15 +98,16 @@ class TicketService
 
     private function getPayments($card, $cash, $total): array
     {
+        //dd($card, $cash, $total);
         $result = null;
         if ( $cash > 0 ) {
             $change = $total - $cash;
 
             $result[] = [
                 'payment_type' => 0,
-                'total' => $cash+$change,
-                'change' => $change,
-                'amount' => $cash,
+                'total' => (float) $cash+$change,
+                'change' => (float) $change,
+                'amount' => (float) $cash,
             ];
         }
         if ( $card > 0 ) {
@@ -112,8 +115,8 @@ class TicketService
 
             $result[] = [
                 'payment_type' => 1,
-                'total' => $cash + $change,
-                'amount' => $cash,
+                'total' => (float) $card + $change,
+                'amount' => (float) $card,
             ];
         }
 
@@ -123,21 +126,27 @@ class TicketService
     private function getItems($Setting, $positions, $idObject, $typeObject): array
     {
         $result = null;
-        foreach ($positions as $item){
-            $is_nds = trim($item->is_nds, '%');
-            $discount = trim($item->discount, '%');
+        foreach ($positions as $id => $item){
+            $is_nds = trim($item['is_nds'], '%');
+            $discount = trim($item['discount'], '%');
             if ($is_nds == 'без НДС' or $is_nds == "0%"){$is_nds = false;
             } else $is_nds = true;
 
 
-            $result[] = [
-                'name' => $item->name,
-                'price' => $item->price,
-                'quantity' => $item->quantity,
-                'total_amount' => ($item->price * $item->quantity),
+            $result[$id] = [
+                'name' => (string) $item['name'],
+                'price' => (float) $item['price'],
+                'quantity' => (float) $item['quantity'],
+                'total_amount' => (float) ($item['price'] * $item['quantity']),
                 'is_nds' => $is_nds,
-                'discount' => $discount,
+                'discount' =>(float) $discount,
+                'section' => (int) $Setting->idDepartment,
             ];
+
+            if ($discount == 0 or $discount < 0 ) {
+                unset($result[$id]['discount']);
+            }
+
         }
         return $result;
     }
