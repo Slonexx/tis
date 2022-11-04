@@ -23,11 +23,12 @@ class mainController extends Controller
 
         $SettingBD = new getMainSettingBD($accountId);
 
+
         return view('setting.authToken', [
             'accountId' => $accountId,
             'isAdmin' => $isAdmin,
 
-            'token' => $SettingBD->tokenMs,
+            'token' => $SettingBD->authtoken,
         ]);
     }
 
