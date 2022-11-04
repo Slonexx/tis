@@ -29,8 +29,8 @@ switch ($method) {
             $app->persist();
 
         }
-    /*    $url = 'https://smarttis.kz/setAttributes/' . $accountId . '/' . $accessToken;
-        $install = file_get_contents($url);*/
+        $url = 'https://smarttis.kz/setAttributes/' . $accountId . '/' . $accessToken;
+        $install = file_get_contents($url);
         break;
     case 'GET':
         break;

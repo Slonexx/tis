@@ -3,7 +3,6 @@
 
 @section('content')
 
-
     <script>
 
         //const url = 'http://tus/Popup/customerorder/show';

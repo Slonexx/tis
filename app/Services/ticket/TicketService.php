@@ -62,6 +62,11 @@ class TicketService
         } catch (\Throwable $e){
            return response()->json(['code' => $e->getCode(), 'message'=> $e->getMessage()]);
         }
+        dd($postTicket);
+        $Client = new MsClient($Setting->tokenMs);
+        $putBody = $this->putBodyMS($postTicket, $Client, $Setting);
+        $put = $Client->put('https://online.moysklad.ru/api/remap/1.2/entity/'.$entity_type.'/'.$id_entity, $putBody);
+
         return response()->json($postTicket);
     }
 
@@ -85,7 +90,8 @@ class TicketService
             'payments' => $payments,
             'items' => $items,
             "total_amount" => (float) $total,
-            "customer" => (float) $total,
+            "customer" => $customer,
+            "as_html" => true,
         ];
     }
 
@@ -159,7 +165,18 @@ class TicketService
     {
         $Client = new MsClient($Setting->tokenMs);
         $body = $Client->get('https://online.moysklad.ru/api/remap/1.2/entity/'.$entity_type.'/'.$id_entity);
-        dd($body);
+        $agent = $Client->get($body->agent->meta->href);
+        $result = null;
 
+        if (property_exists($agent, 'email')) { $result['email'] = $agent->email; }
+        if (property_exists($agent, 'phone')) { $result['phone'] = $agent->phone; }
+        if (property_exists($agent, 'inn')) { $result['iin'] = $agent->inn; }
+
+        return $result;
+
+    }
+
+    private function putBodyMS(mixed $postTicket, MsClient $Client, getMainSettingBD $Setting)
+    {
     }
 }

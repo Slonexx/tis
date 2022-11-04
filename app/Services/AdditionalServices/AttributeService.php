@@ -85,16 +85,22 @@ class AttributeService
     {
         return [
             0 => [
-                "name" => "id-билета (ReKassa)",
+                "name" => "фискальный номер (ukassa)",
                 "type" => "string",
                 "required" => false,
-                "description" => "id-билета (ReKassa)",
+                "description" => "фискальный номер (ukassa)",
             ],
             1 => [
-                "name" => "Фискализация (ReKassa)",
+                "name" => "Ссылка для QR-кода",
+                "type" => "link",
+                "required" => false,
+                "description" => "Ссылка для QR-кода (ukassa)",
+            ],
+            2 => [
+                "name" => "Фискализация (ukassa)",
                 "type" => "boolean",
                 "required" => false,
-                "description" => "Фискализация (ReKassa)",
+                "description" => "Фискализация (ukassa)",
             ]
         ];
     }
@@ -102,10 +108,10 @@ class AttributeService
     public function getPayDocAttributes(){
         return [
             0 => [
-                "name" => "Фискализация (ReKassa)",
+                "name" => "Фискализация (ukassa)",
                 "type" => "boolean",
                 "required" => false,
-                "description" => "Фискализация (ReKassa)",
+                "description" => "Фискализация (ukassa)",
             ],
         ];
     }

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AttributeController;
 use App\Http\Controllers\Config\collectionOfPersonalController;
 use App\Http\Controllers\Config\DeleteVendorApiController;
 use App\Http\Controllers\Popup\fiscalizationController;
@@ -14,6 +15,7 @@ use App\Http\Controllers\Widget\salesreturnEditController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('delete/{accountId}/', [DeleteVendorApiController::class, 'delete']);
+Route::get('setAttributes/{accountId}/{tokenMs}', [AttributeController::class, 'setAllAttributesVendor']);
 //для админа
 Route::get('/web/getPersonalInformation/', [collectionOfPersonalController::class, 'getPersonal']);
 Route::get('/collectionOfPersonalInformation/{accountId}/', [collectionOfPersonalController::class, 'getCollection']);
