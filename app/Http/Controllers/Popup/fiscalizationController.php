@@ -31,7 +31,6 @@ class fiscalizationController extends Controller
         $url = "https://online.moysklad.ru/api/remap/1.2/entity/customerorder/".$object_Id;
         $Client = new MsClient($Setting->TokenMoySklad);
         $Body = $Client->get($url);
-        $positions = $Client->get($Body->positions->meta->href)->rows;
         $attributes = null;
         if (property_exists($Body, 'attributes')){
             $attributes = [
@@ -47,21 +46,25 @@ class fiscalizationController extends Controller
         $vatEnabled = $Body->vatEnabled;
         $vat = null;
         $products = [];
+        $positions = $Client->get($Body->positions->meta->href)->rows;
 
         foreach ($positions as $id=>$item){
-
             $final = $item->price / 100 * $item->quantity;
 
-            if ($vatEnabled == true) {
-                if ($Body->vatIncluded == false) {
+            if ($vatEnabled == true) {if ($Body->vatIncluded == false) {
                     $final = $item->price / 100 * $item->quantity;
                     $final = $final + ( $final * ($item->vat/100) );
-                }
-            }
+            }}
             $uom_body = $Client->get($item->assortment->meta->href);
+
             if (property_exists($uom_body, 'uom')){
                $propety_uom = true;
-            } else $propety_uom = false;
+               $uom = $Client->get($uom_body->uom->meta->href);
+               $uom = ['id' => $uom->code, 'name' => $uom->name];
+            } else {
+                $propety_uom = false;
+                $uom = ['id' => 796, 'name' => 'шт'];
+            }
 
 
             $products[$id] = [
@@ -69,6 +72,7 @@ class fiscalizationController extends Controller
                 'propety' => $propety_uom,
                 'name' => $Client->get($item->assortment->meta->href)->name,
                 'quantity' => $item->quantity,
+                'uom' => $uom,
                 'price' => round($item->price / 100, 2) ?: 0,
                 'vatEnabled' => $item->vatEnabled,
                 'vat' => $item->vat,

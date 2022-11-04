@@ -20,7 +20,7 @@
                 "name":"OpenPopup","messageId":1,"popupName":"fiscalizationPopup","popupParameters":
                     {"object_Id":"4f4a2e5a-4f6c-11ed-0a80-09be0003f312","accountId":"1dd5bd55-d141-11ec-0a80-055600047495"}
             }; */
-            var receivedMessage = event.data;
+            //var receivedMessage = event.data;
             newPopup();
             if (receivedMessage.name === 'OpenPopup') {
                 object_Id = receivedMessage.popupParameters.object_Id;
@@ -45,6 +45,10 @@
                             window.document.getElementById('productId_' + i).innerHTML = products[i].position;
                             window.document.getElementById('productName_' + i).innerHTML = products[i].name;
                             window.document.getElementById('productQuantity_' + i).innerHTML = products[i].quantity;
+
+                            window.document.getElementById('productUOM_' + i).innerHTML = products[i].uom['id'];
+                            window.document.getElementById('productIDUOM_' + i).innerHTML = products[i].uom['name']
+
                             window.document.getElementById('productPrice_' + i).innerHTML = products[i].price;
                             if (products[i].vat === 0)  window.document.getElementById('productVat_' + i).innerHTML = "без НДС";
                             else window.document.getElementById('productVat_' + i).innerHTML = products[i].vat + '%';
@@ -274,7 +278,7 @@
                             <div class="col-1 text-black">№</div>
                             <div class="col-4 text-black">Наименование</div>
                             <div class="col-1 text-black">Кол-во</div>
-                            <div class="col-1 text-black">Ед. изм.</div>
+                            <div class="col-1 text-black">Ед. Изм.</div>
                             <div class="col-1 text-black">Цена</div>
                             <div class="col-1 text-black">НДС</div>
                             <div class="col-1 text-black">Скидка</div>
@@ -296,6 +300,7 @@
                                         <div class="col-4"><i onclick="updateQuantity( '{{ $i }}', 'plus')" class="fa-solid fa-circle-plus text-success" style="cursor: pointer"></i></div>
                                     </div>
                                     <div id="{{ 'productUOM_'.$i }}"  class="col-1 text-center"></div>
+                                    <div id="{{ 'productIDUOM_'.$i }}"  class="col-1 text-center" style="display: none"></div>
                                     <div id="{{ 'productPrice_'.$i }}"  class="col-1 text-center"></div>
                                     <div id="{{ 'productVat_'.$i }}"  class="col-1 text-center"></div>
                                     <div id="{{ 'productDiscount_'.$i }}"  class="col-1 text-center"></div>
