@@ -160,7 +160,7 @@ class fiscalizationController extends Controller
     }
 
     public function printFiscalizationPopup($html){
-
+        dd($html);
         return view( 'popup.print', [ 'html' => $html] );
     }
 
