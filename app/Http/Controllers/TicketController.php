@@ -18,7 +18,7 @@ class TicketController extends Controller
         $this->ticketService = $ticketService;
     }
 
-    public function initTicket(Request $request): \Illuminate\Http\Response|\Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory
+    public function initTicket(Request $request): \Illuminate\Http\JsonResponse
     {
         $data = $request->validate([
             "accountId" => "required|string",
@@ -33,9 +33,7 @@ class TicketController extends Controller
             "positions" => "required|array",
         ]);
 
-        $serviceRes =  $this->ticketService->createTicket($data);
-
-        return response($serviceRes);
+        return  $this->ticketService->createTicket($data);
 
     }
 
