@@ -138,8 +138,8 @@ class fiscalizationController extends Controller
         //dd(($body), json_encode($body));
 
         $Client = new Client();
-        $url = 'https://smarttis.kz/api/ticket';
-        //$url = 'http://tus/api/ticket';
+        //$url = 'https://smarttis.kz/api/ticket';
+        $url = 'http://tus/api/ticket';
         try {
             $ClinetPost = $Client->post( $url, [
                 'headers' => [
@@ -154,8 +154,13 @@ class fiscalizationController extends Controller
             return response()->json($res);
 
         } catch (\Throwable $e){
+            //dd($e->getCode());
             return response()->json($e->getMessage());
         }
+    }
+
+    public function printFiscalizationPopup(Request $request){
+        return view( 'popup.print', ['html' => $request->html] );
     }
 
 }

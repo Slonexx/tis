@@ -12,6 +12,7 @@
         let accountId = '';
         let entity_type = '';
         let id_ticket = '';
+        let html = '';
 
         window.addEventListener("message", function(event) { openDown();
 
@@ -165,8 +166,7 @@
                         window.document.getElementById("ShowCheck").style.display = "block";
                         window.document.getElementById("closeShift").style.display = "block";
                         modalShowHide = 'hide';
-                        let response = json.response;
-                        id_ticket = response.id;
+                        html = json.postTicket.html
                     } else {
                         window.document.getElementById('messageAlert').innerText = json.errors.message;
                         window.document.getElementById('message').style.display = "block";
@@ -181,18 +181,16 @@
             else window.document.getElementById(button_hide).style.display = "block"
         }
 
-        function ShowCheck(){
-            let urlrekassa = 'https://app.rekassa.kz/'
+        function PrintCheck(){
             //let url = 'http://rekassa/Popup/customerorder/closeShift';
-            let url = 'https://smarttis.kz/api/ticket';
+            let url = 'https://smarttis.kz/Popup/customerorder/print';
             let params = {
-                accountId: accountId,
-                id_ticket: id_ticket,
+                html: html,
             };
             let final = url + formatParams(params);
             let xmlHttpRequest = new XMLHttpRequest();
             xmlHttpRequest.addEventListener("load", function () {
-                window.open(urlrekassa + this.responseText);
+
             });
             xmlHttpRequest.open("GET", final);
             xmlHttpRequest.send();
@@ -348,7 +346,7 @@
                     </div>
                     <div class="col-1"></div>
                     <div class="col-2 d-flex justify-content-end">
-                        <button onclick="ShowCheck()" id="ShowCheck" class="btn btn-success">Показать чек</button>
+                        <button onclick="PrintCheck()" id="ShowCheck" class="btn btn-success">Распечатать чек</button>
                     </div>
                 </div>
                 <div class="col-7 row mt-2">

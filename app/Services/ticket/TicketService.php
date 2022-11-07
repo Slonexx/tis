@@ -69,6 +69,7 @@ class TicketService
             return response()->json([
                 'status'    => 'Ticket created',
                 'code'      => 200,
+                'postTicket' => $postTicket,
             ]);
 
         } catch (BadResponseException  $e){
@@ -105,7 +106,7 @@ class TicketService
             'items' => $items,
             "total_amount" => (float) $total,
             "customer" => $customer,
-            //"as_html" => true,
+            "as_html" => true,
         ];
     }
 
@@ -196,18 +197,16 @@ class TicketService
         $Resul_positions = null;
         $attributes = $Client->get('https://online.moysklad.ru/api/remap/1.2/entity/customerorder/metadata/attributes/')->rows;
         $Result_attributes = $this->setAttributesToPutBody($postTicket, $attributes);
-        if ($attributes != null){ $result[0] = [ 'attributes' => $attributes ]; }
 
         $positions = $Client->get($oldBody->positions->meta->href)->rows;
         $Resul_positions = $this->setPositionsToPutBody($postTicket, $positions, $positionsBody);
 
         if ($Result_attributes != null){
-            $result[0] = [ 'attributes' => $Result_attributes, ];
+            $result['attributes'] = $Result_attributes;
         }
         if ($Resul_positions != null){
-            $result[0] = [ 'positions' => $Resul_positions, ];
+            $result['positions'] = $Resul_positions;
         }
-        dd($result);
         return $result;
     }
 
