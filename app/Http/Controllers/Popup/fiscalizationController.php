@@ -151,7 +151,7 @@ class fiscalizationController extends Controller
             //dd(json_decode($ClinetPost->getBody()));
             $res = json_decode($ClinetPost->getBody());
 
-            return response()->json($res);
+            return $res;
 
         } catch (\Throwable $e){
             //dd($e->getCode());
