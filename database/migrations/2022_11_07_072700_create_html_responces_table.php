@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string('accountId');
             $table->foreign('accountId')->references('accountId')->on('main_settings')->cascadeOnDelete();
-            $table->json('html');
+            $table->mediumText('html');
             $table->timestamps();
         });
     }
