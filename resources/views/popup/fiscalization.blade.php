@@ -160,7 +160,7 @@
                 xmlHttpRequest.addEventListener("load", function () {
                     $('#downL').modal('hide');
                     let json = JSON.parse(this.responseText);
-                    if (json.status === 'Ticket created!'){
+                    if (json.status === 'Ticket created'){
                         window.document.getElementById("messageGoodAlert").innerText = "Чек создан";
                         window.document.getElementById("messageGood").style.display = "block";
                         window.document.getElementById("ShowCheck").style.display = "block";
