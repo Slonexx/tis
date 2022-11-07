@@ -262,7 +262,7 @@ class TicketService
             $result[$id] = [
                 "id" => $item['id'],
                 "quantity" => (int) $item['quantity'],
-                "price" => (float) $item['price'],
+                "price" => (float) $item['price'] * 100,
                 "discount" => (int) $item['discount'],
                 "vat" => (int) $item['is_nds'],
                 "assortment" => ['meta'=>[
