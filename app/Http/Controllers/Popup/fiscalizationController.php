@@ -138,17 +138,17 @@ class fiscalizationController extends Controller
         //dd(($body), json_encode($body));
 
         $Client = new Client();
-        $url = 'https://smarttis.kz/api/create/ticket';
-        //$url = 'http://tus/api/create/ticket';
+        $url = 'https://smarttis.kz/api/ticket';
+        //$url = 'http://tus/api/ticket';
         try {
             $ClinetPost = $Client->post( $url, [
                 'headers' => [
                     'Accept' => 'application/json',
-                    'http_errors' => false,
+                    //'http_errors' => false,
                     ],
                 'form_params' => $body,
             ]);
-
+            //dd(json_decode($ClinetPost->getBody()));
             $res = json_decode($ClinetPost->getBody());
 
             return response()->json($res);
