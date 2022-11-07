@@ -168,7 +168,7 @@
                         let response = json.response;
                         id_ticket = response.id;
                     } else {
-                        window.document.getElementById('messageAlert').innerText = json.errors.message;
+                        window.document.getElementById('messageAlert').innerText = json.errors['message'];
                         window.document.getElementById('message').style.display = "block";
                         window.document.getElementById(button_hide).style.display = "block";
                         modalShowHide = 'hide';
