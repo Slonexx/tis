@@ -12,7 +12,8 @@ use Illuminate\Http\Request;
 
 class indexController extends Controller
 {
-    public function Index(Request $request){
+    public function Index(Request $request)
+    {
 
            $contextKey = $request->contextKey;
             if ($contextKey == null) {
@@ -30,7 +31,8 @@ class indexController extends Controller
         ]);
     }
 
-    public function indexShow($accountId, Request $request){
+    public function indexShow($accountId, Request $request)
+    {
         $isAdmin = $request->isAdmin;
         $getPersonal = new getPersonal($accountId);
         if ($getPersonal->status == "деактивированный" or $getPersonal->status == null){
@@ -44,7 +46,8 @@ class indexController extends Controller
         ] );
     }
 
-    public function widgetInfoAttributes(Request $request){
+    public function widgetInfoAttributes(Request $request)
+    {
         $ticket_id = null;
 
         $accountId = $request->accountId;
@@ -58,7 +61,7 @@ class indexController extends Controller
 
         if (property_exists($body, 'attributes')){
             foreach ($body->attributes as $item){
-                if ($item->name == 'id (Ukassa)'){
+                if ($item->name == 'фискальный номер (ukassa)'){
                     if ($item->value != null) $ticket_id = $item->value;
                     break;
                 }
@@ -67,7 +70,8 @@ class indexController extends Controller
         return response()->json(['ticket_id' => $ticket_id]);
     }
 
-    private function getUrlEntity($enType,$enId){
+    private function getUrlEntity($enType,$enId): ?string
+    {
         return match ($enType) {
             "customerorder" => "https://online.moysklad.ru/api/remap/1.2/entity/customerorder/" . $enId,
             "demand" => "https://online.moysklad.ru/api/remap/1.2/entity/demand/" . $enId,

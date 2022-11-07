@@ -159,7 +159,7 @@
                 xmlHttpRequest.addEventListener("load", function () {
                     $('#downL').modal('hide');
                     let json = JSON.parse(this.responseText);
-                    if (json.message === 'Ticket created!'){
+                    if (json.status === 'Ticket created!'){
                         window.document.getElementById("messageGoodAlert").innerText = "Чек создан";
                         window.document.getElementById("messageGood").style.display = "block";
                         window.document.getElementById("ShowCheck").style.display = "block";
@@ -168,7 +168,7 @@
                         let response = json.response;
                         id_ticket = response.id;
                     } else {
-                        window.document.getElementById('messageAlert').innerText = "Ошибка 400";
+                        window.document.getElementById('messageAlert').innerText = json.errors.message;
                         window.document.getElementById('message').style.display = "block";
                         window.document.getElementById(button_hide).style.display = "block";
                         modalShowHide = 'hide';

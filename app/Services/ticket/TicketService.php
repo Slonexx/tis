@@ -8,6 +8,8 @@ use App\Http\Controllers\BD\getMainSettingBD;
 use App\Http\Controllers\globalObjectController;
 use App\Services\AdditionalServices\DocumentService;
 use App\Services\MetaServices\MetaHook\AttributeHook;
+use GuzzleHttp\Exception\BadResponseException;
+use GuzzleHttp\Exception\ClientException;
 
 class TicketService
 {
@@ -47,7 +49,9 @@ class TicketService
 
 
         $ClientTIS = new KassClient($Setting->authtoken);
+        $Client = new MsClient($Setting->tokenMs);
         $Config = new globalObjectController();
+        $oldBody =  $Client->get('https://online.moysklad.ru/api/remap/1.2/entity/'.$entity_type.'/'.$id_entity);
 
         $Body = $this->setBodyToPostClient($Setting, $id_entity, $entity_type, $money_card, $money_cash, $payType, $total, $positions);
 
@@ -59,15 +63,25 @@ class TicketService
 
         try {
             $postTicket = $ClientTIS->POSTClient($Config->apiURL_ukassa.'v2/operation/ticket/', $Body);
-        } catch (\Throwable $e){
-           return response()->json(['code' => $e->getCode(), 'message'=> $e->getMessage()]);
-        }
-        dd($postTicket);
-        $Client = new MsClient($Setting->tokenMs);
-        $putBody = $this->putBodyMS($postTicket, $Client, $Setting);
-        $put = $Client->put('https://online.moysklad.ru/api/remap/1.2/entity/'.$entity_type.'/'.$id_entity, $putBody);
+            $putBody = $this->putBodyMS($postTicket, $Client, $Setting, $oldBody, $positions);
+            $put = $Client->put('https://online.moysklad.ru/api/remap/1.2/entity/'.$entity_type.'/'.$id_entity, $putBody);
 
-        return response()->json($postTicket);
+            return response()->json([
+                'status'    => 'Ticket created',
+                'code'      => 200,
+            ]);
+
+        } catch (BadResponseException  $e){
+            return response()->json([
+                'status'    => 'error',
+                'code'      => $e->getCode(),
+                'errors'    => json_decode($e->getResponse()->getBody()->getContents(), true)
+            ]);
+        }
+        //$postTicket = null;
+
+
+
     }
 
 
@@ -91,7 +105,7 @@ class TicketService
             'items' => $items,
             "total_amount" => (float) $total,
             "customer" => $customer,
-            "as_html" => true,
+            //"as_html" => true,
         ];
     }
 
@@ -161,7 +175,7 @@ class TicketService
         return $result;
     }
 
-    private function getCustomer($Setting, $id_entity, $entity_type)
+    private function getCustomer($Setting, $id_entity, $entity_type): array
     {
         $Client = new MsClient($Setting->tokenMs);
         $body = $Client->get('https://online.moysklad.ru/api/remap/1.2/entity/'.$entity_type.'/'.$id_entity);
@@ -176,7 +190,90 @@ class TicketService
 
     }
 
-    private function putBodyMS(mixed $postTicket, MsClient $Client, getMainSettingBD $Setting)
+    private function putBodyMS(mixed $postTicket, MsClient $Client, getMainSettingBD $Setting, mixed $oldBody, mixed $positionsBody)
+    {   $result = null;
+        $Result_attributes = null;
+        $Resul_positions = null;
+        $attributes = $Client->get('https://online.moysklad.ru/api/remap/1.2/entity/customerorder/metadata/attributes/')->rows;
+        $Result_attributes = $this->setAttributesToPutBody($postTicket, $attributes);
+        if ($attributes != null){ $result[0] = [ 'attributes' => $attributes ]; }
+
+        $positions = $Client->get($oldBody->positions->meta->href)->rows;
+        $Resul_positions = $this->setPositionsToPutBody($postTicket, $positions, $positionsBody);
+
+        if ($Result_attributes != null){
+            $result[0] = [ 'attributes' => $Result_attributes, ];
+        }
+        if ($Resul_positions != null){
+            $result[0] = [ 'positions' => $Resul_positions, ];
+        }
+        dd($result);
+        return $result;
+    }
+
+    private function setAttributesToPutBody(mixed $postTicket, $attributes): array
     {
+        $Result_attributes = null;
+        foreach ($attributes as $item) {
+            if ($item->name == "фискальный номер (ukassa)" ) {
+                $Result_attributes[] = [
+                    "meta"=> [
+                        "href"=> $item->meta->href,
+                        "type"=> $item->meta->type,
+                        "mediaType"=> $item->meta->mediaType,
+                    ],
+                    "value" => $postTicket->data->fixed_check,
+                ];
+            }
+            if ($item->name == "Ссылка для QR-кода" ) {
+                $Result_attributes[] = [
+                    "meta"=> [
+                        "href"=> $item->meta->href,
+                        "type"=> $item->meta->type,
+                        "mediaType"=> $item->meta->mediaType,
+                    ],
+                    "value" => $postTicket->data->link,
+                ];
+            }
+            if ($item->name == "Фискализация (ukassa)" ) {
+                $Result_attributes[] = [
+                    "meta"=> [
+                        "href"=> $item->meta->href,
+                        "type"=> $item->meta->type,
+                        "mediaType"=> $item->meta->mediaType,
+                    ],
+                    "value" => true,
+                ];
+            }
+        }
+        return $Result_attributes;
+    }
+
+    private function setPositionsToPutBody(mixed $postTicket, mixed $positions, mixed $positionsBody): array
+    {   $result = null;
+        $sort = null;
+        foreach ($positionsBody as $id=>$one){
+            foreach ($positions as $item_p){
+                if ($item_p->id == $one['id']){
+                    $sort[$id] = $item_p;
+                }
+            }
+        }
+        foreach ($positionsBody as $id=>$item){
+            $result[$id] = [
+                "id" => $item['id'],
+                "quantity" => (int) $item['quantity'],
+                "price" => (float) $item['price'],
+                "discount" => (int) $item['discount'],
+                "vat" => (int) $item['is_nds'],
+                "assortment" => ['meta'=>[
+                    "href" => $sort[$id]->assortment->meta->href,
+                    "type" => $sort[$id]->assortment->meta->type,
+                    "mediaType" => $sort[$id]->assortment->meta->mediaType,
+                ]],
+            ];
+        }
+        return $result;
+
     }
 }
