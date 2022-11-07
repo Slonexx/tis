@@ -6,6 +6,7 @@ use App\Clients\KassClient;
 use App\Clients\MsClient;
 use App\Http\Controllers\BD\getMainSettingBD;
 use App\Http\Controllers\globalObjectController;
+use App\Models\htmlResponce;
 use App\Services\AdditionalServices\DocumentService;
 use App\Services\MetaServices\MetaHook\AttributeHook;
 use GuzzleHttp\Exception\BadResponseException;
@@ -65,6 +66,11 @@ class TicketService
             $postTicket = $ClientTIS->POSTClient($Config->apiURL_ukassa.'v2/operation/ticket/', $Body);
             $putBody = $this->putBodyMS($postTicket, $Client, $Setting, $oldBody, $positions);
             $put = $Client->put('https://online.moysklad.ru/api/remap/1.2/entity/'.$entity_type.'/'.$id_entity, $putBody);
+
+            htmlResponce::create([
+                'accountId' => $accountId,
+                'html' => $postTicket->data->html,
+            ]);
 
             return response()->json([
                 'status'    => 'Ticket created',

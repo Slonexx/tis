@@ -183,8 +183,10 @@
         function PrintCheck(){
             //let url = 'http://rekassa/Popup/customerorder/closeShift';
             let url = 'https://smarttis.kz/Popup/customerorder/print';
-            let final = url + '/' + html;
-            console.log('PrintCheck = ' + final)
+            let params = {
+                accountId: accountId,
+            };
+            let final = url + formatParams(params);
             let xmlHttpRequest = new XMLHttpRequest();
             xmlHttpRequest.addEventListener("load", function () {
 

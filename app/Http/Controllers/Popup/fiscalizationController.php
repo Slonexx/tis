@@ -6,6 +6,7 @@ use App\Clients\MsClient;
 use App\Http\Controllers\Config\getSettingVendorController;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\TicketController;
+use App\Models\mainSetting;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 
@@ -159,9 +160,14 @@ class fiscalizationController extends Controller
         }
     }
 
-    public function printFiscalizationPopup($html){
-        dd($html);
-        return view( 'popup.print', [ 'html' => $html] );
+    public function printFiscalizationPopup(Request $request, $accountId){
+
+        $find = mainSetting::query()->where('accountId', $accountId)->first();
+        $result = $find->getAttributes();
+
+        dd($result);
+
+        return view( 'popup.print', [ 'html' => $result] );
     }
 
 }
