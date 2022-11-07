@@ -159,8 +159,9 @@ class fiscalizationController extends Controller
         }
     }
 
-    public function printFiscalizationPopup(Request $request){
-        return view( 'popup.print', ['html' => $request->html] );
+    public function printFiscalizationPopup($html){
+
+        return view( 'popup.print', [ 'html' => $html] );
     }
 
 }
