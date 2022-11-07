@@ -186,7 +186,7 @@
             let params = {
                 accountId: accountId,
             };
-            let final = url + formatParams(params);
+            let final = url + '/' + params;
             window.open(final)
         }
 
