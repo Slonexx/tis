@@ -164,7 +164,6 @@
                         window.document.getElementById("messageGoodAlert").innerText = "Чек создан";
                         window.document.getElementById("messageGood").style.display = "block";
                         window.document.getElementById("ShowCheck").style.display = "block";
-                        window.document.getElementById("closeShift").style.display = "block";
                         modalShowHide = 'hide';
                         html = json.postTicket.html
                     } else {
