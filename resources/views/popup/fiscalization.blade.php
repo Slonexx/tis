@@ -187,12 +187,7 @@
                 accountId: accountId,
             };
             let final = url + formatParams(params);
-            let xmlHttpRequest = new XMLHttpRequest();
-            xmlHttpRequest.addEventListener("load", function () {
-
-            });
-            xmlHttpRequest.open("GET", final);
-            xmlHttpRequest.send();
+            window.open(final)
         }
 
         function SelectorSum(Selector){
