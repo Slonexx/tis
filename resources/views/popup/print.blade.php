@@ -1,36 +1,6 @@
-{{$html}}
+{!! $html !!}
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-{{--<script>
+<script>
     window.print()
-</script>--}}
+</script>
