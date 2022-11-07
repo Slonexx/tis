@@ -165,8 +165,8 @@
                         window.document.getElementById("messageGood").style.display = "block";
                         window.document.getElementById("ShowCheck").style.display = "block";
                         modalShowHide = 'hide';
-                        console.log('html = ' + json.postTicket.html)
-                        html = json.postTicket.html
+                        console.log('html = ' + json.postTicket.data.html)
+                        html = json.postTicket.data.html
                     } else {
                         window.document.getElementById('messageAlert').innerText = json.errors.message;
                         window.document.getElementById('message').style.display = "block";
