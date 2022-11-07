@@ -163,7 +163,7 @@ class fiscalizationController extends Controller
 
     public function printFiscalizationPopup(Request $request, $accountId){
 
-        $find = htmlResponce::query()->where('accountId', $accountId)->first();
+        $find = htmlResponce::query()->where('accountId', $accountId)->latest()->first();
         $result = $find->getAttributes();
 
         return view( 'popup.print', [ 'html' => $result['html'] ] );
