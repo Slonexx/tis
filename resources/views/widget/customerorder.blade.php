@@ -100,17 +100,8 @@
         <div id="messageGoodAlert" class=" mt-1 mx-3 p-2 alert alert-success text-center " style="display: none; font-size: 12px; margin-bottom: 5px !important;">    </div>
 
         <div id="workerAccess_yes" class="mx-4 text-center rounded-pill bg-warning" style="display:none;">
-            <button id="btnF" onclick="fiscalization()" class=" btn btn-outline-warning style_btn rounded-pill">  </button>
+            <button id="btnF" onclick="fiscalization()" class=" btn btn-warning text-white rounded-pill">  </button>
         </div>
 
-        <style>
-            .style_btn{
-                background-color: white !important;
-                color: #ffc107 !important;
-            }
-            .style_btn :hover{
-                background-color: #ffc107 !important;
-                color: white !important;
-            }
-        </style>
+
 @endsection
