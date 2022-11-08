@@ -129,9 +129,10 @@ class TicketService
     private function getPayments($card, $cash, $total): array
     {
         //dd($card, $cash, $total);
+
         $result = null;
         if ( $cash > 0 ) {
-            $change = $total - $cash;
+            $change = $total - $cash - $card;
             if ($change < 0) $change = $change * (-1);
 
             $result[] = [
@@ -143,7 +144,6 @@ class TicketService
             //dd($result);
         }
         if ( $card > 0 ) {
-            $change = $total - $card;
 
             $result[] = [
                 'payment_type' => 1,
