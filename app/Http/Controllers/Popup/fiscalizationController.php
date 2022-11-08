@@ -161,7 +161,8 @@ class fiscalizationController extends Controller
         }
     }
 
-    public function printFiscalizationPopup(Request $request, $accountId){
+    public function printFiscalizationPopup(Request $request, $accountId): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Contracts\Foundation\Application
+    {
 
         $find = htmlResponce::query()->where('accountId', $accountId)->latest()->first();
         $result = $find->getAttributes();

@@ -5,15 +5,21 @@
 
     <script>
 
-        //const url = 'http://rekassa/Popup/customerorder/show';
+        //const url = 'http://tus/Popup/customerorder/show';
 
         const url = 'https://smarttis.kz/Popup/demand/show';
         let object_Id = '';
         let accountId = '';
         let entity_type = '';
         let id_ticket = '';
+        let html = '';
 
         window.addEventListener("message", function(event) { openDown();
+
+            /*var receivedMessage = {
+                "name":"OpenPopup","messageId":1,"popupName":"fiscalizationPopup","popupParameters":
+                    {"object_Id":"4f4a2e5a-4f6c-11ed-0a80-09be0003f312","accountId":"1dd5bd55-d141-11ec-0a80-055600047495"}
+            }; */
             var receivedMessage = event.data;
             newPopup();
             if (receivedMessage.name === 'OpenPopup') {
@@ -25,7 +31,7 @@
                     accountId: accountId,
                 };
                 let final = url + formatParams(params);
-
+                console.log('receivedMessage = ' + final);
                 let xmlHttpRequest = new XMLHttpRequest();
                 xmlHttpRequest.addEventListener("load", function () { $('#lDown').modal('hide');
                     let json = JSON.parse(this.responseText);
@@ -39,6 +45,10 @@
                             window.document.getElementById('productId_' + i).innerHTML = products[i].position;
                             window.document.getElementById('productName_' + i).innerHTML = products[i].name;
                             window.document.getElementById('productQuantity_' + i).innerHTML = products[i].quantity;
+
+                            window.document.getElementById('productUOM_' + i).innerHTML = products[i].uom['name']
+                            window.document.getElementById('productIDUOM_' + i).innerHTML = products[i].uom['id'];
+
                             window.document.getElementById('productPrice_' + i).innerHTML = products[i].price;
                             if (products[i].vat === 0)  window.document.getElementById('productVat_' + i).innerHTML = "без НДС";
                             else window.document.getElementById('productVat_' + i).innerHTML = products[i].vat + '%';
@@ -63,130 +73,74 @@
                             window.document.getElementById("getKKM").style.display = "block";
                         }
                     } else  window.document.getElementById("getKKM").style.display = "block";
-                    window.document.getElementById("closeButtonId").style.display = "block";
                 });
                 xmlHttpRequest.open("GET", final);
                 xmlHttpRequest.send();
             }
         });
-        function roundToTwo(num) {
-            return +(Math.round(num + "e+2")  + "e-2");
-        }
-        function formatParams(params) {
-            return "?" + Object
-                .keys(params)
-                .map(function (key) {
-                    return key + "=" + encodeURIComponent(params[key])
-                })
-                .join("&")
-        }
-        function deleteBTNClick(Object){
 
 
-            let sum = document.getElementById("sum").innerHTML;
-            let final = document.getElementById('productFinal_' + Object).innerHTML;
-            window.document.getElementById("sum").innerHTML = sum-final;
-
-
-            window.document.getElementById('productName_' + Object).innerHTML = '';
-            window.document.getElementById('productQuantity_' + Object).innerHTML = '';
-            window.document.getElementById('productPrice_' + Object).innerHTML = '';
-            window.document.getElementById('productVat_' + Object).innerHTML = '';
-            window.document.getElementById('productDiscount_' + Object).innerHTML = '';
-            window.document.getElementById('productFinal_' + Object).innerHTML = '';
-            window.document.getElementById(Object).style.display = "none";
-        }
-
-
-        function isNumberKeyCash(evt){
-            var charCode = (evt.which) ? evt.which : event.keyCode
-            if (charCode == 46){
-                var inputValue = $("#cash").val();
-                var count = (inputValue.match(/'.'/g) || []).length;
-                if(count<1){
-                    if (inputValue.indexOf('.') < 1){
-                        return true;
-                    }
-                    return false;
-                }else{
-                    return false;
-                }
-            }
-            if (charCode != 46 && charCode > 31 && (charCode < 48 || charCode > 57)){
-                return false;
-            }
-            return true;
-        }
-        function isNumberKeyCard(evt){
-            var charCode = (evt.which) ? evt.which : event.keyCode
-            if (charCode == 46){
-                var inputValue = $("#card").val();
-                var count = (inputValue.match(/'.'/g) || []).length;
-                if(count<1){
-                    if (inputValue.indexOf('.') < 1){
-                        return true;
-                    }
-                    return false;
-                }else{
-                    return false;
-                }
-            }
-            if (charCode != 46 && charCode > 31 && (charCode < 48 || charCode > 57)){
-                return false;
-            }
-            return true;
-        }
 
         function sendKKM(pay_type){
-            let button_hide = '';
-            if (pay_type == 'return') button_hide = 'refundCheck';
-            if (pay_type == 'sell') button_hide = 'getKKM';
-            window.document.getElementById(button_hide).style.display = "none";
-            let modalShowHide = 'show';
+            let button_hide = ''
+            if (pay_type == 'return') button_hide = 'refundCheck'
+            if (pay_type == 'sell') button_hide = 'getKKM'
 
-            let money_card = window.document.getElementById('card').value;
-            let money_cash = window.document.getElementById('cash').value;
-            let money_mobile = window.document.getElementById('mobile').value;
-            let SelectorInfo = document.getElementById('valueSelector');
-            let option = SelectorInfo.options[SelectorInfo.selectedIndex];
+            window.document.getElementById(button_hide).style.display = "none"
+            let modalShowHide = 'show'
 
-            if (option.value == 0){
-                if (!money_cash) {
-                    window.document.getElementById('messageAlert').innerText = 'Вы не ввели сумму наличных';
-                    window.document.getElementById('message').style.display = "block";
+            let total = window.document.getElementById('sum').innerText
+            let money_card = window.document.getElementById('card').value
+            let money_cash = window.document.getElementById('cash').value
+            let SelectorInfo = document.getElementById('valueSelector')
+            let option = SelectorInfo.options[SelectorInfo.selectedIndex]
+
+            if (option.value == 0){if (!money_cash) {
+                window.document.getElementById('messageAlert').innerText = 'Вы не ввели сумму наличных'
+                window.document.getElementById('message').style.display = "block"
+                modalShowHide = 'hide'
+            }
+                if (money_cash <= parseFloat(window.document.getElementById('sum').innerText)){
+                    window.document.getElementById('messageAlert').innerText = 'Введите сумму больше !'
+                    window.document.getElementById('message').style.display = "block"
                     modalShowHide = 'hide'
                 }
             }
-            if (option.value == 1){
-                if (!money_card) {
-                    window.document.getElementById('messageAlert').innerText = 'Вы не ввели сумму карты';
-                    window.document.getElementById('message').style.display = "block";
+            if (option.value == 1){if (!money_card) {
+                window.document.getElementById('messageAlert').innerText = 'Вы не ввели сумму карты'
+                window.document.getElementById('message').style.display = "block"
+                modalShowHide = 'hide'
+            }
+            }
+            if (option.value == 2){if (!money_card && !money_cash){
+                window.document.getElementById('messageAlert').innerText = 'Вы не ввели сумму'
+                window.document.getElementById('message').style.display = "block"
+                modalShowHide = 'hide'
+                if (money_card + money_cash < parseFloat(window.document.getElementById('sum').innerText)){
+                    window.document.getElementById('messageAlert').innerText = 'Введите сумму больше !'
+                    window.document.getElementById('message').style.display = "block"
                     modalShowHide = 'hide'
                 }
             }
-            if (option.value == 2){
-                if (!money_mobile){
-                    window.document.getElementById('messageAlert').innerText = 'Вы не ввели сумму мобильных';
-                    window.document.getElementById('message').style.display = "block";
-                    modalShowHide = 'hide'
-                }
-            }
-            if (option.value == 3){
-                if (!money_card && !money_cash && !money_mobile){
-                    window.document.getElementById('messageAlert').innerText = 'Вы не ввели сумму';
-                    window.document.getElementById('message').style.display = "block";
-                    modalShowHide = 'hide'
-                }
             }
 
-            let url = 'https://smarttis.kz/Popup/demand/send';
+            //let url = 'https://tus/Popup/customerorder/send'
+            let url = 'https://smarttis.kz/Popup/demand/send'
 
             if (modalShowHide === 'show'){
-                $('#downL').modal('toggle');
-                let products = [];
+                $('#downL').modal('toggle')
+                let products = []
                 for (let i = 0; i < 20; i++) {
                     if ( window.document.getElementById(i).style.display === 'block' ) {
-                        products[i] = window.document.getElementById('productId_'+i).innerText
+                        products[i] = {
+                            id:window.document.getElementById('productId_'+i).innerText,
+                            name:window.document.getElementById('productName_'+i).innerText,
+                            quantity:window.document.getElementById('productQuantity_'+i).innerText,
+                            UOM:window.document.getElementById('productIDUOM_'+i).innerText,
+                            price:window.document.getElementById('productPrice_'+i).innerText,
+                            is_nds:window.document.getElementById('productVat_'+i).innerText,
+                            discount:window.document.getElementById('productDiscount_'+i).innerText
+                        }
                     }
                 }
                 let params = {
@@ -195,8 +149,9 @@
                     entity_type: entity_type,
                     money_card: money_card,
                     money_cash: money_cash,
-                    money_mobile: money_mobile,
+                    //money_mobile: money_mobile,
                     pay_type: pay_type,
+                    total: total,
                     position: JSON.stringify(products),
                 };
                 let final = url + formatParams(params);
@@ -205,17 +160,14 @@
                 xmlHttpRequest.addEventListener("load", function () {
                     $('#downL').modal('hide');
                     let json = JSON.parse(this.responseText);
-                    if (json.message === 'Ticket created!'){
+                    if (json.status === 'Ticket created'){
                         window.document.getElementById("messageGoodAlert").innerText = "Чек создан";
                         window.document.getElementById("messageGood").style.display = "block";
                         window.document.getElementById("ShowCheck").style.display = "block";
-                        window.document.getElementById("closeShift").style.display = "block";
-                        window.document.getElementById(button_hide).style.display = "block";
                         modalShowHide = 'hide';
-                        let response = json.response;
-                        id_ticket = response.id;
+                        html = json.postTicket.data.html
                     } else {
-                        window.document.getElementById('messageAlert').innerText = "Ошибка 400";
+                        window.document.getElementById('messageAlert').innerText = json.errors.message;
                         window.document.getElementById('message').style.display = "block";
                         window.document.getElementById(button_hide).style.display = "block";
                         modalShowHide = 'hide';
@@ -225,145 +177,75 @@
                 xmlHttpRequest.send();
                 modalShowHide = 'hide';
             }
-            else window.document.getElementById(button_hide).style.display = "block";
+            else window.document.getElementById(button_hide).style.display = "block"
         }
 
-
-        function ShowCheck(){
-            let urlrekassa = 'https://app.rekassa.kz/'
-            let url = 'https://smarttis.kz/api/ticket';
-            let params = {
-                accountId: accountId,
-                id_ticket: id_ticket,
-            };
-            let final = url + formatParams(params);
-            let xmlHttpRequest = new XMLHttpRequest();
-            xmlHttpRequest.addEventListener("load", function () {
-                window.open(urlrekassa + this.responseText);
-            });
-            xmlHttpRequest.open("GET", final);
-            xmlHttpRequest.send();
-        }
-
-        function updatePopup(){
-            let params = {
-                object_Id: object_Id,
-                accountId: accountId,
-            };
-            let final = url + formatParams(params);
-
-            let xmlHttpRequest = new XMLHttpRequest();
-            xmlHttpRequest.addEventListener("load", function () {
-
-                let json = JSON.parse(this.responseText);
-
-
-            });
-            xmlHttpRequest.open("GET", final);
-            xmlHttpRequest.send();
+        function PrintCheck(){
+            //let url = 'http://rekassa/Popup/customerorder/closeShift';
+            let url = 'https://smarttis.kz/Popup/demand/print';
+            let final = url + '/' + accountId;
+            window.open(final)
         }
 
         function SelectorSum(Selector){
             window.document.getElementById("cash").value = ''
             window.document.getElementById("card").value = ''
-            window.document.getElementById("mobile").value = ''
             let option = Selector.options[Selector.selectedIndex];
             if (option.value === "0") {
                 document.getElementById('Visibility_Cash').style.display = 'block';
                 document.getElementById('Visibility_Card').style.display = 'none';
-                document.getElementById('Visibility_Mobile').style.display = 'none';
             }
             if (option.value === "1") {
                 document.getElementById('Visibility_Card').style.display = 'block';
                 document.getElementById('Visibility_Cash').style.display = 'none';
-                document.getElementById('Visibility_Mobile').style.display = 'none';
                 let card =  window.document.getElementById("card");
                 card.value = window.document.getElementById("sum").innerText
                 window.document.getElementById("card").disabled = true
             }
             if (option.value === "2") {
-                document.getElementById('Visibility_Cash').style.display = 'none';
-                document.getElementById('Visibility_Card').style.display = 'none';
-                document.getElementById('Visibility_Mobile').style.display = 'block';
-                let mobile =  window.document.getElementById("mobile");
-                mobile.value = window.document.getElementById("sum").innerText
-                window.document.getElementById("mobile").disabled = true
-            }
-            if (option.value === "3") {
                 document.getElementById('Visibility_Cash').style.display = 'block';
                 document.getElementById('Visibility_Card').style.display = 'block';
-                document.getElementById('Visibility_Mobile').style.display = 'block';
+                //document.getElementById('Visibility_Mobile').style.display = 'block';
                 window.document.getElementById("card").disabled = false
-                window.document.getElementById("mobile").disabled = false
             }
 
         }
-        function openDown(){
-            $('#lDown').modal('show');
-        }
-        function closeDown(){
-            $('#lDown').modal('hide');
-            $('#downL').modal('hide');
-        }
 
+        function updateQuantity(id, params){
+            let object_Quantity = window.document.getElementById('productQuantity_'+id);
+            let Quantity = parseInt(object_Quantity.innerText)
 
+            let object_price = window.document.getElementById('productPrice_'+id).innerText;
+            let object_Final = window.document.getElementById('productFinal_'+id);
 
-        function newPopup(){
-            window.document.getElementById("sum").innerHTML = ''
+            let object_sum = window.document.getElementById('sum');
+            let sum = parseFloat(object_sum.innerText - object_Final.innerText)
 
-            window.document.getElementById("message").style.display = "none"
-            window.document.getElementById("messageGood").style.display = "none"
-            window.document.getElementById("closeButtonId").style.display = "none"
-
-            window.document.getElementById("refundCheck").style.display = "none"
-            window.document.getElementById("getKKM").style.display = "none"
-            window.document.getElementById("ShowCheck").style.display = "none"
-
-            window.document.getElementById("cash").value = ''
-            window.document.getElementById("card").value = ''
-            window.document.getElementById("mobile").value = ''
-
-            window.document.getElementById("cash").style.display = "block"
-            let thisSelectorSum = window.document.getElementById("valueSelector")
-            thisSelectorSum.value = 0;
-            SelectorSum(thisSelectorSum)
-
-            for (var i = 0; i < 20; i++) {
-                window.document.getElementById(i).style.display = "none"
-                window.document.getElementById('productName_' + i).innerHTML = ''
-                window.document.getElementById('productQuantity_' + i).innerHTML = ''
-                window.document.getElementById('productPrice_' + i).innerHTML = ''
-                window.document.getElementById('productVat_' + i).innerHTML = ''
-                window.document.getElementById('productDiscount_' + i).innerHTML = ''
-                window.document.getElementById('productFinal_' + i).innerHTML = ''
+            if (params === 'plus'){
+                object_Quantity.innerText = Quantity + 1
+                object_Final.innerText = object_Quantity.innerText * object_price
+                object_sum.innerText = parseFloat(sum + object_Final.innerText)
+            }
+            if (params === 'minus'){
+                object_Quantity.innerText = Quantity - 1
+                object_Final.innerText = object_Quantity.innerText * object_price
+                object_sum.innerText = parseFloat(sum + object_Final.innerText)
             }
         }
+
     </script>
 
 
     <div class="main-container">
         <div class="row gradient rounded p-2">
-            <div class="col-9">
-                <div class="mx-2"> <img src="https://app.rekassa.kz/static/logo.png" width="35" height="35"  alt="">
-                    <span class="text-white"> re:Kassa </span>
-                    <span class="mx-5 text-white">Отгрузка №</span>
-                    <span id="numberOrder" class="text-white"></span>
-                </div>
-            </div>
             <div class="col-3">
-                <div class="row">
-                    <div class="col-3">
-
-                    </div>
-                    <div class="col-6">
-                        <button id="closeButtonId" type="button" class="btn btn-danger"
-                                data-bs-toggle="modal" data-bs-target="#modal" >Закрыть смену</button>
-                    </div>
-                    <div class="col-3 text-right">
-                        <button type="submit" onclick="updatePopup()" class="myButton btn "> <i class="fa-solid fa-arrow-rotate-right"></i> </button>
-                    </div>
-                </div>
+                <div class="mx-2"> <img src="https://test.ukassa.kz/_nuxt/img/d2b49fb.svg" width="90%"  alt=""></div>
             </div>
+            <div class="col-6 text-black " style="font-size: 22px; margin-top: 1.2rem !important;">
+                <span> Отгрузка № </span>
+                <span id="numberOrder" class="text-black"></span>
+            </div>
+            <div class="col-3"></div>
         </div>
         <div id="message" class="mt-2 row" style="display:none;" >
             <div class="col-12">
@@ -382,15 +264,16 @@
                 <div id="main" class="row p-3">
                     <div class="col-12">
                         <div class="row">
-                            <div class="col-1 text-success">№</div>
-                            <div class="col-5 text-success">Наименование</div>
-                            <div class="col-1 text-success">Кол-во</div>
-                            <div class="col-1 text-success">Цена</div>
-                            <div class="col-1 text-success">НДС</div>
-                            <div class="col-1 text-success">Скидка</div>
-                            <div class="col-1 text-success">Сумма</div>
-                            <div class="col-1 text-success">Учитывать </div>
-                            <hr class="mt-1 text-success" style="background-color: #0c7d70; height: 3px; border: 0;">
+                            <div class="col-1 text-black">№</div>
+                            <div class="col-4 text-black">Наименование</div>
+                            <div class="col-1 text-black">Кол-во</div>
+                            <div class="col-1 text-black">Ед. Изм.</div>
+                            <div class="col-1 text-black">Цена</div>
+                            <div class="col-1 text-black">НДС</div>
+                            <div class="col-1 text-black">Скидка</div>
+                            <div class="col-1 text-black">Сумма</div>
+                            <div class="col-1 text-black">Учитывать </div>
+                            <div class="buttons-container-head mt-1"></div>
                         </div>
                     </div>
                     <div id="products" class="col-12 text-black">
@@ -399,8 +282,14 @@
                                 <div class="row">
                                     <div class="col-1">{{ $i + 1 }}</div>
                                     <div id="{{'productId_'.$i}}" style="display:none;"></div>
-                                    <div id="{{ 'productName_'.$i }}"  class="col-5"></div>
-                                    <div id="{{ 'productQuantity_'.$i }}"  class="col-1 text-center"></div>
+                                    <div id="{{ 'productName_'.$i }}"  class="col-4"></div>
+                                    <div class="col-1 text-center row">
+                                        <div class="col-4"><i onclick="updateQuantity( '{{ $i }}', 'minus')" class="fa-solid fa-circle-minus text-danger" style="cursor: pointer"></i></div>
+                                        <div id="{{ 'productQuantity_'.$i }}" class="col-4"></div>
+                                        <div class="col-4"><i onclick="updateQuantity( '{{ $i }}', 'plus')" class="fa-solid fa-circle-plus text-success" style="cursor: pointer"></i></div>
+                                    </div>
+                                    <div id="{{ 'productUOM_'.$i }}"  class="col-1 text-center"></div>
+                                    <div id="{{ 'productIDUOM_'.$i }}"  class="col-1 text-center" style="display: none"></div>
                                     <div id="{{ 'productPrice_'.$i }}"  class="col-1 text-center"></div>
                                     <div id="{{ 'productVat_'.$i }}"  class="col-1 text-center"></div>
                                     <div id="{{ 'productDiscount_'.$i }}"  class="col-1 text-center"></div>
@@ -418,30 +307,7 @@
         <div class="buttons-container-head"></div>
         <div class="buttons-container">
             <div class="row">
-
-                <div class="col-7 row">
-                    <div class="row">
-                        <div class="col-12 mx-2 ">
-                            <div class="col-5 bg-success text-white p-1 rounded">
-                                <span> Итого: </span>
-                                <span id="sum"></span>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-                <div class="col-1">
-
-                </div>
-                <div class="col-2">
-
-                </div>
-                <div class="col-2 d-flex justify-content-end">
-                    <button onclick="sendKKM('return')" id="refundCheck" class="btn btn-danger">возврат</button>
-                    <button onclick="sendKKM('sell')" id="getKKM" class="btn btn-success">Отправить в ККМ</button>
-                </div>
-
-                <div class="row mt-2">
+                <div class="row">
                     <div class="col-3">
                         <div class="row">
                             <div class="col-5">
@@ -451,8 +317,8 @@
                                 <select onchange="SelectorSum(valueSelector)" id="valueSelector" class="form-select">
                                     <option selected value="0">Наличными</option>
                                     <option value="1">Картой</option>
-                                    <option value="2">Мобильная</option>
-                                    <option value="3">Смешанная</option>
+                                    {{--<option value="2">Мобильная</option>--}}
+                                    <option value="2">Смешанная</option>
                                 </select>
                             </div>
                         </div>
@@ -467,49 +333,36 @@
                                     <input id="card" type="number" step="0.1"  placeholder="Сумма картой" onkeypress="return isNumberKeyCard(event)"
                                            class="form-control float" required maxlength="255" value="">
                                 </div> </div>
-                            <div class="col-4"> <div id="Visibility_Mobile" class="mx-2" style="display: none">
-                                    <input id="mobile" type="number" step="0.1"  placeholder="Сумма мобильных" onkeypress="return isNumberKeyMobile(event)"
-                                           class="form-control float" required maxlength="255" value="">
-                                </div> </div>
                         </div>
                     </div>
                     <div class="col-1"></div>
                     <div class="col-2 d-flex justify-content-end">
-                        <button onclick="ShowCheck()" id="ShowCheck" class="btn btn-success">Показать чек</button>
+                        <button onclick="PrintCheck()" id="ShowCheck" class="btn btn-success">Распечатать чек</button>
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
+                <div class="col-7 row mt-2">
+                    <div class="row">
+                        <div class="col-12 mx-2 ">
+                            <div class="col-5 bg-info text-white p-1 rounded">
+                                <span class="mx-2"> Итого: </span>
+                                <span id="sum"></span>
+                            </div>
 
-
-
-    <div class="modal fade" id="modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title"> Закрытие смены
-                        <i class="fa-solid fa-circle-question text-danger"></i>
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="row mt-2">
-                        <div class="col-1"></div>
-                        <div class="col-10">
-                            <label> Введите пин код для закрытия смены</label>
-                            <input id="pin_code" type="number" placeholder="PIN code"
-                                   class="form-control float" required maxlength="10" value="">
                         </div>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button  onclick="closeShift()" id="closeShift"
-                             data-bs-dismiss="modal" class="btn btn-danger">Закрыть смену</button>
+                <div class="col-3"></div>
+                <div class="col-2 d-flex justify-content-end">
+                    <button onclick="sendKKM('return')" id="refundCheck" class="btn btn-danger">возврат</button>
+                    <button onclick="sendKKM('sell')" id="getKKM" class="btn btn-success">Отправить в ККМ</button>
                 </div>
+
+
             </div>
         </div>
     </div>
+
+
     <div id="downL" class="modal fade bd-example-modal-sm" data-bs-keyboard="false" data-bs-backdrop="static"
          tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-sm">
@@ -545,6 +398,115 @@
         </div>
     </div>
 
+
+
+    <script>
+        function newPopup(){
+            window.document.getElementById("sum").innerHTML = ''
+
+            window.document.getElementById("message").style.display = "none"
+            window.document.getElementById("messageGood").style.display = "none"
+
+            window.document.getElementById("refundCheck").style.display = "none"
+            window.document.getElementById("getKKM").style.display = "none"
+            window.document.getElementById("ShowCheck").style.display = "none"
+
+            window.document.getElementById("cash").value = ''
+            window.document.getElementById("card").value = ''
+
+            window.document.getElementById("cash").style.display = "block"
+            let thisSelectorSum = window.document.getElementById("valueSelector")
+            thisSelectorSum.value = 0;
+            SelectorSum(thisSelectorSum)
+
+            for (var i = 0; i < 20; i++) {
+                window.document.getElementById(i).style.display = "none"
+                window.document.getElementById('productName_' + i).innerHTML = ''
+                window.document.getElementById('productQuantity_' + i).innerHTML = ''
+                window.document.getElementById('productPrice_' + i).innerHTML = ''
+                window.document.getElementById('productVat_' + i).innerHTML = ''
+                window.document.getElementById('productDiscount_' + i).innerHTML = ''
+                window.document.getElementById('productFinal_' + i).innerHTML = ''
+            }
+        }
+
+        function openDown(){
+            $('#lDown').modal('show');
+        }function closeDown(){
+            $('#lDown').modal('hide');
+            $('#downL').modal('hide');
+        }
+
+        function formatParams(params) {
+            return "?" + Object
+                .keys(params)
+                .map(function (key) {
+                    return key + "=" + encodeURIComponent(params[key])
+                })
+                .join("&")
+        }
+        function deleteBTNClick(Object){
+
+
+            let sum = document.getElementById("sum").innerHTML;
+            let final = document.getElementById('productFinal_' + Object).innerHTML;
+            window.document.getElementById("sum").innerHTML = sum-final;
+
+
+            window.document.getElementById('productName_' + Object).innerHTML = '';
+            window.document.getElementById('productQuantity_' + Object).innerHTML = '';
+            window.document.getElementById('productPrice_' + Object).innerHTML = '';
+            window.document.getElementById('productVat_' + Object).innerHTML = '';
+            window.document.getElementById('productDiscount_' + Object).innerHTML = '';
+            window.document.getElementById('productFinal_' + Object).innerHTML = '';
+            window.document.getElementById(Object).style.display = "none";
+        }
+
+        function roundToTwo(num) {
+            return +(Math.round(num + "e+2")  + "e-2");
+        }
+        function isNumberKeyCash(evt){
+            var charCode = (evt.which) ? evt.which : event.keyCode
+            if (charCode == 46){
+                var inputValue = $("#cash").val();
+                var count = (inputValue.match(/'.'/g) || []).length;
+                if(count<1){
+                    if (inputValue.indexOf('.') < 1){
+                        return true;
+                    }
+                    return false;
+                }else{
+                    return false;
+                }
+            }
+            if (charCode != 46 && charCode > 31 && (charCode < 48 || charCode > 57)){
+                return false;
+            }
+            return true;
+        }function isNumberKeyCard(evt){
+            var charCode = (evt.which) ? evt.which : event.keyCode
+            if (charCode == 46){
+                var inputValue = $("#card").val();
+                var count = (inputValue.match(/'.'/g) || []).length;
+                if(count<1){
+                    if (inputValue.indexOf('.') < 1){
+                        return true;
+                    }
+                    return false;
+                }else{
+                    return false;
+                }
+            }
+            if (charCode != 46 && charCode > 31 && (charCode < 48 || charCode > 57)){
+                return false;
+            }
+            return true;
+        }
+    </script>
+
+
+
+
 @endsection
 
 <style>
@@ -563,7 +525,7 @@
         flex-grow: 1;
     }
     .buttons-container-head{
-        background-color: rgba(12, 125, 112, 0.27);
+        background-color: rgba(76, 175, 237, 0.86);
         padding-top: 3px;
         min-height: 3px;
     }
@@ -572,23 +534,4 @@
         min-height: 100px;
     }
 
-    .myButton {
-        box-shadow: 0px 4px 5px 0px #5d5d5d !important;
-        background-image: radial-gradient( circle farthest-corner at 10% 20%,  rgba(14,174,87,1) 0%, rgba(12,116,117,1) 90% ) !important;
-        color: white !important;
-        border-radius:50px !important;
-        display:inline-block !important;
-        cursor:pointer !important;
-        padding:5px 5px !important;
-        text-decoration:none !important;
-    }
-    .myButton:hover {
-        filter: invert(1);
-
-        color: #111111 !important;
-    }
-    .myButton:active {
-        position: relative !important;
-        top: 1px !important;
-    }
 </style>

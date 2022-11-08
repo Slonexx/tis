@@ -3,6 +3,7 @@
 use App\Http\Controllers\AttributeController;
 use App\Http\Controllers\Config\collectionOfPersonalController;
 use App\Http\Controllers\Config\DeleteVendorApiController;
+use App\Http\Controllers\Popup\demandController;
 use App\Http\Controllers\Popup\fiscalizationController;
 use App\Http\Controllers\Web\indexController;
 use App\Http\Controllers\Web\Setting\documentController;
@@ -53,3 +54,8 @@ Route::get('/Popup/customerorder', [fiscalizationController::class, 'fiscalizati
 Route::get('/Popup/customerorder/show', [fiscalizationController::class, 'ShowFiscalizationPopup']);
 Route::get('/Popup/customerorder/send', [fiscalizationController::class, 'SendFiscalizationPopup']);
 Route::get('/Popup/customerorder/print/{accountId}', [fiscalizationController::class, 'printFiscalizationPopup']);
+
+Route::get('/Popup/demand', [demandController::class, 'demandPopup']);
+Route::get('/Popup/demand/show', [demandController::class, 'ShowDemandPopup']);
+Route::get('/Popup/demand/send', [demandController::class, 'SendDemandPopup']);
+Route::get('/Popup/demand/print/{accountId}', [demandController::class, 'printDemandPopup']);

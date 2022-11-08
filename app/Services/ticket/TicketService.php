@@ -56,7 +56,7 @@ class TicketService
 
         $Body = $this->setBodyToPostClient($Setting, $id_entity, $entity_type, $money_card, $money_cash, $payType, $total, $positions);
 
-
+        dd($Body);
 
         if (isset($Body['Status'])) {
             return response()->json($Body['Message']);
@@ -96,7 +96,7 @@ class TicketService
     }
 
 
-    public function setBodyToPostClient($Setting, $id_entity, $entity_type, $money_card, $money_cash, $payType, $total, $positions): array
+    private function setBodyToPostClient(getMainSettingBD $Setting, mixed $id_entity, mixed $entity_type, mixed $money_card, mixed $money_cash, mixed $payType, mixed $total, mixed $positions): array
     {
 
         $operation = $this->getOperation($payType);
@@ -159,32 +159,84 @@ class TicketService
         return $result;
     }
 
-    private function getItems($Setting, $positions, $idObject, $typeObject): array
+    private function getItems(getMainSettingBD $Setting, $positions, $idObject, $typeObject): array
     {
         $result = null;
-        foreach ($positions as $id => $item){
-            $is_nds = trim($item['is_nds'], '%');
-            $discount = trim($item['discount'], '%');
-            if ($is_nds == 'без НДС' or $is_nds == "0%"){$is_nds = false;
-            } else $is_nds = true;
+        if ($typeObject == 'demand'){
+            $Client = new MsClient($Setting->tokenMs);
+            $demand = $Client->get('https://online.moysklad.ru/api/remap/1.2/entity/' . $typeObject . '/' . $idObject);
+            $demandPos = $Client->get($demand->positions->meta->href)->rows;
+
+            foreach ($positions as $id => $item){
+                $is_nds = trim($item['is_nds'], '%');
+                $discount = trim($item['discount'], '%');
+                if ($is_nds == 'без НДС' or $is_nds == "0%"){$is_nds = false;
+                } else $is_nds = true;
 
 
-            $result[$id] = [
-                'name' => (string) $item['name'],
-                'price' => (float) $item['price'],
-                'quantity' => (float) $item['quantity'],
-                'quantity_type' => (int) $item['UOM'],
-                'total_amount' => (float) ($item['price'] * $item['quantity']),
-                'is_nds' => $is_nds,
-                'discount' =>(float) $discount,
-                'section' => (int) $Setting->idDepartment,
-            ];
+                $result[] = [
+                    'name' => (string) $item['name'],
+                    'price' => (float) $item['price'],
+                    'quantity' => (float) $item['quantity'],
+                    'quantity_type' => (int) $item['UOM'],
+                    'total_amount' => (float) ($item['price'] * $item['quantity']),
+                    'is_nds' => $is_nds,
+                    'discount' =>(float) $discount,
+                    'section' => (int) $Setting->idDepartment,
+                ];
 
-            if ($discount == 0 or $discount < 0 ) {
-                unset($result[$id]['discount']);
+
+                    foreach ($demandPos as $item_2){
+                        if ($item['id'] == $item_2->id){
+                            if (isset($item_2->trackingCodes)){
+                                array_pop($result);
+                                foreach ($item_2->trackingCodes as $code){
+                                    $result[] = [
+                                        'name' => (string) $item['name'],
+                                        'price' => (float) $item['price'],
+                                        'quantity' => 1,
+                                        'quantity_type' => (int) $item['UOM'],
+                                        'total_amount' => (float) ($item['price'] * $item['quantity']),
+                                        'is_nds' => $is_nds,
+                                        'discount' =>(float) $discount,
+                                        'mark_code' =>(string) $code->cis,
+                                        'section' => (int) $Setting->idDepartment,
+                                    ];
+                                }
+                            }
+                        }
+                    }
+
             }
 
+        } else {
+            foreach ($positions as $id => $item){
+                $is_nds = trim($item['is_nds'], '%');
+                $discount = trim($item['discount'], '%');
+                if ($is_nds == 'без НДС' or $is_nds == "0%"){$is_nds = false;
+                } else $is_nds = true;
+
+                $result[$id] = [
+                    'name' => (string) $item['name'],
+                    'price' => (float) $item['price'],
+                    'quantity' => (float) $item['quantity'],
+                    'quantity_type' => (int) $item['UOM'],
+                    'total_amount' => (float) ($item['price'] * $item['quantity']),
+                    'is_nds' => $is_nds,
+                    'discount' =>(float) $discount,
+                    'section' => (int) $Setting->idDepartment,
+                ];
+
+            }
         }
+
+
+        foreach ($result as $id => $item){
+            if ($item['discount']<= 0) {
+                unset($result[$id]['discount']);
+            }
+        }
+
         return $result;
     }
 
@@ -350,4 +402,6 @@ class TicketService
         }
 
     }
+
+
 }
