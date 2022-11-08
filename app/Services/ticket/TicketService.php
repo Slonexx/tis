@@ -64,7 +64,9 @@ class TicketService
 
         try {
             $postTicket = $ClientTIS->POSTClient($Config->apiURL_ukassa.'v2/operation/ticket/', $Body);
-            $putBody = $this->putBodyMS($postTicket, $Client, $Setting, $oldBody, $positions);
+          //  dd($postTicket);
+
+            $putBody = $this->putBodyMS($entity_type, $postTicket, $Client, $Setting, $oldBody, $positions);
             $put = $Client->put('https://online.moysklad.ru/api/remap/1.2/entity/'.$entity_type.'/'.$id_entity, $putBody);
 
             if ($Setting->paymentDocument != null ){
@@ -195,7 +197,7 @@ class TicketService
                                         'name' => (string) $item['name'],
                                         'price' => (float) $item['price'],
                                         'quantity' => 1,
-                                        'quantity_type' => (int) $item['UOM'],
+                                        'quantity_type' => 796,
                                         'total_amount' => (float) ($item['price'] * 1),
                                         'is_nds' => $is_nds,
                                         'discount' =>(float) $discount,
@@ -255,11 +257,11 @@ class TicketService
 
     }
 
-    private function putBodyMS(mixed $postTicket, MsClient $Client, getMainSettingBD $Setting, mixed $oldBody, mixed $positionsBody)
+    private function putBodyMS($entity_type, mixed $postTicket, MsClient $Client, getMainSettingBD $Setting, mixed $oldBody, mixed $positionsBody)
     {   $result = null;
         $Result_attributes = null;
         $Resul_positions = null;
-        $attributes = $Client->get('https://online.moysklad.ru/api/remap/1.2/entity/customerorder/metadata/attributes/')->rows;
+        $attributes = $Client->get('https://online.moysklad.ru/api/remap/1.2/entity/'.$entity_type.'/metadata/attributes/')->rows;
         $Result_attributes = $this->setAttributesToPutBody($postTicket, $attributes);
 
         $positions = $Client->get($oldBody->positions->meta->href)->rows;
