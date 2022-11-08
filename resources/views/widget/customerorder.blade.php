@@ -30,14 +30,14 @@
                 const xmlHttpRequest = new XMLHttpRequest();
                 xmlHttpRequest.addEventListener("load", function() {
                     var json = JSON.parse(this.responseText);
-                    console.log(json.ticket_id);
                     let btnF = window.document.getElementById('btnF')
+
                     if (json.ticket_id == null){
                         btnF.innerText = 'Фискализация';
                     } else {
                         btnF.innerText = 'Действие с чеком';
                         window.document.getElementById('messageGoodAlert').style.display = 'block'
-                        window.document.getElementById("messageGoodAlert").innerText = "ранее уже был создан чек, его фискальный признак: " + id_ticket
+                        window.document.getElementById("messageGoodAlert").innerText = "ранее уже был создан чек, его фискальный признак: " + json.ticket_id
                     }
 
                     var sendingMessage = {
