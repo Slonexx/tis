@@ -193,7 +193,7 @@ class TicketService
         $Client = new MsClient($Setting->tokenMs);
         $body = $Client->get('https://online.moysklad.ru/api/remap/1.2/entity/'.$entity_type.'/'.$id_entity);
         $agent = $Client->get($body->agent->meta->href);
-        $result = null;
+        $result = [];
 
         if (property_exists($agent, 'email')) { $result['email'] = $agent->email; }
         if (property_exists($agent, 'phone')) { $result['phone'] = $agent->phone; }
