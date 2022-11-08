@@ -67,6 +67,10 @@ class TicketService
             $putBody = $this->putBodyMS($postTicket, $Client, $Setting, $oldBody, $positions);
             $put = $Client->put('https://online.moysklad.ru/api/remap/1.2/entity/'.$entity_type.'/'.$id_entity, $putBody);
 
+            if ($Setting->paymentDocument != null ){
+                $this->createPaymentDocument($Setting, $put);
+            }
+
             htmlResponce::create([
                 'accountId' => $accountId,
                 'html' => $postTicket->data->html,
@@ -215,6 +219,7 @@ class TicketService
         if ($Resul_positions != null){
             $result['positions'] = $Resul_positions;
         }
+
         return $result;
     }
 
@@ -281,6 +286,68 @@ class TicketService
             ];
         }
         return $result;
+
+    }
+
+    private function createPaymentDocument(getMainSettingBD $Setting, mixed $OldBody)
+    {   $client = new MsClient($Setting->tokenMs);
+        if ($Setting->paymentDocument == 1){
+        $url = 'https://online.moysklad.ru/api/remap/1.2/entity/cashin';
+        $body = [
+            'organization' => [  'meta' => [
+                'href' => $OldBody->organization->meta->href,
+                'type' => $OldBody->organization->meta->type,
+                'mediaType' => $OldBody->organization->meta->mediaType,
+            ] ],
+            'agent' => [ 'meta'=> [
+                'href' => $OldBody->agent->meta->href,
+                'type' => $OldBody->agent->meta->type,
+                'mediaType' => $OldBody->agent->meta->mediaType,
+            ] ],
+            'sum' => $OldBody->sum,
+            'operations' => [
+                0 => [
+                    'meta'=> [
+                        'href' => $OldBody->meta->href,
+                        'metadataHref' => $OldBody->meta->metadataHref,
+                        'type' => $OldBody->meta->type,
+                        'mediaType' => $OldBody->meta->mediaType,
+                        'uuidHref' => $OldBody->meta->uuidHref,
+                    ],
+                    'linkedSum' => 0
+                ], ]
+        ];
+        $postBodyCreateCashin = $client->post($url, $body);
+        }
+        if ($Setting->paymentDocument == 2){
+            $url = 'https://online.moysklad.ru/api/remap/1.2/entity/paymentin';
+
+            $body = [
+                'organization' => [  'meta' => [
+                    'href' => $OldBody->organization->meta->href,
+                    'type' => $OldBody->organization->meta->type,
+                    'mediaType' => $OldBody->organization->meta->mediaType,
+                ] ],
+                'agent' => [ 'meta'=> [
+                    'href' => $OldBody->agent->meta->href,
+                    'type' => $OldBody->agent->meta->type,
+                    'mediaType' => $OldBody->agent->meta->mediaType,
+                ] ],
+                'sum' => $OldBody->sum,
+                'operations' => [
+                    0 => [
+                        'meta'=> [
+                            'href' => $OldBody->meta->href,
+                            'metadataHref' => $OldBody->meta->metadataHref,
+                            'type' => $OldBody->meta->type,
+                            'mediaType' => $OldBody->meta->mediaType,
+                            'uuidHref' => $OldBody->meta->uuidHref,
+                        ],
+                        'linkedSum' => 0
+                    ], ]
+            ];
+            $postBodyCreatePaymentin = $client->post($url, $body);
+        }
 
     }
 }
