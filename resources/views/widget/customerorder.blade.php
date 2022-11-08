@@ -97,37 +97,11 @@
             </div>
         </div>
 
-        <div id="messageGoodAlert" class=" mt-1 mx-3 p-2 alert alert-success text-center " style="display: none; font-size: 12px">    </div>
+        <div id="messageGoodAlert" class=" mt-1 mx-3 p-2 alert alert-success text-center " style="display: none; font-size: 12px; margin-bottom: 5px !important;">    </div>
 
-        <div id="workerAccess_yes" class=" rounded-pill bg-warning" style="display:none;">
-            <button id="btnF" onclick="fiscalization()" class="text-center btn btn-outline-warning text-black rounded-pill">  </button>
+        <div id="workerAccess_yes" class="mx-2  text-center rounded-pill bg-warning" style="display:none;">
+            <button id="btnF" onclick="fiscalization()" class=" btn btn-outline-warning rounded-pill">  </button>
         </div>
 
 
 @endsection
-
-    <style>
-        .myButton {
-            box-shadow: 0px 4px 5px 0px #5d5d5d !important;
-            background-image: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); !important;
-            color: white !important;
-            border-radius:50px !important;
-            display:inline-block !important;
-            cursor:pointer !important;
-            padding:5px 5px !important;
-            text-decoration:none !important;
-        }
-        .myButton:hover {
-            filter: invert(1);
-
-            color: #111111 !important;
-        }
-        .myButton:active {
-            position: relative !important;
-            top: 1px !important;
-        }
-        .s-min-10 {
-            font-size: 12px;
-        }
-    </style>
-
