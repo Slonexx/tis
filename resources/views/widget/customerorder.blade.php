@@ -97,26 +97,11 @@
             </div>
         </div>
 
-        <div id="messageGoodAlert" class=" mt-1 mx-3 p-2 alert alert-success text-center " style="display: none; font-size: 10px">    </div>
+        <div id="messageGoodAlert" class=" mt-1 mx-3 p-2 alert alert-success text-center " style="display: none; font-size: 12px">    </div>
 
-        <div id="workerAccess_yes" class="row mt-2 rounded bg-white" style="display:none;">
-            <div class="col-1"></div>
-            <button id="btnF" onclick="fiscalization()" class="col-10 btn btn-warning text-black rounded-pill">  </button>
+        <div id="workerAccess_yes" class=" rounded bg-white" style="display:none;">
+            <button id="btnF" onclick="fiscalization()" class="mx-1  p-2 btn btn-warning text-black rounded-pill">  </button>
         </div>
-
-       {{-- <div id="workerAccess_no" class="row mt-2 rounded bg-white" style="display: none">
-            <div class="col-1"></div>
-            <div class="col-10">
-                <div class="text-center">
-                    <div class="p-3 mb-2 bg-danger text-white">
-                        <span class="s-min-10">
-                        У вас нет доступа к данному виджету, сообщите администратору, чтоб он вам предоставил доступ
-                        <i class="fa-solid fa-ban "></i>
-                    </span>
-                    </div>
-                </div>
-            </div>
-        </div>--}}
 
 
 @endsection
