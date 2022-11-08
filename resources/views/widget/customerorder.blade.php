@@ -37,7 +37,7 @@
                     } else {
                         btnF.innerText = 'Действие с чеком';
                         window.document.getElementById('messageGoodAlert').style.display = 'block'
-                        window.document.getElementById("messageGoodAlert").innerText = "ранее уже был создан чек, его фискальный признак: " + json.ticket_id
+                        window.document.getElementById("messageGoodAlert").innerText = "Чек уже создан. Фискальный номер:  " + json.ticket_id
                     }
 
                     var sendingMessage = {
@@ -97,7 +97,7 @@
             </div>
         </div>
 
-        <div id="messageGoodAlert" class=" mx-3 p-2 alert alert-success text-center " style="display: none">    </div>
+        <div id="messageGoodAlert" class=" mt-1 mx-3 p-2 alert alert-success text-center " style="display: none; font-size: 10px">    </div>
 
         <div id="workerAccess_yes" class="row mt-2 rounded bg-white" style="display:none;">
             <div class="col-1"></div>
