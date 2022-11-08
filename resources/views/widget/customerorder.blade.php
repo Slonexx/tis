@@ -99,8 +99,8 @@
 
         <div id="messageGoodAlert" class=" mt-1 mx-3 p-2 alert alert-success text-center " style="display: none; font-size: 12px">    </div>
 
-        <div id="workerAccess_yes" class=" rounded bg-white" style="display:none;">
-            <button id="btnF" onclick="fiscalization()" class="mx-1  p-2 btn btn-warning text-black rounded-pill">  </button>
+        <div id="workerAccess_yes" class=" rounded-pill bg-warning" style="display:none;">
+            <button id="btnF" onclick="fiscalization()" class="text-center btn btn-outline-warning text-black rounded-pill">  </button>
         </div>
 
 
