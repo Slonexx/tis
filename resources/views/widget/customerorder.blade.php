@@ -11,6 +11,9 @@
         let entity_type = 'customerorder';
 
         window.addEventListener("message", function(event) {
+
+            window.document.getElementById('messageGoodAlert').style.display = 'none'
+
             const receivedMessage = event.data;
             $('#workerAccess_yes').show();
             //workerAccess();
@@ -33,8 +36,8 @@
                         btnF.innerText = 'Фискализация';
                     } else {
                         btnF.innerText = 'Действие с чеком';
-                        window.document.getElementById("messageGoodAlert").innerText = "ранее уже был создан чек, его фискальный признак: " + id_ticket;
-
+                        window.document.getElementById('messageGoodAlert').style.display = 'block'
+                        window.document.getElementById("messageGoodAlert").innerText = "ранее уже был создан чек, его фискальный признак: " + id_ticket
                     }
 
                     var sendingMessage = {
