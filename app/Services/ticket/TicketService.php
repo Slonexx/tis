@@ -56,7 +56,7 @@ class TicketService
 
         $Body = $this->setBodyToPostClient($Setting, $id_entity, $entity_type, $money_card, $money_cash, $payType, $total, $positions);
 
-        //dd($Body);
+        dd($Body);
 
         if (isset($Body['Status'])) {
             return response()->json($Body['Message']);
@@ -196,7 +196,7 @@ class TicketService
                                         'price' => (float) $item['price'],
                                         'quantity' => 1,
                                         'quantity_type' => (int) $item['UOM'],
-                                        'total_amount' => (float) ($item['price'] * $item['quantity']),
+                                        'total_amount' => (float) ($item['price'] * 1),
                                         'is_nds' => $is_nds,
                                         'discount' =>(float) $discount,
                                         'mark_code' =>(string) $code->cis,
