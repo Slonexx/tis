@@ -132,20 +132,22 @@ class TicketService
         $result = null;
         if ( $cash > 0 ) {
             $change = $total - $cash;
+            if ($change < 0) $change = $change * (-1);
 
             $result[] = [
                 'payment_type' => 0,
-                'total' => (float) $cash+$change,
+                'total' => (float) $cash,
                 'change' => (float) $change,
                 'amount' => (float) $cash,
             ];
+            //dd($result);
         }
         if ( $card > 0 ) {
             $change = $total - $card;
 
             $result[] = [
                 'payment_type' => 1,
-                'total' => (float) $card + $change,
+                'total' => (float) $card,
                 'amount' => (float) $card,
             ];
         }
