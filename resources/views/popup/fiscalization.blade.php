@@ -36,10 +36,6 @@
                 xmlHttpRequest.addEventListener("load", function () { $('#lDown').modal('hide');
                     let json = JSON.parse(this.responseText);
                     id_ticket = json.attributes.ticket_id;
-                    if (id_ticket != '' || id_ticket != null){
-                        window.document.getElementById("messageGoodAlert").innerText = "уже был создан чек, фискальный признак: " + id_ticket;
-                        window.document.getElementById("messageGood").style.display = "block";
-                    }
                     window.document.getElementById("numberOrder").innerHTML = json.name;
 
                     let products = json.products;

@@ -31,7 +31,11 @@
                     let btnF = window.document.getElementById('btnF')
                     if (json.ticket_id == null){
                         btnF.innerText = 'Фискализация';
-                    } else btnF.innerText = 'Действие с чеком';
+                    } else {
+                        btnF.innerText = 'Действие с чеком';
+                        window.document.getElementById("messageGoodAlert").innerText = "ранее уже был создан чек, его фискальный признак: " + id_ticket;
+
+                    }
 
                     var sendingMessage = {
                         name: "OpenFeedback",
@@ -89,6 +93,9 @@
 
             </div>
         </div>
+
+        <div id="messageGoodAlert" class=" mx-3 p-2 alert alert-success text-center " style="display: none">    </div>
+
         <div id="workerAccess_yes" class="row mt-2 rounded bg-white" style="display:none;">
             <div class="col-1"></div>
             <button id="btnF" onclick="fiscalization()" class="col-10 btn btn-warning text-black rounded-pill">  </button>
