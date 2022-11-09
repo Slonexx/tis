@@ -62,9 +62,9 @@ class InstallOrDelete extends Command
             'concurrency' => count($accountIds) - $countFailSettings,
             'fulfilled' => function (Response $response) {
                 if ($response->getStatusCode() == 200) {
-                    dd($response->getBody()->getContents());
+                    //dd($response->getBody()->getContents());
                 } else {
-                    dd($response);
+                    //dd($response);
                 }
             },
             'rejected' => function ($reason) {
