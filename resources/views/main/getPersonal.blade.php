@@ -28,7 +28,7 @@
             @if( $item['status'] == 'активированный' )
                 <div class="col-2 text-white text-center bg-success mx-2 rounded"> {{$item['status']}} </div>
             @else
-                <div class="col-2 text-center bg-secondary mx-2 rounded"> {{$item['status']}} </div>
+                <div class="col-2 text-center bg-secondary mx-2 rounded text-white"> {{$item['status']}} </div>
             @endif
             <hr class="mt-1">
         @endforeach

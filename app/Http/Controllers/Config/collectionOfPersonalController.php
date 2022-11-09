@@ -11,7 +11,8 @@ use Illuminate\Http\Request;
 
 class collectionOfPersonalController extends Controller
 {
-    public function getCollection(Request $request, $accountId){
+    public function getCollection(Request $request, $accountId): \Illuminate\Http\JsonResponse
+    {
         $Setting = new getSettingVendorController($accountId);
         $getPersonal = new getPersonal($accountId);
 
@@ -39,7 +40,8 @@ class collectionOfPersonalController extends Controller
 
     }
 
-    public function getPersonal(){
+    public function getPersonal(): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Contracts\Foundation\Application
+    {
         $model = userLoadModel::all(['accountId', 'email', 'name', 'status'])->all();
         $Personals = null;
         foreach ($model as $item){

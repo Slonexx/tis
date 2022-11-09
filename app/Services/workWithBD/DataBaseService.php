@@ -32,6 +32,15 @@ class DataBaseService
         return $result;
     }
 
+    public static function updatePersonal($accountId, $email, $name, $status){
+        $find = userLoadModel::query()->where('accountId', $accountId);
+        $find->update([
+            'email' => $email,
+            'name' => $name,
+            'status' => $status,
+        ]);
+    }
+
     public static function createMainSetting($accountId, $tokenMs, $authtoken){
         mainSetting::create([
             'accountId' => $accountId,
