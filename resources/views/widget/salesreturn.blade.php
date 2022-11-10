@@ -34,6 +34,8 @@
 
                     if (json.ticket_id == null){
                         btnF.innerText = 'Возврат';
+                        window.document.getElementById('messageGoodAlert').style.display = 'none'
+                        window.document.getElementById("messageGoodAlert").innerText = ""
                     } else {
                         btnF.innerText = 'Действие с чеком';
                         window.document.getElementById('messageGoodAlert').style.display = 'block'
