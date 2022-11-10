@@ -147,6 +147,9 @@ class TicketService
                 'change' => (float) $change,
                 'amount' => (float) $cash,
             ];
+            if ($result[0]['change'] == 0){
+                unset($result[0]['change']);
+            }
             //dd($result);
         }
         if ( $card > 0 ) {

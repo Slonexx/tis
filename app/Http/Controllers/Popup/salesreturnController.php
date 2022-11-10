@@ -138,6 +138,8 @@ class salesreturnController extends Controller
             'positions' => $positions,
         ];
 
+        dd($body, json_encode($body));
+
         $Client = new Client();
         $url = 'https://smarttis.kz/api/ticket';
         //$url = 'http://tus/api/ticket';
