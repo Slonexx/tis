@@ -81,11 +81,23 @@
         }
 
 
-        function logSendingMessage(msg) {
-            var messageAsString = JSON.stringify(msg);
-            console.log("← Sending" + " message: " + messageAsString);
-        }
 
+
+        function cash_operation(params){
+
+            Global_messageId++;
+            var sendingMessage = {
+                name: "ShowPopupRequest",
+                messageId: Global_messageId,
+                popupName: "cash_operationPopup",
+                popupParameters: {
+                    params:params,
+                },
+            };
+            logSendingMessage(sendingMessage);
+            hostWindow.postMessage(sendingMessage, '*');
+
+        }
 
     </script>
 
@@ -101,9 +113,24 @@
 
         <div id="messageGoodAlert" class=" mt-1 mx-3 p-2 alert alert-success text-center " style="display: none; font-size: 12px; margin-bottom: 5px !important;">    </div>
 
-        <div id="workerAccess_yes" class="mt-1 mx-4 text-center" style="display:none;">
+    <div class="row">
+        <div id="" class="col-4">
+            <button id="" onclick="cash_operation('attachment')" class=" btn btn-warning text-white rounded-pill"> Внесение </button>
+        </div>
+        <div id="workerAccess_yes" class="col-4 mt-1 mx-4 text-center" style="display:none;">
             <button id="btnF" onclick="fiscalization()" class=" btn btn-warning text-white rounded-pill">  </button>
         </div>
+        <div id="" class="col-4">
+            <button id="" onclick="cash_operation('seizure')" class=" btn btn-warning text-white rounded-pill"> Изъятие </button>
+        </div>
+    </div>
 
+
+    <script>
+        function logSendingMessage(msg) {
+            var messageAsString = JSON.stringify(msg);
+            console.log("← Sending" + " message: " + messageAsString);
+        }
+    </script>
 
 @endsection
