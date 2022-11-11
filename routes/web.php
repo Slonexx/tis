@@ -51,6 +51,9 @@ Route::get('/widget/demand', [demandEditController::class, 'demand']);
 Route::get('/widget/salesreturn', [salesreturnEditController::class, 'salesreturn']);
 
 
+Route::get('/Popup/cash_operation', [fiscalizationController::class, 'fiscalizationPopup']);
+
+
 Route::get('/Popup/customerorder', [fiscalizationController::class, 'fiscalizationPopup']);
 Route::get('/Popup/customerorder/show', [fiscalizationController::class, 'ShowFiscalizationPopup']);
 Route::get('/Popup/customerorder/send', [fiscalizationController::class, 'SendFiscalizationPopup']);
