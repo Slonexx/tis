@@ -314,6 +314,16 @@ class TicketService
                     "value" => true,
                 ];
             }
+            if ($item->name == "ID (ukassa)" ) {
+                $Result_attributes[] = [
+                    "meta"=> [
+                        "href"=> $item->meta->href,
+                        "type"=> $item->meta->type,
+                        "mediaType"=> $postTicket->data->id,
+                    ],
+                    "value" => true,
+                ];
+            }
         }
         return $Result_attributes;
     }

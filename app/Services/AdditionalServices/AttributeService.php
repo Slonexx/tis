@@ -101,7 +101,14 @@ class AttributeService
                 "type" => "boolean",
                 "required" => false,
                 "description" => "Фискализация (ukassa)",
-            ]
+            ],
+            3 => [
+                "name" => "ID (ukassa)",
+                "type" => "string",
+                "required" => false,
+                "show" => false,
+                "description" => "уникальный идентификатор (ukassa)",
+            ],
         ];
     }
 

@@ -100,7 +100,7 @@
                 window.document.getElementById('message').style.display = "block"
                 modalShowHide = 'hide'
             }
-                if (money_cash <= parseFloat(window.document.getElementById('sum').innerText)){
+                if (money_cash <= parseFloat(window.document.getElementById('sum').innerText) - 0.01){
                     window.document.getElementById('messageAlert').innerText = 'Введите сумму больше !'
                     window.document.getElementById('message').style.display = "block"
                     modalShowHide = 'hide'
