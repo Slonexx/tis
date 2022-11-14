@@ -96,10 +96,10 @@
 
 
 
-        <div id="workerAccess_yes" class="col-4 mt-1 mx-4 text-center" style="display:none;">
+        <div id="workerAccess_yes" class="mt-1 mx-4 text-center" style="display:none;">
             <button id="btnF" onclick="fiscalization()" class=" btn btn-warning text-white rounded-pill">  </button>
         </div>
-       
+
 
 
     <script>
