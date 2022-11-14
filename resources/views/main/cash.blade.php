@@ -47,13 +47,19 @@
                     </select>
                 </div>
             </div>
-            <div class="input-group mt-1">
-                <div class="input-group-prepend">
-                    <span id="inputGroupText" class="input-group-text text-white bg-success">Введите сумму наличных</span>
-                </div>
-                <input id="inputSum" name="inputSum" onkeypress="return isNumber(event)" type="text" class="form-control" aria-label="" required>
-                <div class="input-group-append">
-                    <span class="input-group-text">.00</span>
+            <div class="row">
+                <div class="col-3"></div>
+                <div class="col-9">
+                    <div class="input-group mt-1">
+                        <div class="input-group-prepend">
+                            <span id="inputGroupText" class="input-group-text text-white bg-success">Введите сумму наличных</span>
+                        </div>
+                        <input id="inputSum" name="inputSum" onkeypress="return isNumber(event)" type="text" class="form-control" aria-label="" required>
+                        <div class="input-group-append">
+                            <span class="input-group-text">.00</span>
+                        </div>
+                    </div>
+
                 </div>
             </div>
 
