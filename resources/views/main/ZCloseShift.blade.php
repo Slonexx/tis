@@ -64,7 +64,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">закрыть</button>
-                    <button type="button" class="btn btn-primary">Распечатать</button>
+                    <button onclick="PrintCheck()" type="button" class="btn btn-primary">Распечатать</button>
                 </div>
             </div>
         </div>
