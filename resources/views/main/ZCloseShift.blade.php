@@ -76,6 +76,8 @@
         @isset($html) @php($showOrHide = 'show') @endisset
 
         let html = "{{$showOrHide}}"
+        let $accountId = '{{ $accountId }}'
+
         htmlVue(html)
         function htmlVue(parameter){
             if (parameter == 'show'){
