@@ -6,6 +6,7 @@ use App\Http\Controllers\Config\DeleteVendorApiController;
 use App\Http\Controllers\Popup\demandController;
 use App\Http\Controllers\Popup\fiscalizationController;
 use App\Http\Controllers\Popup\salesreturnController;
+use App\Http\Controllers\Web\cash_operationController;
 use App\Http\Controllers\Web\indexController;
 use App\Http\Controllers\Web\Setting\documentController;
 use App\Http\Controllers\Web\Setting\errorSettingController;
@@ -39,6 +40,8 @@ Route::post('/Setting/Kassa/{accountId}', [KassaController::class, 'postKassa'])
 Route::get('/Setting/Document/{accountId}', [documentController::class, 'getDocument'])->name('getDocument');
 Route::post('/Setting/Document/{accountId}', [documentController::class, 'postDocument']);
 
+Route::get('/operation/cash_operation/{accountId}', [cash_operationController::class, 'getCash']);
+Route::post('/operation/cash_operation/{accountId}', [cash_operationController::class, 'postCash']);
 
 Route::get('/get/createAuthToken/{accountId}', [mainController::class, 'createAuthToken']);
 
@@ -50,8 +53,6 @@ Route::get('/widget/customerorder', [customerorderEditController::class, 'custom
 Route::get('/widget/demand', [demandEditController::class, 'demand']);
 Route::get('/widget/salesreturn', [salesreturnEditController::class, 'salesreturn']);
 
-
-Route::get('/Popup/cash_operation', [fiscalizationController::class, 'fiscalizationPopup']);
 
 
 Route::get('/Popup/customerorder', [fiscalizationController::class, 'fiscalizationPopup']);

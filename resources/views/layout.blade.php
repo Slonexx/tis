@@ -23,6 +23,11 @@
                                                 <a href="/Setting/Document/{{$accountId}}?isAdmin={{ request()->isAdmin }}"> Документ </a>
                                                 {{--<a href="/Setting/Worker/{{$accountId}}?isAdmin={{ request()->isAdmin }}"> Сотрудники </a>--}}
                                             </div>
+                                            <button class="dropdown-btn">Смена <i class="fa fa-caret-down"></i> </button>
+                                            <div class="dropdown-container">
+                                                <a href="/operation/cash_operation/{{$accountId}}?isAdmin={{ request()->isAdmin }}"> Внесение/Изъятие </a>
+                                                <a href="/Setting/createAuthToken/{{$accountId}}?isAdmin={{ request()->isAdmin }}"> Отчёт </a>
+                                            </div>
                                     @endif
                                 @endif
                             </div>
