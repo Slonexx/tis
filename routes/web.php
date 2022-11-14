@@ -7,6 +7,7 @@ use App\Http\Controllers\Popup\demandController;
 use App\Http\Controllers\Popup\fiscalizationController;
 use App\Http\Controllers\Popup\salesreturnController;
 use App\Http\Controllers\Web\cash_operationController;
+use App\Http\Controllers\Web\close_z_shiftController;
 use App\Http\Controllers\Web\indexController;
 use App\Http\Controllers\Web\Setting\documentController;
 use App\Http\Controllers\Web\Setting\errorSettingController;
@@ -43,8 +44,12 @@ Route::post('/Setting/Document/{accountId}', [documentController::class, 'postDo
 Route::get('/operation/cash_operation/{accountId}', [cash_operationController::class, 'getCash']);
 Route::post('/operation/cash_operation/{accountId}', [cash_operationController::class, 'postCash']);
 
-Route::get('/get/createAuthToken/{accountId}', [mainController::class, 'createAuthToken']);
 
+Route::get('/operation/close_z_shift/{accountId}', [close_z_shiftController::class, 'getZShift']);
+Route::post('/operation/close_z_shift/{accountId}', [close_z_shiftController::class, 'postZShift']);
+Route::get('/operation/close_z_shift/print/{accountId}', [close_z_shiftController::class, 'printZShift']);
+
+Route::get('/get/createAuthToken/{accountId}', [mainController::class, 'createAuthToken']);
 
 
 Route::get('/widget/InfoAttributes/', [indexController::class, 'widgetInfoAttributes']);

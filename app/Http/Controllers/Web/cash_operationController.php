@@ -21,7 +21,7 @@ class cash_operationController extends Controller
         try {
             $get_user = $ClientTIS->GETClient($Config->apiURL_ukassa.'auth/get_user/');
         } catch (\Throwable $e){
-            return to_route('errorSetting', ['error' => $e->getMessage()]);
+            return to_route('errorSetting', ['accountId' => $accountId,  'isAdmin' => $isAdmin, 'error' => $e->getMessage()]);
         }
 
         $kassa = $get_user->user_kassas->kassa;
@@ -37,7 +37,8 @@ class cash_operationController extends Controller
     /**
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function postCash(Request $request, $accountId){
+    public function postCash(Request $request, $accountId): \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\Contracts\Foundation\Application
+    {
         $isAdmin = $request->isAdmin;
         $SettingBD = new getMainSettingBD($accountId);
         $Config = new globalObjectController();
@@ -47,7 +48,7 @@ class cash_operationController extends Controller
             $get_user = $Client->GETClient($Config->apiURL_ukassa.'auth/get_user/');
             $kassa = $get_user->user_kassas->kassa;
         } catch (BadResponseException  $e){
-            return to_route('errorSetting', ['error' => $e->getMessage()]);
+            return to_route('errorSetting', ['accountId' => $accountId,  'isAdmin' => $isAdmin, 'error' => $e->getMessage()]);
         }
 
 

@@ -76,11 +76,13 @@
         valueCash(window.document.getElementById('operations').value)
 
         function valueCash(value){
-            if (value === 0 ) {
+            if (value == 0 ) {
+                window.document.getElementById('cash').innerText = 'Внесение'
                 document.getElementById('inputGroupText').classList.add('bg-success')
                 document.getElementById('inputGroupText').classList.remove('bg-danger')
             }
-            if (value === 1) {
+            if (value == 1) {
+                window.document.getElementById('cash').innerText = 'Изъятие'
                 document.getElementById('inputGroupText').classList.add('bg-danger')
                 document.getElementById('inputGroupText').classList.remove('bg-success')
             }
