@@ -90,7 +90,7 @@
         }
         function PrintCheck(){
             //let url = 'http://rekassa/Popup/customerorder/closeShift';
-            let url = 'https://smarttis.kz/operation/close_z_shift/print/';
+            let url = 'https://smarttis.kz/operation/close_z_shift/print';
             let final = url + '/' + accountId;
             window.open(final)
         }
