@@ -88,7 +88,7 @@
             }
         }
         function PrintCheck(){
-            let url = 'https://smarttis.kz/kassa/get_shift_report/print/';
+            let url = 'https://smarttis.kz/kassa/get_shift_report/print';
             let final = url + '/' + accountId;
             window.open(final)
         }
