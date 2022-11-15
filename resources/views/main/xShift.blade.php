@@ -24,7 +24,7 @@
             </div>
 
         @endisset
-        <form class="mt-3" action="/operation/close_z_shift/{{ $accountId }}?isAdmin={{ $isAdmin }}" method="post">
+        <form class="mt-3" action="/kassa/get_shift_report/{{ $accountId }}?isAdmin={{ $isAdmin }}" method="post">
         @csrf <!-- {{ csrf_field() }} -->
 
             <div class="row">
