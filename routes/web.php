@@ -8,6 +8,7 @@ use App\Http\Controllers\Popup\fiscalizationController;
 use App\Http\Controllers\Popup\salesreturnController;
 use App\Http\Controllers\Web\cash_operationController;
 use App\Http\Controllers\Web\close_z_shiftController;
+use App\Http\Controllers\Web\get_shift_reportController;
 use App\Http\Controllers\Web\indexController;
 use App\Http\Controllers\Web\Setting\documentController;
 use App\Http\Controllers\Web\Setting\errorSettingController;
@@ -48,6 +49,10 @@ Route::post('/operation/cash_operation/{accountId}', [cash_operationController::
 Route::get('/operation/close_z_shift/{accountId}', [close_z_shiftController::class, 'getZShift']);
 Route::post('/operation/close_z_shift/{accountId}', [close_z_shiftController::class, 'postZShift']);
 Route::get('/operation/close_z_shift/print/{accountId}', [close_z_shiftController::class, 'printZShift']);
+
+Route::get('/kassa/get_shift_report/{accountId}', [get_shift_reportController::class, 'getXShift']);
+Route::post('/kassa/get_shift_report/{accountId}', [get_shift_reportController::class, 'postXShift']);
+Route::get('/kassa/get_shift_report/print/{accountId}', [get_shift_reportController::class, 'printXShift']);
 
 Route::get('/get/createAuthToken/{accountId}', [mainController::class, 'createAuthToken']);
 

@@ -26,6 +26,7 @@
                                             <button class="dropdown-btn">Смена <i class="fa fa-caret-down"></i> </button>
                                             <div class="dropdown-container">
                                                 <a href="/operation/cash_operation/{{$accountId}}?isAdmin={{ request()->isAdmin }}"> Внесение/Изъятие </a>
+                                                <a href="/kassa/get_shift_report/{{$accountId}}?isAdmin={{ request()->isAdmin }}"> X-отчёт </a>
                                                 <a href="/operation/close_z_shift/{{$accountId}}?isAdmin={{ request()->isAdmin }}"> Z-отчёт </a>
                                             </div>
                                     @endif
