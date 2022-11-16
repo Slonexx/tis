@@ -431,9 +431,9 @@
         }
 
         function openDown(){
-            $('#lDown').modal('show');
+            // $('#lDown').modal('show');
         }function closeDown(){
-            $('#lDown').modal('hide');
+            // $('#lDown').modal('hide');
             $('#downL').modal('hide');
         }
 
