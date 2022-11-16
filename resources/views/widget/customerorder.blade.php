@@ -101,8 +101,8 @@
 
         <div id="workerAccess_yes" class="mt-1 mx-4 text-center" style="display:none;">
             <div class="row">
-                <button id="TIS_search" onclick="getSearchToTIS()" class="col-6 btn btn-warning text-white rounded-pill" style="font-size: 14px"> Посмотреть в кассе </button>
                 <button id="btnF" onclick="fiscalization()" class="col-6 btn btn-warning text-white rounded-pill" style="font-size: 14px">  </button>
+                <button id="TIS_search" onclick="getSearchToTIS()" class="col-6 btn btn-warning text-white rounded-pill" style="font-size: 14px"> Посмотреть в кассе </button>
             </div>
         </div>
 
