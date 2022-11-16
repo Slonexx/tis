@@ -61,7 +61,7 @@ class indexController extends Controller
 
         if (property_exists($body, 'attributes')){
             foreach ($body->attributes as $item){
-                if ($item->name == 'фискальный номер (ukassa)'){
+                if ($item->name == 'фискальный номер (ТИС)'){
                     if ($item->value != null) $ticket_id = $item->value;
                     break;
                 }

@@ -50,7 +50,7 @@
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLongTitle">Z-отчёт</h5>
+                    <h5 class="modal-title" id="exampleModalLongTitle">X-отчёт</h5>
                     <div class="close" data-dismiss="modal" aria-label="Close" style="cursor: pointer;"><i class="fa-regular fa-circle-xmark"></i></div>
                 </div>
                 <div class="modal-body">

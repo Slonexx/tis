@@ -283,7 +283,7 @@ class TicketService
     {
         $Result_attributes = null;
         foreach ($attributes as $item) {
-            if ($item->name == "фискальный номер (ukassa)" ) {
+            if ($item->name == "фискальный номер (ТИС)" ) {
                 $Result_attributes[] = [
                     "meta"=> [
                         "href"=> $item->meta->href,

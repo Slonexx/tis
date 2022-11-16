@@ -85,29 +85,29 @@ class AttributeService
     {
         return [
             0 => [
-                "name" => "фискальный номер (ukassa)",
+                "name" => "фискальный номер (ТИС)",
                 "type" => "string",
                 "required" => false,
-                "description" => "фискальный номер (ukassa)",
+                "description" => "фискальный номер (ТИС)",
             ],
             1 => [
-                "name" => "Ссылка для QR-кода",
+                "name" => "Ссылка для QR-кода (ТИС)",
                 "type" => "link",
                 "required" => false,
-                "description" => "Ссылка для QR-кода (ukassa)",
+                "description" => "Ссылка для QR-кода (ТИС)",
             ],
             2 => [
-                "name" => "Фискализация (ukassa)",
+                "name" => "Фискализация (ТИС)",
                 "type" => "boolean",
                 "required" => false,
-                "description" => "Фискализация (ukassa)",
+                "description" => "Фискализация (ТИС)",
             ],
             3 => [
-                "name" => "ID (ukassa)",
+                "name" => "ID (ТИС)",
                 "type" => "string",
                 "required" => false,
                 "show" => false,
-                "description" => "уникальный идентификатор (ukassa)",
+                "description" => "уникальный идентификатор (ТИС)",
             ],
         ];
     }
@@ -115,10 +115,10 @@ class AttributeService
     public function getPayDocAttributes(){
         return [
             0 => [
-                "name" => "Фискализация (ukassa)",
+                "name" => "Фискализация (ТИС)",
                 "type" => "boolean",
                 "required" => false,
-                "description" => "Фискализация (ukassa)",
+                "description" => "Фискализация (ТИС)",
             ],
         ];
     }
