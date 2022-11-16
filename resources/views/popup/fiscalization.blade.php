@@ -224,12 +224,12 @@
             if (params === 'plus'){
                 object_Quantity.innerText = Quantity + 1
                 object_Final.innerText = object_Quantity.innerText * object_price
-                object_sum.innerText = parseFloat(sum + object_Final.innerText)
+                object_sum.innerText = parseFloat(sum + parseFloat(object_Final.innerText))
             }
             if (params === 'minus'){
                 object_Quantity.innerText = Quantity - 1
                 object_Final.innerText = object_Quantity.innerText * object_price
-                object_sum.innerText = parseFloat(sum + object_Final.innerText)
+                object_sum.innerText = parseFloat(sum + parseFloat(object_Final.innerText))
             }
         }
 
