@@ -26,7 +26,7 @@
                 };
                 let url = 'https://smarttis.kz/widget/InfoAttributes/';
                 let final = url + formatParams(params);
-
+                console.log('InfoAttributes = ' + final)
                 const xmlHttpRequest = new XMLHttpRequest();
                 xmlHttpRequest.addEventListener("load", function() {
                     var json = JSON.parse(this.responseText);
