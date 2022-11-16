@@ -31,15 +31,18 @@
                     var json = JSON.parse(this.responseText);
                     console.log(json.ticket_id);
                     let btnF = window.document.getElementById('btnF')
+                    let TIS_search = window.document.getElementById('TIS_search')
 
                     if (json.ticket_id == null){
-                        btnF.innerText = 'Возврат';
+                        btnF.innerText = 'Фискализация';
                         window.document.getElementById('messageGoodAlert').style.display = 'none'
                         window.document.getElementById("messageGoodAlert").innerText = ""
+                        TIS_search.style.display = 'none'
                     } else {
                         btnF.innerText = 'Действие с чеком';
                         window.document.getElementById('messageGoodAlert').style.display = 'block'
                         window.document.getElementById("messageGoodAlert").innerText = "Чек уже создан. Фискальный номер:  " + json.ticket_id
+                        TIS_search.style.display = 'block'
                     }
 
                     var sendingMessage = {
@@ -84,6 +87,10 @@
             console.log("← Sending" + " message: " + messageAsString);
         }
 
+        function getSearchToTIS(){
+            window.open('https://test.ukassa.kz/kassa/report/search/')
+        }
+
     </script>
 
 
@@ -99,7 +106,10 @@
     <div id="messageGoodAlert" class=" mt-1 mx-3 p-2 alert alert-success text-center " style="display: none; font-size: 12px; margin-bottom: 5px !important;">    </div>
 
     <div id="workerAccess_yes" class="mt-1 mx-4 text-center" style="display:none;">
-        <button id="btnF" onclick="fiscalization()" class=" btn btn-warning text-white rounded-pill">  </button>
+        <div class="row">
+            <button id="btnF" onclick="fiscalization()" class="col-6 btn btn-warning text-white rounded-pill" style="font-size: 14px">  </button>
+            <button id="TIS_search" onclick="getSearchToTIS()" class="col-6 btn btn-warning text-white rounded-pill" style="font-size: 14px"> Посмотреть в кассе </button>
+        </div>
     </div>
 
 
