@@ -67,7 +67,7 @@
 
                     if (json.attributes != null){
                         if (json.attributes.ticket_id != null){
-                            window.document.getElementById("ShowCheck").style.display = "block";
+                            //window.document.getElementById("ShowCheck").style.display = "block";
                             window.document.getElementById("refundCheck").style.display = "block";
                         } else {
                             window.document.getElementById("getKKM").style.display = "block";

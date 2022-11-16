@@ -31,15 +31,18 @@
                 xmlHttpRequest.addEventListener("load", function() {
                     var json = JSON.parse(this.responseText);
                     let btnF = window.document.getElementById('btnF')
+                    let TIS_search = window.document.getElementById('TIS_search')
 
                     if (json.ticket_id == null){
                         btnF.innerText = 'Фискализация';
                         window.document.getElementById('messageGoodAlert').style.display = 'none'
                         window.document.getElementById("messageGoodAlert").innerText = ""
+                        TIS_search.style.display = 'none'
                     } else {
                         btnF.innerText = 'Действие с чеком';
                         window.document.getElementById('messageGoodAlert').style.display = 'block'
                         window.document.getElementById("messageGoodAlert").innerText = "Чек уже создан. Фискальный номер:  " + json.ticket_id
+                        TIS_search.style.display = 'block'
                     }
 
                     var sendingMessage = {
@@ -97,7 +100,9 @@
 
 
         <div id="workerAccess_yes" class="mt-1 mx-4 text-center" style="display:none;">
-            <button id="btnF" onclick="fiscalization()" class=" btn btn-warning text-white rounded-pill">  </button>
+            <div class="col-1"></div>
+            <button id="TIS_search" onclick="getSearchToTIS()" class="col-6 btn btn-warning text-white rounded-pill"> Посмотреть в кассе </button>
+            <button id="btnF" onclick="fiscalization()" class="col-5 btn btn-warning text-white rounded-pill">  </button>
         </div>
 
 
@@ -106,6 +111,9 @@
         function logSendingMessage(msg) {
             var messageAsString = JSON.stringify(msg);
             console.log("← Sending" + " message: " + messageAsString);
+        }
+        function getSearchToTIS(){
+            window.open('https://test.ukassa.kz/kassa/report/search/')
         }
     </script>
 
