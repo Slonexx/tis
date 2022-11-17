@@ -79,4 +79,24 @@ class get_shift_reportController extends Controller
 
         return view( 'popup.print', [ 'html' => $result['html'] ] );
     }
+    public function infoXShift(Request $request, $accountId){
+        $SettingBD = new getMainSettingBD($accountId);
+        $Config = new globalObjectController();
+        $ClientTIS = new KassClient($SettingBD->authtoken);
+        try {
+            $body = ['kassa'=> $request->idKassa, 'html_code'=>false];
+            $close_shift = $ClientTIS->POSTClient($Config->apiURL_ukassa.'kassa/get_shift_report/', $body);
+
+            return response()->json([
+                'status' => true,
+                'shift' => $close_shift,
+            ]);
+
+        } catch (BadResponseException $e){
+            return response()->json([
+                'status' => false,
+                'error' => json_decode($e->getResponse()->getBody()->getContents())->message,
+            ]);
+        }
+    }
 }

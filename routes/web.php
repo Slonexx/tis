@@ -53,6 +53,7 @@ Route::get('/operation/close_z_shift/print/{accountId}', [close_z_shiftControlle
 Route::get('/kassa/get_shift_report/{accountId}', [get_shift_reportController::class, 'getXShift']);
 Route::post('/kassa/get_shift_report/{accountId}', [get_shift_reportController::class, 'postXShift']);
 Route::get('/kassa/get_shift_report/print/{accountId}', [get_shift_reportController::class, 'printXShift']);
+Route::get('/kassa/get_shift_report/info/{accountId}', [get_shift_reportController::class, 'infoXShift']);
 
 Route::get('/get/createAuthToken/{accountId}', [mainController::class, 'createAuthToken']);
 

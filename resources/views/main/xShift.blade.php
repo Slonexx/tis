@@ -29,13 +29,14 @@
 
             <div class="row">
                 <label for="idKassa" class="col-3 col-form-label"> Выберите кассу </label>
-                <div class="col-9">
-                    <select id="idKassa" name="idKassa" class="form-select text-black">
+                <div class="col-6">
+                    <select id="idKassa" name="idKassa" class="form-select text-black" onchange="get_activated()">
                         @foreach( $kassa as $item)
                             <option value="{{ $item->id }}"> {{ $item->name }} </option>
                         @endforeach
                     </select>
                 </div>
+                <div id="is_activated" class="col-3 bg-success text-white p-1 col-form-label text-center rounded"> загрузка... </div>
             </div>
 
 
@@ -93,6 +94,44 @@
             window.open(final)
         }
 
+        function formatParams(params) {
+            return "?" + Object
+                .keys(params)
+                .map(function (key) {
+                    return key + "=" + encodeURIComponent(params[key])
+                })
+                .join("&")
+        }
+
+        get_activated()
+
+        function get_activated(){
+            let idKassa = window.document.getElementById('idKassa').value
+            console.log(idKassa)
+
+            let params = {
+                idKassa: idKassa,
+            };
+            let url = 'https://smarttis.kz/kassa/get_shift_report/info/'+accountId;
+            let final = url + formatParams(params);
+
+            const xmlHttpRequest = new XMLHttpRequest();
+            xmlHttpRequest.addEventListener("load", function() {
+                var json = JSON.parse(this.responseText);
+                if (json.status == true){
+                    window.document.getElementById('is_activated').innerText = 'Активна'
+                    window.document.getElementById('is_activated').classList.add('bg-success')
+                    window.document.getElementById('is_activated').classList.add('text-white')
+                } else  {
+                    window.document.getElementById('is_activated').classList.add('bg-danger')
+                    window.document.getElementById('is_activated').innerText = "Смена закрыта"
+                }
+
+            });
+            xmlHttpRequest.open("GET", final);
+            xmlHttpRequest.send();
+
+        }
 
     </script>
 
