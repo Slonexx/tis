@@ -22,7 +22,7 @@ class KassaController extends Controller
             $get_user = $ClientTIS->GETClient($Config->apiURL_ukassa.'auth/get_user/');
             $department = $ClientTIS->GETClient($Config->apiURL_ukassa.'department');
         } catch (\Throwable $e){
-            return to_route('errorSetting', ['error' => $e->getMessage()]);
+            return to_route('errorSetting', ['accountId' => $accountId,  'isAdmin' => $isAdmin, 'error' => $e->getMessage()]);
         }
 
         $kassa = $get_user->user_kassas->kassa;

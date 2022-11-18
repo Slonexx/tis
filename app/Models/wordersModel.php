@@ -9,6 +9,7 @@ class wordersModel extends Model
 {
 
     protected $fillable = [
+        'id',
         'accountId',
         'access',
     ];

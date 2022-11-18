@@ -18,12 +18,13 @@
                                 <a id="link_2" href="/Setting/createAuthToken/{{$accountId}}?isAdmin={{ request()->isAdmin }}"> Основное </a>
                                 <a id="link_3" href="/Setting/Kassa/{{$accountId}}?isAdmin={{ request()->isAdmin }}"> Касса </a>
                                 <a id="link_4" href="/Setting/Document/{{$accountId}}?isAdmin={{ request()->isAdmin }}"> Документ </a>
+                                <a id="link_5" href="/Setting/Worker/{{$accountId}}?isAdmin={{ request()->isAdmin }}"> Доступ </a>
                             </div>
                             <button id="btn_2" class="mt-1 dropdown-btn">Смена <i class="fa fa-caret-down"></i> </button>
                             <div class="dropdown-container">
-                                <a id="link_5" href="/operation/cash_operation/{{$accountId}}?isAdmin={{ request()->isAdmin }}"> Внесение/Изъятие </a>
-                                <a id="link_6" href="/kassa/get_shift_report/{{$accountId}}?isAdmin={{ request()->isAdmin }}"> X-отчёт </a>
-                                <a id="link_7" href="/operation/close_z_shift/{{$accountId}}?isAdmin={{ request()->isAdmin }}"> Z-отчёт </a>
+                                <a id="link_6" href="/operation/cash_operation/{{$accountId}}?isAdmin={{ request()->isAdmin }}"> Внесение/Изъятие </a>
+                                <a id="link_7" href="/kassa/get_shift_report/{{$accountId}}?isAdmin={{ request()->isAdmin }}"> X-отчёт </a>
+                                <a id="link_8" href="/operation/close_z_shift/{{$accountId}}?isAdmin={{ request()->isAdmin }}"> Z-отчёт </a>
                             </div>
                         @endif
                     @endif
@@ -47,10 +48,10 @@
         let item = '@yield('item')'
 
         window.document.getElementById(item).classList.add('active_sprint')
-        if (item.replace(/[^+\d]/g, '') > 1 && item.replace(/[^+\d]/g, '') <= 4){
+        if (item.replace(/[^+\d]/g, '') > 1 && item.replace(/[^+\d]/g, '') <= 5){
            this_click(window.document.getElementById('btn_1'))
         }
-        if (item.replace(/[^+\d]/g, '') > 4 && item.replace(/[^+\d]/g, '') <= 7){
+        if (item.replace(/[^+\d]/g, '') > 5 && item.replace(/[^+\d]/g, '') <= 8){
             this_click(window.document.getElementById('btn_2'))
         }
 

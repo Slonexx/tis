@@ -1,5 +1,5 @@
 @extends('layout')
-@section('item', 'link_6')
+@section('item', 'link_7')
 @section('content')
 
     <div class="p-4 mx-1 mt-1 bg-white rounded py-3">

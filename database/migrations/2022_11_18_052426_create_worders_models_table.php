@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::create('worders_models', function (Blueprint $table) {
-            $table->id();
+            $table->string('id')->unique()->primary();
             $table->string('accountId');
             $table->foreign('accountId')->references('accountId')->on('main_settings')->cascadeOnDelete();
             $table->boolean('access');

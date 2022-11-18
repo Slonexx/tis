@@ -6,6 +6,8 @@ namespace App\Services\workWithBD;
 use App\Models\addSettingModel;
 use App\Models\mainSetting;
 use App\Models\userLoadModel;
+use App\Models\wordersModel;
+use App\Models\Worker;
 
 class DataBaseService
 {
@@ -17,7 +19,8 @@ class DataBaseService
             'status' => $status,
         ]);
     }
-    public static function showPersonal($accountId){
+    public static function showPersonal($accountId): array
+    {
         $find = userLoadModel::query()->where('accountId', $accountId)->first();
         try {
             $result = $find->getAttributes();
@@ -48,7 +51,8 @@ class DataBaseService
             'authtoken' => $authtoken,
         ]);
     }
-    public static function showMainSetting($accountId){
+    public static function showMainSetting($accountId): array
+    {
         $find = mainSetting::query()->where('accountId', $accountId)->first();
         try {
             $result = $find->getAttributes();
@@ -77,7 +81,8 @@ class DataBaseService
             'paymentDocument' => $paymentDocument,
         ]);
     }
-    public static function showDocumentSetting($accountId){
+    public static function showDocumentSetting($accountId): array
+    {
         $find = addSettingModel::query()->where('accountId', $accountId)->first();
         try {
             $result = $find->getAttributes();
@@ -90,5 +95,50 @@ class DataBaseService
             ];
         }
         return $result;
+    }
+
+    public static function getAccessByAccountId($accountId): array
+    {
+        $Workers = [];
+        $find = wordersModel::query()->where('accountId', $accountId)->get();
+
+        foreach ($find as $item) {
+            $json = json_encode($item->getAttributes());
+            $Workers[] = json_decode($json);
+        }
+
+        return $Workers;
+    }
+
+    public static function showWorkerFirst(mixed $id): array
+    {
+        $find = wordersModel::query()->where('id', $id)->first();
+        try {
+            $result = $find->getAttributes();
+        } catch (\Throwable $e) {
+            $result = [
+                'id' => $id,
+                'accountId' => null,
+                'access' => null,
+            ];
+        }
+        return $result;
+    }
+
+    public static function createWorker(mixed $id, mixed $accountId, mixed $access)
+    {
+        wordersModel::create([
+            'id' => $id,
+            'accountId' => $accountId,
+            'access' => $access,
+        ]);
+    }
+
+    public static function updateWorker(mixed $id, mixed $access)
+    {
+        $find = wordersModel::query()->where('id', $id);
+        $find->update([
+            'access' => $access,
+        ]);
     }
 }

@@ -10,6 +10,7 @@ use App\Http\Controllers\Web\cash_operationController;
 use App\Http\Controllers\Web\close_z_shiftController;
 use App\Http\Controllers\Web\get_shift_reportController;
 use App\Http\Controllers\Web\indexController;
+use App\Http\Controllers\Web\Setting\AccessController;
 use App\Http\Controllers\Web\Setting\documentController;
 use App\Http\Controllers\Web\Setting\errorSettingController;
 use App\Http\Controllers\Web\Setting\KassaController;
@@ -41,6 +42,12 @@ Route::post('/Setting/Kassa/{accountId}', [KassaController::class, 'postKassa'])
 
 Route::get('/Setting/Document/{accountId}', [documentController::class, 'getDocument'])->name('getDocument');
 Route::post('/Setting/Document/{accountId}', [documentController::class, 'postDocument']);
+
+
+Route::get('/Setting/Worker/{accountId}', [AccessController::class, 'getWorker'])->name('getWorker');
+Route::post('/Setting/Worker/{accountId}', [AccessController::class, 'postWorker']);
+
+
 
 Route::get('/operation/cash_operation/{accountId}', [cash_operationController::class, 'getCash']);
 Route::post('/operation/cash_operation/{accountId}', [cash_operationController::class, 'postCash']);

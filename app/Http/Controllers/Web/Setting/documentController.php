@@ -43,21 +43,13 @@ class documentController extends Controller
 
         try {
             DataBaseService::createDocumentSetting($accountId,$SettingBD->idKassa, $SettingBD->idDepartment, $request->paymentDocument);
-            $message["alert"] = " alert alert-success alert-dismissible fade show in text-center ";
-            $message["message"] = "Настройки сохранились!";
         } catch (\Throwable $e){
             $message["alert"] = " alert alert-danger alert-dismissible fade show in text-center ";
             $message["message"] = "Ошибка " . $e->getCode();
+            return redirect()->route('getWorker', [ 'accountId' => $accountId, 'isAdmin' => $isAdmin, 'message'=>$message ]);
         }
 
-        return view('setting.document', [
-            'accountId' => $accountId,
-            'isAdmin' => $isAdmin,
-
-            'paymentDocument' => $request->paymentDocument,
-
-            'message' => $message,
-        ]);
+        return redirect()->route('getWorker', [ 'accountId' => $accountId, 'isAdmin' => $isAdmin, 'message'=>"" ]);
     }
 
 }
