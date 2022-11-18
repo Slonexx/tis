@@ -1,5 +1,4 @@
 <style>
-
     .head-full {
         height: 720px;
     }
@@ -9,10 +8,6 @@
         color: #444444;
         font-size: 8pt;
         background-color: #FAFAFA;
-    }
-
-    .s-min-16 {
-        font-size: 16px;
     }
 
     .gradient{
@@ -52,6 +47,7 @@
         background-image: radial-gradient( circle farthest-corner at 10% 20%, rgb(174, 201, 5) 0%, rgb(151, 174, 4) 90% );
         border-radius: 10px 10px 0px 0px;
         color: white;
+        width: 100%;
     }
 
     /* Основное содержание */
@@ -60,12 +56,13 @@
         font-size: 18px; /* Увеличенный текст для включения прокрутки */
         padding: 0 10px;
     }
+
     /* Добавить активный класс для кнопки активного выпадающего списка */
-    .active {
-        background-image: radial-gradient( circle farthest-corner at 10% 20%, rgb(174, 201, 5) 0%, rgb(174, 201, 5) 90% );
-        margin-right: 50px;
-        border-radius: 10px 10px 0px 0px;
-        color: white;
+    .sidenav .active_sprint {
+        background-image: radial-gradient( circle farthest-corner at 10% 20%, rgb(174, 201, 5) 0%, rgb(151, 174, 4) 90% ) ;
+        border-radius: 10px 10px 0px 0px ;
+        color: white ;
+        width: 100% ;
     }
 
     /* Выпадающий контейнер (по умолчанию скрыт). Необязательно: добавьте более светлый цвет фона и некоторые левые отступы, чтобы изменить дизайн выпадающего содержимого */

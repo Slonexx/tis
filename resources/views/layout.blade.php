@@ -3,58 +3,68 @@
     @include('head')
     <body style="background-color:#dcdcdc;">
 
-            <div class="page headfull">
+           <div class="page headfull">
                 <div class="sidenav">
-
                     <div class="p-2 gradient pb-3 ">
                         <img src="https://test.ukassa.kz/_nuxt/img/d2b49fb.svg" width="90%"  alt="">
                     </div>
                     <br>
-                        <div class="toc-list-h1">
-                            <a class="mt-2 mb-2" href="/{{$accountId}}?isAdmin={{ request()->isAdmin }}">Главная </a>
-                            <div>
-                                @if ( request()->isAdmin == null )
-                                @else
-                                    @if( request()->isAdmin == 'ALL')
-                                            <button class="dropdown-btn">Настройки <i class="fa fa-caret-down"></i> </button>
-                                            <div class="dropdown-container">
-                                                <a href="/Setting/createAuthToken/{{$accountId}}?isAdmin={{ request()->isAdmin }}"> Основное </a>
-                                                <a href="/Setting/Kassa/{{$accountId}}?isAdmin={{ request()->isAdmin }}"> Касса </a>
-                                                <a href="/Setting/Document/{{$accountId}}?isAdmin={{ request()->isAdmin }}"> Документ </a>
-                                                {{--<a href="/Setting/Worker/{{$accountId}}?isAdmin={{ request()->isAdmin }}"> Сотрудники </a>--}}
-                                            </div>
-                                            <button class="dropdown-btn">Смена <i class="fa fa-caret-down"></i> </button>
-                                            <div class="dropdown-container">
-                                                <a href="/operation/cash_operation/{{$accountId}}?isAdmin={{ request()->isAdmin }}"> Внесение/Изъятие </a>
-                                                <a href="/kassa/get_shift_report/{{$accountId}}?isAdmin={{ request()->isAdmin }}"> X-отчёт </a>
-                                                <a href="/operation/close_z_shift/{{$accountId}}?isAdmin={{ request()->isAdmin }}"> Z-отчёт </a>
-                                            </div>
-                                    @endif
-                                @endif
-                            </div>
-                        </div>
-
-                    <div class="mt-2 mb-2" >
-                        <button class="dropdown-btn">Помощь <i class="fa fa-caret-down"></i> </button>
+                    <a id="link_1" href="/{{$accountId}}?isAdmin={{ request()->isAdmin }}">Главная </a>
+                    @if ( request()->isAdmin == null )
+                    @else
+                    @if( request()->isAdmin == 'ALL')
+                            <button id="btn_1" class="mt-1 dropdown-btn">Настройки <i class="fa fa-caret-down"></i> </button>
                             <div class="dropdown-container">
-                                <a target="_blank" href="https://smartrekassa.bitrix24.site/contact/">
-                                    <i class="fa-solid fa-address-book"></i>
-                                    Контакты </a>
-                                <a target="_blank" href="https://api.whatsapp.com/send/?phone=77232400545&text=" >
-                                    <i class="fa-brands fa-whatsapp"></i>
-                                    Написать на WhatsApp </a>
-                                <a target="_blank" href="https://smartrekassa.bitrix24.site/instruktsiiponastroyke" >
-                                    <i class="fa-solid fa-chalkboard-user"></i>
-                                     Инструкция </a>
+                                <a id="link_2" href="/Setting/createAuthToken/{{$accountId}}?isAdmin={{ request()->isAdmin }}"> Основное </a>
+                                <a id="link_3" href="/Setting/Kassa/{{$accountId}}?isAdmin={{ request()->isAdmin }}"> Касса </a>
+                                <a id="link_4" href="/Setting/Document/{{$accountId}}?isAdmin={{ request()->isAdmin }}"> Документ </a>
                             </div>
+                            <button id="btn_2" class="mt-1 dropdown-btn">Смена <i class="fa fa-caret-down"></i> </button>
+                            <div class="dropdown-container">
+                                <a id="link_5" href="/operation/cash_operation/{{$accountId}}?isAdmin={{ request()->isAdmin }}"> Внесение/Изъятие </a>
+                                <a id="link_6" href="/kassa/get_shift_report/{{$accountId}}?isAdmin={{ request()->isAdmin }}"> X-отчёт </a>
+                                <a id="link_7" href="/operation/close_z_shift/{{$accountId}}?isAdmin={{ request()->isAdmin }}"> Z-отчёт </a>
+                            </div>
+                        @endif
+                    @endif
+                    <button class="mt-1 dropdown-btn"> Помощь <i class="fa fa-caret-down"></i> </button>
+                    <div class="dropdown-container">
+                        <a target="_blank" href="https://smartrekassa.bitrix24.site/contact/">
+                            <i class="fa-solid fa-address-book"></i> Контакты </a>
+                        <a target="_blank" href="https://api.whatsapp.com/send/?phone=77232400545&text=" >
+                            <i class="fa-brands fa-whatsapp"></i> Написать на WhatsApp </a>
+                        <a target="_blank" href="https://smartrekassa.bitrix24.site/instruktsiiponastroyke" >
+                            <i class="fa-solid fa-chalkboard-user"></i> Инструкция </a>
                     </div>
-
                 </div>
-                <div class="main head-full"> @yield('content') </div>
-            </div>
-
+           </div>
+           <div class="main head-full" style=""> @yield('content') </div>
     </body>
 </html>
+
+<script>
+
+        let item = '@yield('item')'
+
+        window.document.getElementById(item).classList.add('active_sprint')
+        if (item.replace(/[^+\d]/g, '') > 1 && item.replace(/[^+\d]/g, '') <= 4){
+           this_click(window.document.getElementById('btn_1'))
+        }
+        if (item.replace(/[^+\d]/g, '') > 4 && item.replace(/[^+\d]/g, '') <= 7){
+            this_click(window.document.getElementById('btn_2'))
+        }
+
+        function this_click(btn){
+            btn.classList.toggle("active");
+            let dropdownContent = btn.nextElementSibling;
+            if (dropdownContent.style.display === "block") {
+                dropdownContent.style.display = "none";
+            } else {
+                dropdownContent.style.display = "block";
+            }
+        }
+
+</script>
 
 @include('style')
 @include('script')

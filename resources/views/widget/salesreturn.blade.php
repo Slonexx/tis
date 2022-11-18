@@ -107,8 +107,12 @@
 
     <div id="workerAccess_yes" class="mt-1 mx-4 text-center" style="display:none;">
         <div class="row">
-            <button id="btnF" onclick="fiscalization()" class="col-6 btn btn-warning text-white rounded-pill" style="font-size: 14px">  </button>
-            <button id="TIS_search" onclick="getSearchToTIS()" class="col-6 btn btn-warning text-white rounded-pill" style="font-size: 14px"> Посмотреть в кассе </button>
+            <div class="col-6">
+                <button id="btnF" onclick="fiscalization()" class="btn p-1 btn-warning text-white rounded-pill" style="font-size: 14px">  </button>
+            </div>
+            <div class="col-6">
+                <button id="TIS_search" onclick="getSearchToTIS()" class="btn p-1 btn-info text-white rounded-pill" style="font-size: 14px"> Посмотреть в кассе </button>
+            </div>
         </div>
     </div>
 

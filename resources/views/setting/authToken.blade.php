@@ -1,5 +1,5 @@
 @extends('layout')
-
+@section('item', 'link_2')
 @section('content')
     <script>
         //let url = 'https://tus/';

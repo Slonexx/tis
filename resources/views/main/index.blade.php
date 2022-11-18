@@ -1,11 +1,10 @@
 @extends('layout')
-
+@section('item', 'link_1')
 @section('content')
     <script>
         let url = 'https://tus/';
         //let url = 'https://smarttis.kz/';
         let accountId = '{{ $accountId }}'
-
     </script>
     <div class="p-4 mx-1 mt-1 bg-white rounded py-3">
         @if ( request()->isAdmin != null and request()->isAdmin != 'ALL' )
@@ -21,11 +20,6 @@
             <div class="row gradient rounded p-2 pb-3">
                 <div class="col-2"><img src="https://test.ukassa.kz/_nuxt/img/d2b49fb.svg" width="90%" height="90%"  alt=""></div>
                 <div class="col-8" style="margin-top: 0.9rem"> <span class="text-black" style="font-size: 18px"> Возможности интеграции </span></div>
-                {{--<div class="col-2 mt-2">
-                    <button onclick="sendCollection('show')" type="button" class="btn btn-outline-info text-black" data-toggle="modal">
-                        Сбор информации
-                    </button>
-                </div>--}}
             </div>
 
             <div class="row mt-3">
