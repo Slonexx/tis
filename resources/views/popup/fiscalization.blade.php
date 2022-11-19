@@ -239,7 +239,7 @@
     <div class="main-container">
         <div class="row gradient rounded p-2">
             <div class="col-3">
-                <div class="mx-2"> <img src="https://test.ukassa.kz/_nuxt/img/d2b49fb.svg" width="90%"  alt=""></div>
+                <div class="mx-2"> <img src="https://tisuchet.kz/images/Tis%20logo.svg" width="90%"  alt=""></div>
             </div>
             <div class="col-6 text-black " style="font-size: 22px; margin-top: 1.2rem !important;">
                 <span> Заказ покупателя № </span>

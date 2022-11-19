@@ -6,7 +6,7 @@
            <div class="page headfull">
                 <div class="sidenav">
                     <div class="p-2 gradient pb-3 ">
-                        <img src="https://test.ukassa.kz/_nuxt/img/d2b49fb.svg" width="90%"  alt="">
+                        <img src="https://tisuchet.kz/images/Tis%20logo.svg" width="90%"  alt="">
                     </div>
                     <br>
                     <a id="link_1" href="/{{$accountId}}?isAdmin={{ request()->isAdmin }}">Главная </a>

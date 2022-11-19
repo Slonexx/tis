@@ -44,7 +44,7 @@
 
     /* При наведении курсора мыши */
     .sidenav a:hover, .dropdown-btn:hover {
-        background-image: radial-gradient( circle farthest-corner at 10% 20%, rgb(174, 201, 5) 0%, rgb(151, 174, 4) 90% );
+        background-image: linear-gradient(147deg, #ffb13b 0%, #FF2525 74%);
         border-radius: 10px 10px 0px 0px;
         color: white;
         width: 100%;
@@ -59,7 +59,7 @@
 
     /* Добавить активный класс для кнопки активного выпадающего списка */
     .sidenav .active_sprint {
-        background-image: radial-gradient( circle farthest-corner at 10% 20%, rgb(174, 201, 5) 0%, rgb(151, 174, 4) 90% ) ;
+        background-image: linear-gradient(147deg, #ffb13b 0%, #FF2525 74%);
         border-radius: 10px 10px 0px 0px ;
         color: white ;
         width: 100% ;
