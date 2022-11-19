@@ -30,11 +30,11 @@
                     @endif
                     <button class="mt-1 dropdown-btn"> Помощь <i class="fa fa-caret-down"></i> </button>
                     <div class="dropdown-container">
-                        <a target="_blank" href="https://smartrekassa.bitrix24.site/contact/">
+                        <a target="_blank" href="https://smartuchettis.bitrix24.site/contact/">
                             <i class="fa-solid fa-address-book"></i> Контакты </a>
                         <a target="_blank" href="https://api.whatsapp.com/send/?phone=77232400545&text=" >
                             <i class="fa-brands fa-whatsapp"></i> Написать на WhatsApp </a>
-                        <a target="_blank" href="https://smartrekassa.bitrix24.site/instruktsiiponastroyke" >
+                        <a target="_blank" href="https://smartuchettis.bitrix24.site/instruktsiiponastroyke" >
                             <i class="fa-solid fa-chalkboard-user"></i> Инструкция </a>
                     </div>
                 </div>
