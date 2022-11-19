@@ -10,7 +10,8 @@ use function view;
 
 class customerorderEditController extends Controller
 {
-    public function customerorder(Request $request){
+    public function customerorder(Request $request): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Contracts\Foundation\Application
+    {
 
         $contextKey = $request->contextKey;
         $vendorAPI = new VendorApiController();

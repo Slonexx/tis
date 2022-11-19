@@ -33,7 +33,7 @@
 
     <div id="messageGoodAlert" class=" mt-1 mx-3 p-2 alert alert-success text-center " style="display: none; font-size: 12px; margin-bottom: 5px !important;">    </div>
 
-    <div id="workerAccess_no" class="row mt-2 rounded bg-white" style="display: none">
+    <div id="workerAccess_no" class="row mt-2 rounded bg-white">
         <div class="col-1"></div>
         <div class="col-10">
             <div class="text-center">
