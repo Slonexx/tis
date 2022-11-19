@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Widget;
 
+use App\Http\Controllers\BD\getWorkerID;
 use App\Http\Controllers\Config\Lib\VendorApiController;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -15,9 +16,15 @@ class customerorderEditController extends Controller
         $vendorAPI = new VendorApiController();
         $employee = $vendorAPI->context($contextKey);
         $accountId = $employee->accountId;
-        //$accountId = "1dd5bd55-d141-11ec-0a80-055600047495";
 
-        //$Workers = new getWorkerID($employee->id);
+
+        $Workers = new getWorkerID($employee->id);
+
+        if ($Workers->access == 0 or $Workers->access = null){
+            return view( 'widget.noAccess', [
+                'accountId' => $accountId,
+            ] );
+        }
 
         $entity = 'counterparty';
 
@@ -26,7 +33,6 @@ class customerorderEditController extends Controller
         return view( 'widget.customerorder', [
             'accountId' => $accountId,
             'entity' => $entity,
-            //'worker' => $Workers->access,
         ] );
     }
 }
