@@ -7,6 +7,7 @@ use App\Http\Controllers\Popup\demandController;
 use App\Http\Controllers\Popup\fiscalizationController;
 use App\Http\Controllers\Popup\salesreturnController;
 use App\Http\Controllers\Web\cash_operationController;
+use App\Http\Controllers\Web\changeController;
 use App\Http\Controllers\Web\close_z_shiftController;
 use App\Http\Controllers\Web\get_shift_reportController;
 use App\Http\Controllers\Web\indexController;
@@ -48,6 +49,8 @@ Route::get('/Setting/Worker/{accountId}', [AccessController::class, 'getWorker']
 Route::post('/Setting/Worker/{accountId}', [AccessController::class, 'postWorker']);
 
 
+
+Route::get('/kassa/change/{accountId}', [changeController::class, 'getChange']);
 
 Route::get('/operation/cash_operation/{accountId}', [cash_operationController::class, 'getCash']);
 Route::post('/operation/cash_operation/{accountId}', [cash_operationController::class, 'postCash']);

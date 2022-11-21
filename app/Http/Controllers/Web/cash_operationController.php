@@ -37,8 +37,10 @@ class cash_operationController extends Controller
     /**
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function postCash(Request $request, $accountId): \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\Contracts\Foundation\Application
+    public function postCash(Request $request, $accountId): \Illuminate\Http\JsonResponse
     {
+
+
         $isAdmin = $request->isAdmin;
         $SettingBD = new getMainSettingBD($accountId);
         $Config = new globalObjectController();
@@ -48,27 +50,33 @@ class cash_operationController extends Controller
             $get_user = $Client->GETClient($Config->apiURL_ukassa.'auth/get_user/');
             $kassa = $get_user->user_kassas->kassa;
         } catch (BadResponseException  $e){
-            return to_route('errorSetting', ['accountId' => $accountId,  'isAdmin' => $isAdmin, 'error' => $e->getMessage()]);
+
         }
+
 
 
         $Body = [
             'kassa' => $request->idKassa,
-            'operation_type' => $request->operations,
-            'amount' => $request->inputSum,
+            'operation_type' => $request->operation_type,
+            'amount' => $request->amount,
         ];
+
         try {
             $postBody = $Client->POSTClient($url, $Body);
-            return view('main.cash', [
-                'accountId' => $accountId,
-                'isAdmin' => $isAdmin,
+            return response()->json(
+                [
+                    'status' => true,
+                    'accountId' => $accountId,
+                    'isAdmin' => $isAdmin,
 
-                'kassa' => $kassa,
-                'message_good' => $postBody->message,
-            ]);
+                    'kassa' => $kassa,
+                    'message_good' => $postBody->message,
+                ]
+            );
         } catch (BadResponseException  $e){
 
-            return view('main.cash', [
+            return response()->json([
+                'status' => false,
                 'accountId' => $accountId,
                 'isAdmin' => $isAdmin,
 

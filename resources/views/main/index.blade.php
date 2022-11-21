@@ -17,9 +17,12 @@
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
 
-            <div class="row gradient rounded p-2 pb-3">
-                <div class="col-1"> </div>
-                <div class="col-8" style="margin-top: 0.5rem"> <span class="text-black" style="font-size: 18px"> Возможности интеграции </span></div>
+            <div class="row gradient rounded p-2 pb-2" style="margin-top: -1rem">
+                <div class="col-10" style="margin-top: 1.2rem"> <span class="text-black" style="font-size: 20px"> Возможности интеграции </span></div>
+                <div class="col-2 text-center">
+                    <img src="https://smarttis.kz/Config/logo.png" width="50%"  alt="">
+                    <div style="font-size: 11px; margin-top: 8px"> <b>Топ партнёр сервиса МойСклад</b> </div>
+                </div>
             </div>
 
             <div class="row mt-3">
