@@ -8,7 +8,7 @@
     </script>
     <div class="p-4 mx-1 mt-1 bg-white rounded py-3">
         @if ( request()->isAdmin != null and request()->isAdmin != 'ALL' )
-            <div class="mt-2 alert alert-danger alert-dismissible fade show in text-center  "> Доступ к настройкам есть только у администратора
+            <div class="mt-2 alert alert-danger alert-dismissible fade show in text-center "> Доступ к настройкам есть только у администратора
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         @endif
@@ -18,7 +18,7 @@
             </div>
 
             <div class="row gradient rounded p-2 pb-3">
-                <div class="col-2"><img src="https://tisuchet.kz/images/Tis%20logo.svg" width="90%" height="90%"  alt=""></div>
+                <div class="col-1"> </div>
                 <div class="col-8" style="margin-top: 0.5rem"> <span class="text-black" style="font-size: 18px"> Возможности интеграции </span></div>
             </div>
 
