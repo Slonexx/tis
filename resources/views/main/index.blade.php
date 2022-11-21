@@ -2,8 +2,8 @@
 @section('item', 'link_1')
 @section('content')
     <script>
-        let url = 'https://tus/';
-        //let url = 'https://smarttis.kz/';
+        //let url = 'https://tus/';
+        let url = 'https://smarttis.kz/';
         let accountId = '{{ $accountId }}'
     </script>
     <div class="p-4 mx-1 mt-1 bg-white rounded py-3">
