@@ -7,7 +7,7 @@
 
         //const url = 'http://tus/Popup/salesreturn/show';
 
-        const url = 'https://smarttis.kz/Popup/salesreturn/show';
+        const url = 'https://dev.smarttis.kz/Popup/salesreturn/show';
         let object_Id = '';
         let accountId = '';
         let entity_type = '';
@@ -125,7 +125,7 @@
             }
 
             //let url = 'https://tus/Popup/salesreturn/send'
-            let url = 'https://smarttis.kz/Popup/salesreturn/send'
+            let url = 'https://dev.smarttis.kz/Popup/salesreturn/send'
 
             if (modalShowHide === 'show'){
                 $('#downL').modal('toggle')
@@ -182,7 +182,7 @@
 
         function PrintCheck(){
             //let url = 'http://rekassa/Popup/salesreturn/closeShift';
-            let url = 'https://smarttis.kz/Popup/salesreturn/print';
+            let url = 'https://dev.smarttis.kz/Popup/salesreturn/print';
             let final = url + '/' + accountId;
             window.open(final)
         }

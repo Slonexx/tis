@@ -24,7 +24,7 @@
                     entity_type: entity_type,
                     objectId: Global_object_Id,
                 };
-                let url = 'https://smarttis.kz/widget/InfoAttributes/';
+                let url = 'https://dev.smarttis.kz/widget/InfoAttributes/';
                 let final = url + formatParams(params);
                 //console.log('InfoAttributes = ' + final)
                 const xmlHttpRequest = new XMLHttpRequest();
