@@ -1,8 +1,8 @@
 <?php
 
 return [
-    'appId' => '7bd5e7ce-8d4b-4225-9d8a-4a2568690121',
-    'appUid' => 'ukassa.smartinnovations',
-    'secretKey' => 'kh4M8ESbQmphrLVsYDqHO3qPVGi6MQexOWmu20QQVZia854ExZzcLdfTWuwiI3n0Ca3MoaFcF7HGPQWgn4DgMwjVz6JaisTsQ23xf56FSc3G1tE8oooTPiRjmrSZTKGn',
+    'appId' => '9875982f-c89b-4249-98f0-10143887bd17',
+    'appUid' => 'devukassa.smartinnovations',
+    'secretKey' => 'tlMzm6ZyD2YTCSjBEBkc95H7CZaGdosKN3jevnN3Orwf6eu3Rq7DEd6mgmFIOKOYbsFSk8EmVHuSafmZMY5cE4cUhIvjnLSERFft8dfAu4FZ768gCbEsbBqJh1t3fsoc',
     'appBaseUrl' => 'https://dev.smarttis.kz/',
 ];
