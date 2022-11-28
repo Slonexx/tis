@@ -56,8 +56,6 @@ class TicketService
 
         $Body = $this->setBodyToPostClient($Setting, $id_entity, $entity_type, $money_card, $money_cash, $payType, $total, $positions);
 
-        //dd($Body);
-
         if (isset($Body['Status'])) {
             return response()->json($Body['Message']);
         }
@@ -68,6 +66,10 @@ class TicketService
 
             $putBody = $this->putBodyMS($entity_type, $postTicket, $Client, $Setting, $oldBody, $positions);
             $put = $Client->put('https://online.moysklad.ru/api/remap/1.2/entity/'.$entity_type.'/'.$id_entity, $putBody);
+
+            //dd($putBody);
+
+            if ($payType == 'return'){$this->createReturnDocument($Setting, $put, $postTicket, $putBody, $entity_type); }
 
             if ($Setting->paymentDocument != null ){
                 $this->createPaymentDocument($Setting, $put);
@@ -260,15 +262,26 @@ class TicketService
 
     }
 
-    private function putBodyMS($entity_type, mixed $postTicket, MsClient $Client, getMainSettingBD $Setting, mixed $oldBody, mixed $positionsBody)
+    private function putBodyMS($entity_type, mixed $postTicket, MsClient $Client, getMainSettingBD $Setting, mixed $oldBody, mixed $positionsBody): array
     {   $result = null;
         $Result_attributes = null;
         $Resul_positions = null;
+        $check_attributes_in_value_name = false;
+        foreach ($oldBody->attributes as $item){
+            if ($item->name == 'Фискальный номер (ТИС)' and $item->name != ''){
+                $check_attributes_in_value_name = false;
+                break;
+            } else $check_attributes_in_value_name = true;
+        }
+
         $attributes = $Client->get('https://online.moysklad.ru/api/remap/1.2/entity/'.$entity_type.'/metadata/attributes/')->rows;
-        $Result_attributes = $this->setAttributesToPutBody($postTicket, $attributes);
+        $Result_attributes = $this->setAttributesToPutBody($postTicket, $check_attributes_in_value_name, $attributes);
 
         $positions = $Client->get($oldBody->positions->meta->href)->rows;
         $Resul_positions = $this->setPositionsToPutBody($postTicket, $positions, $positionsBody);
+
+
+
 
         if ($Result_attributes != null){
             $result['attributes'] = $Result_attributes;
@@ -279,11 +292,11 @@ class TicketService
         return $result;
     }
 
-    private function setAttributesToPutBody(mixed $postTicket, $attributes): array
+    private function setAttributesToPutBody(mixed $postTicket, bool $check_attributes, $attributes): array
     {
         $Result_attributes = null;
         foreach ($attributes as $item) {
-            if ($item->name == "фискальный номер (ТИС)" ) {
+            if ($item->name == "фискальный номер (ТИС)" and $check_attributes == true) {
                 $Result_attributes[] = [
                     "meta"=> [
                         "href"=> $item->meta->href,
@@ -413,6 +426,139 @@ class TicketService
                     ], ]
             ];
             $postBodyCreatePaymentin = $client->post($url, $body);
+        }
+
+    }
+
+    private function createReturnDocument(getMainSettingBD $Setting, mixed $newBody, mixed $putBody, mixed $oldBody, mixed $entity_type)
+    {
+
+        //dd($newBody);
+
+        $client = new MsClient($Setting->tokenMs);
+
+        $attributes_item = $client->get('https://online.moysklad.ru/api/remap/1.2/entity/salesreturn/metadata/attributes/')->rows;
+        $attributes = null;
+        $positions = null;
+        foreach ($attributes_item as $item){
+            if ($item->name == 'фискальный номер (ТИС)'){
+                $attributes[] = [
+                    'meta' => [
+                        'href' => $item->meta->href,
+                        'type' => $item->meta->type,
+                        'mediaType' => $item->meta->mediaType,
+                    ],
+                    'value' => $putBody->data->fixed_check,
+                ];
+            }
+            if ($item->name == 'Ссылка для QR-кода (ТИС)'){
+                $attributes[] = [
+                    'meta' => [
+                        'href' => $item->meta->href,
+                        'type' => $item->meta->type,
+                        'mediaType' => $item->meta->mediaType,
+                    ],
+                    'value' => $putBody->data->link,
+                ];
+            }
+            if ($item->name == 'Фискализация (ТИС)'){
+                $attributes[] = [
+                    'meta' => [
+                        'href' => $item->meta->href,
+                        'type' => $item->meta->type,
+                        'mediaType' => $item->meta->mediaType,
+                    ],
+                    'value' => true,
+                ];
+            }
+
+        }
+
+        foreach ($oldBody['positions'] as $item) {
+            unset($item['id']);
+            $positions[] = $item;
+        }
+
+        $url = 'https://online.moysklad.ru/api/remap/1.2/entity/salesreturn';
+
+        $body = [
+            'organization' => [
+              'meta' => [
+                  'href' => $newBody->organization->meta->href,
+                  'metadataHref' => $newBody->organization->meta->metadataHref,
+                  'type' => $newBody->organization->meta->type,
+                  'mediaType' => $newBody->organization->meta->mediaType,
+              ]
+            ],
+            'agent' =>[
+                'meta' => [
+                    'href' => $newBody->agent->meta->href,
+                    'metadataHref' => $newBody->agent->meta->metadataHref,
+                    'type' => $newBody->agent->meta->type,
+                    'mediaType' => $newBody->agent->meta->mediaType,
+                ]
+            ],
+            'attributes' => $attributes,
+            'positions' => $positions,
+            'description' => 'Созданный документ возврата с ',
+            'organizationAccount' => null,
+            'demand' => null,
+            'store' => null,
+        ];
+
+        if (isset($newBody->organizationAccount)){
+            $body['organizationAccount'] = [
+                'meta' => [
+                    'href' => $newBody->organizationAccount->meta->href,
+                    'type' => $newBody->organizationAccount->meta->type,
+                    'mediaType' => $newBody->organizationAccount->meta->mediaType,
+                ]
+            ];
+        } else { unlink($body['organizationAccount']); }
+
+        if (isset($newBody->store)){
+            $body['store'] = [
+                'meta' => [
+                    'href' => $newBody->store->meta->href,
+                    'metadataHref' => $newBody->store->meta->metadataHref,
+                    'type' => $newBody->store->meta->type,
+                    'mediaType' => $newBody->store->meta->mediaType,
+                ]
+            ];
+        } else { $store = $client->get('https://online.moysklad.ru/api/remap/1.2/entity/store')->rows[0];
+            $body['store'] = [
+                'meta' => [
+                    'href' => $store->meta->href,
+                    'metadataHref' => $store->meta->metadataHref,
+                    'type' => $store->meta->type,
+                    'mediaType' => $store->meta->mediaType,
+                ]
+            ];
+        }
+
+
+
+
+        if ($entity_type == 'customerorder'){
+            $body['description'] = $body['description'].'заказа покупателя, его номер:'. $newBody->name;
+            unset($body['demand']);
+        }
+
+        if ($entity_type == 'demand'){
+            $body['description'] = $body['description'].'отгрузка, его номер:'. $newBody->name;
+            $body['demand'] = [
+                'meta' => [
+                    'href' => $newBody->meta->href,
+                    'metadataHref' => $newBody->meta->metadataHref,
+                    'type' => $newBody->meta->type,
+                    'mediaType' => $newBody->meta->mediaType,
+                ]
+            ];
+        }
+        try {
+            $post = $client->post($url, $body);
+        } catch (BadResponseException $exception){
+
         }
 
     }
