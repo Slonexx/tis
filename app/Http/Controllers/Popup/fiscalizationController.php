@@ -137,7 +137,7 @@ class fiscalizationController extends Controller
             'positions' => $positions,
         ];
 
-        dd(($body), json_encode($body));
+        //dd(($body), json_encode($body));
 
         $Client = new Client();
         $url = 'https://dev.smarttis.kz/api/ticket';
