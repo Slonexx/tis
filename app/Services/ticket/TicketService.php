@@ -47,7 +47,7 @@ class TicketService
 
         $Setting = new getMainSettingBD($accountId);
 
-        //dd($data);
+        dd($data);
 
         $ClientTIS = new KassClient($Setting->authtoken);
         $Client = new MsClient($Setting->tokenMs);
