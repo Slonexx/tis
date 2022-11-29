@@ -60,12 +60,19 @@ class fiscalizationController extends Controller
             $uom_body = $Client->get($item->assortment->meta->href);
 
             if (property_exists($uom_body, 'uom')){
-               $propety_uom = true;
-               $uom = $Client->get($uom_body->uom->meta->href);
-               $uom = ['id' => $uom->code, 'name' => $uom->name];
+                $propety_uom = true;
             } else {
-                $propety_uom = false;
-                $uom = ['id' => 796, 'name' => 'шт'];
+                if (property_exists($uom_body, 'characteristics')){
+                    $check_uom = $Client->get($uom_body->product->meta->href);
+                    if (property_exists($check_uom, 'uom')){
+                        $propety_uom = true;
+                        $uom = $Client->get($check_uom->uom->meta->href);
+                        $uom = ['id' => $uom->code, 'name' => $uom->name];
+                    } else $propety_uom = false;
+                } else {
+                    $propety_uom = false;
+                    $uom = ['id' => 796, 'name' => 'шт'];
+                }
             }
 
 
