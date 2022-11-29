@@ -25,7 +25,6 @@ class fiscalizationController extends Controller
         $Setting = new getSettingVendorController($accountId);
 
         $json = $this->info_object_Id($object_Id, $Setting);
-        dd($json);
         return response()->json($json);
     }
 
