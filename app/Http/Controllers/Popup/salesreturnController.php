@@ -63,9 +63,13 @@ class salesreturnController extends Controller
             if (property_exists($uom_body, 'uom')){
                 $propety_uom = true;
                 $uom = $Client->get($uom_body->uom->meta->href);
-                $uom = ['id' => $uom->code, 'name' => $uom->name];
+                if (property_exists($uom, 'code')){
+                    $uom = ['id' => $uom->code, 'name' => $uom->name];
+                } else {
+                    $propety_uom = false;
+                    $uom = ['id' => 796, 'name' => 'шт'];
+                }
             } else {
-
                 if (property_exists($uom_body, 'characteristics')){
                     $check_uom = $Client->get($uom_body->product->meta->href);
 
