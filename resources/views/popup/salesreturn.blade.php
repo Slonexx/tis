@@ -20,7 +20,7 @@
                 "name":"OpenPopup","messageId":1,"popupName":"fiscalizationPopup","popupParameters":
                     {"object_Id":"4f4a2e5a-4f6c-11ed-0a80-09be0003f312","accountId":"1dd5bd55-d141-11ec-0a80-055600047495"}
             }; */
-            var receivedMessage = event.data;
+            let receivedMessage = event.data;
             newPopup();
             if (receivedMessage.name === 'OpenPopup') {
                 object_Id = receivedMessage.popupParameters.object_Id;
@@ -95,89 +95,88 @@
             let SelectorInfo = document.getElementById('valueSelector')
             let option = SelectorInfo.options[SelectorInfo.selectedIndex]
 
-            if (option.value == 0){if (!money_cash) {
-                window.document.getElementById('messageAlert').innerText = 'Вы не ввели сумму наличных'
-                window.document.getElementById('message').style.display = "block"
-                modalShowHide = 'hide'
-            }
-                if (money_cash <= parseFloat(window.document.getElementById('sum').innerText) - 0.01){
-                    window.document.getElementById('messageAlert').innerText = 'Введите сумму больше !'
+            if (option.value == 0){
+                if (!money_cash) {
+                    window.document.getElementById('messageAlert').innerText = 'Вы не ввели сумму наличных'
                     window.document.getElementById('message').style.display = "block"
                     modalShowHide = 'hide'
                 }
             }
-            if (option.value == 1){if (!money_card) {
-                window.document.getElementById('messageAlert').innerText = 'Вы не ввели сумму карты'
-                window.document.getElementById('message').style.display = "block"
-                modalShowHide = 'hide'
-            }
-            }
-            if (option.value == 2){if (!money_card && !money_cash){
-                window.document.getElementById('messageAlert').innerText = 'Вы не ввели сумму'
-                window.document.getElementById('message').style.display = "block"
-                modalShowHide = 'hide'
-                if (money_card + money_cash < parseFloat(window.document.getElementById('sum').innerText)){
-                    window.document.getElementById('messageAlert').innerText = 'Введите сумму больше !'
+            if (option.value == 1){
+                if (!money_card) {
+                    window.document.getElementById('messageAlert').innerText = 'Вы не ввели сумму карты'
                     window.document.getElementById('message').style.display = "block"
                     modalShowHide = 'hide'
                 }
             }
+            if (option.value == 2){
+                if (!money_card && !money_cash){
+                    window.document.getElementById('messageAlert').innerText = 'Вы не ввели сумму'
+                    window.document.getElementById('message').style.display = "block"
+                    modalShowHide = 'hide'
+                }
             }
+            if (total-0.01 <= money_card+money_cash){
+                //let url = 'https://tus/Popup/salesreturn/send'
+                let url = 'https://smarttis.kz/Popup/salesreturn/send'
 
-            //let url = 'https://tus/Popup/salesreturn/send'
-            let url = 'https://smarttis.kz/Popup/salesreturn/send'
-
-            if (modalShowHide === 'show'){
-                $('#downL').modal('toggle')
-                let products = []
-                for (let i = 0; i < 20; i++) {
-                    if ( window.document.getElementById(i).style.display === 'block' ) {
-                        products[i] = {
-                            id:window.document.getElementById('productId_'+i).innerText,
-                            name:window.document.getElementById('productName_'+i).innerText,
-                            quantity:window.document.getElementById('productQuantity_'+i).innerText,
-                            UOM:window.document.getElementById('productIDUOM_'+i).innerText,
-                            price:window.document.getElementById('productPrice_'+i).innerText,
-                            is_nds:window.document.getElementById('productVat_'+i).innerText,
-                            discount:window.document.getElementById('productDiscount_'+i).innerText
+                if (modalShowHide === 'show'){
+                    $('#downL').modal('toggle')
+                    let products = []
+                    for (let i = 0; i < 20; i++) {
+                        if ( window.document.getElementById(i).style.display === 'block' ) {
+                            products[i] = {
+                                id:window.document.getElementById('productId_'+i).innerText,
+                                name:window.document.getElementById('productName_'+i).innerText,
+                                quantity:window.document.getElementById('productQuantity_'+i).innerText,
+                                UOM:window.document.getElementById('productIDUOM_'+i).innerText,
+                                price:window.document.getElementById('productPrice_'+i).innerText,
+                                is_nds:window.document.getElementById('productVat_'+i).innerText,
+                                discount:window.document.getElementById('productDiscount_'+i).innerText
+                            }
                         }
                     }
+                    let params = {
+                        accountId: accountId,
+                        object_Id: object_Id,
+                        entity_type: entity_type,
+                        money_card: money_card,
+                        money_cash: money_cash,
+                        //money_mobile: money_mobile,
+                        pay_type: pay_type,
+                        total: total,
+                        position: JSON.stringify(products),
+                    };
+                    let final = url + formatParams(params);
+                    console.log('send to kkm = ' + final);
+                    let xmlHttpRequest = new XMLHttpRequest();
+                    xmlHttpRequest.addEventListener("load", function () {
+                        $('#downL').modal('hide');
+                        let json = JSON.parse(this.responseText);
+                        if (json.status === 'Ticket created'){
+                            window.document.getElementById("messageGoodAlert").innerText = "Чек создан";
+                            window.document.getElementById("messageGood").style.display = "block";
+                            window.document.getElementById("ShowCheck").style.display = "block";
+                            modalShowHide = 'hide';
+                            html = json.postTicket.data.html
+                        } else {
+                            window.document.getElementById('messageAlert').innerText = json.errors.message;
+                            window.document.getElementById('message').style.display = "block";
+                            window.document.getElementById(button_hide).style.display = "block";
+                            modalShowHide = 'hide';
+                        }
+                    });
+                    xmlHttpRequest.open("GET", final);
+                    xmlHttpRequest.send();
+                    modalShowHide = 'hide';
                 }
-                let params = {
-                    accountId: accountId,
-                    object_Id: object_Id,
-                    entity_type: entity_type,
-                    money_card: money_card,
-                    money_cash: money_cash,
-                    //money_mobile: money_mobile,
-                    pay_type: pay_type,
-                    total: total,
-                    position: JSON.stringify(products),
-                };
-                let final = url + formatParams(params);
-                console.log('send to kkm = ' + final);
-                let xmlHttpRequest = new XMLHttpRequest();
-                xmlHttpRequest.addEventListener("load", function () {
-                    $('#downL').modal('hide');
-                    let json = JSON.parse(this.responseText);
-                    if (json.status === 'Ticket created'){
-                        window.document.getElementById("messageGoodAlert").innerText = "Чек создан";
-                        window.document.getElementById("messageGood").style.display = "block";
-                        window.document.getElementById("ShowCheck").style.display = "block";
-                        modalShowHide = 'hide';
-                        html = json.postTicket.data.html
-                    } else {
-                        window.document.getElementById('messageAlert').innerText = json.errors.message;
-                        window.document.getElementById('message').style.display = "block";
-                        window.document.getElementById(button_hide).style.display = "block";
-                        modalShowHide = 'hide';
-                    }
-                });
-                xmlHttpRequest.open("GET", final);
-                xmlHttpRequest.send();
-                modalShowHide = 'hide';
+                else window.document.getElementById(button_hide).style.display = "block"
+            } {
+                window.document.getElementById('messageAlert').innerText = 'Введите сумму больше !'
+                window.document.getElementById('message').style.display = "block"
+                window.document.getElementById(button_hide).style.display = "block";
+                modalShowHide = 'hide'
             }
-            else window.document.getElementById(button_hide).style.display = "block"
         }
 
         function PrintCheck(){
