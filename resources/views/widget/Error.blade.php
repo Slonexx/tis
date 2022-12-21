@@ -17,7 +17,7 @@
         <div class="col-1"></div>
         <div class="col-10">
             <div class="text-center">
-                <div class="p-3 mt-1 bg-danger text-white">
+                <div class="p-2 bg-danger text-white" style="padding-bottom: 1.5rem !important;">
                     <span id="errorMessage" class="s-min-10">
 
                     </span>
@@ -28,13 +28,22 @@
     </div>
 
 
+    <script>
+
+        let app = @json($message);
+
+        if (app.length > 0) {
+            for (let index = 0; index < app.length; index++){
+                let old = window.document.getElementById('errorMessage').innerText;
+                window.document.getElementById('errorMessage').innerText = old + "\n" + app[index]
+            }
+        }
+
+
+    </script>
+
 
 @endsection
-
-<script>
-    window.document.getElementById('errorMessage').innerText = '{{$message}}'
-    console.log('{{$message}}');
-</script>
 
 <style>
     .s-min-10 {

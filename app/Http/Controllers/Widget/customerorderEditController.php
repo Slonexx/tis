@@ -36,11 +36,20 @@ class customerorderEditController extends Controller
             ] );
 
         } catch (BadResponseException $e){
-            dd(json_decode($e->getResponse()->getBody()->getContents())->message,);
+
+            $error = json_decode($e->getResponse()->getBody()->getContents());
+            if (property_exists($error, 'errors')) {
+                foreach ($error->errors as $item){
+                    $message[] = $item->error;
+                }
+            } else {
+                $message[] = $error;
+            }
+
             return view( 'widget.Error', [
                 'status' => false,
                 'code' => 400,
-                'message' => json_decode($e->getResponse()->getBody()->getContents())->message,
+                'message' => $message,
             ] );
         }
 
