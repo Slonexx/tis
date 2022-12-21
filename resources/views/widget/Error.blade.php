@@ -32,7 +32,7 @@
 @endsection
 
 <script>
-    window.document.getElementById('errorMessage').innerText =
+    window.document.getElementById('errorMessage').innerText = '{{$message}}'
 </script>
 
 <style>
