@@ -33,6 +33,7 @@
 
 <script>
     window.document.getElementById('errorMessage').innerText = '{{$message}}'
+    console.log('{{$message}}');
 </script>
 
 <style>
