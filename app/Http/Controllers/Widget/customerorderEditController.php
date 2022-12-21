@@ -21,6 +21,11 @@ class customerorderEditController extends Controller
             $employee = $vendorAPI->context($request->contextKey);
             $accountId = $employee->accountId;
 
+            dd($vendorAPI);
+
+            //$accountId = "1dd5bd55-d141-11ec-0a80-055600047495";
+
+            //$Workers = new getWorkerID($accountId);
             $Workers = new getWorkerID($employee->id);
 
             $Setting = new getSettingVendorController($accountId);
