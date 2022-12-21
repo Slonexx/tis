@@ -29,7 +29,7 @@
 
 
     <script>
-
+        const hostWindow = window.parent
         let app = @json($message);
 
         if (app.length > 0) {
