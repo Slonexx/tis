@@ -16,16 +16,15 @@ class customerorderEditController extends Controller
 {
     public function customerorder(Request $request): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Contracts\Foundation\Application
     {
-
-        $contextKey = $request->contextKey;
-        $vendorAPI = new VendorApiController();
-        $employee = $vendorAPI->context($contextKey);
-        $accountId = $employee->accountId;
-
-        $Workers = new getWorkerID($employee->id);
-
-        $Setting = new getSettingVendorController($accountId);
         try {
+            $vendorAPI = new VendorApiController();
+            $employee = $vendorAPI->context($request->contextKey);
+            $accountId = $employee->accountId;
+
+            $Workers = new getWorkerID($employee->id);
+
+            $Setting = new getSettingVendorController($accountId);
+
             $Client = new MsClient($Setting->TokenMoySklad);
             $body = $Client->get("https://online.moysklad.ru/api/remap/1.2/entity/employee");
 
