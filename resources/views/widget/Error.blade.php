@@ -39,6 +39,15 @@
             }
         }
 
+        window.addEventListener("message", function(event) {
+            const receivedMessage = event.data;
+            let sendingMessage = {
+                name: "OpenFeedback",
+                correlationId: receivedMessage.messageId
+            };
+            hostWindow.postMessage(sendingMessage, '*');
+
+        })
 
     </script>
 
