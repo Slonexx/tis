@@ -28,7 +28,16 @@ class customerorderEditController extends Controller
         try {
             $Client = new MsClient($Setting->TokenMoySklad);
             $body = $Client->get("https://online.moysklad.ru/api/remap/1.2/entity/employee");
+
+            if ($Workers->access == 0 or $Workers->access = null){ return view( 'widget.noAccess', ['accountId' => $accountId, ] ); }
+
+            return view( 'widget.customerorder', [
+                'accountId' => $accountId,
+                'entity' => 'counterparty',
+            ] );
+
         } catch (BadResponseException $e){
+            dd(json_decode($e->getResponse()->getBody()->getContents())->message,);
             return view( 'widget.Error', [
                 'status' => false,
                 'code' => 400,
@@ -36,19 +45,5 @@ class customerorderEditController extends Controller
             ] );
         }
 
-        if ($Workers->access == 0 or $Workers->access = null){
-            return view( 'widget.noAccess', [
-                'accountId' => $accountId,
-            ] );
-        }
-
-        $entity = 'counterparty';
-
-
-
-        return view( 'widget.customerorder', [
-            'accountId' => $accountId,
-            'entity' => $entity,
-        ] );
     }
 }
