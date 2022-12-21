@@ -12,15 +12,16 @@
 
         </div>
     </div>
+
     <div class="row mt-4 rounded bg-white">
         <div class="col-1"></div>
         <div class="col-10">
             <div class="text-center">
-                <div class="p-3 mb-2 bg-danger text-white">
-                    <span class="s-min-10">
-                        Настройки фискализации не были пройдены
-                        <i class="fa-solid fa-ban "></i>
+                <div class="p-3 mt-1 bg-danger text-white">
+                    <span id="errorMessage" class="s-min-10">
+
                     </span>
+                    <span> <i class="fa-solid fa-ban "></i></span>
                 </div>
             </div>
         </div>
@@ -29,3 +30,13 @@
 
 
 @endsection
+
+<script>
+    window.document.getElementById('errorMessage').innerText =
+</script>
+
+<style>
+    .s-min-10 {
+        font-size: 10px;
+    }
+</style>
