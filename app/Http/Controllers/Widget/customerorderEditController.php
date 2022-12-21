@@ -14,14 +14,12 @@ use function view;
 
 class customerorderEditController extends Controller
 {
-    public function customerorder(Request $request): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Contracts\Foundation\Application
+    public function customerorder(Request $request)
     {
         try {
             $vendorAPI = new VendorApiController();
             $employee = $vendorAPI->context($request->contextKey);
             $accountId = $employee->accountId;
-
-            dd($vendorAPI);
 
             //$accountId = "1dd5bd55-d141-11ec-0a80-055600047495";
 
