@@ -137,26 +137,32 @@
                             }
                         }
                     }
-                    let params = {
-                        accountId: accountId,
-                        object_Id: object_Id,
-                        entity_type: entity_type,
 
-                        money_card: money_card,
-                        money_cash: money_cash,
-                        //money_mobile: money_mobile,
+                    let settings = {
+                        "url": url,
+                        "method": "GET",
+                        "timeout": 0,
+                        "headers": {"Content-Type": "application/json",},
+                        "data": {
+                            "accountId": accountId,
+                            "object_Id": object_Id,
+                            "entity_type": entity_type,
 
-                        pay_type: pay_type,
-                        total: total,
+                            "money_card": money_card,
+                            "money_cash": money_cash,
 
-                        position: JSON.stringify(products),
+                            "pay_type": pay_type,
+                            "total": total,
+
+                            "position": JSON.stringify(products),
+                        },
                     };
-                    let final = url + formatParams(params);
-                    console.log('send to kkm = ' + final);
-                    let xmlHttpRequest = new XMLHttpRequest();
-                    xmlHttpRequest.addEventListener("load", function () {
-                        $('#downL').modal('hide');
-                        let json = JSON.parse(this.responseText);
+                    console.log("settings = " + settings);
+
+                    $.ajax(settings).done(function (response) {
+                        $('#downL').modal('hide')
+                        let json = response
+
                         if (json.status === 'Ticket created'){
                             window.document.getElementById("messageGoodAlert").innerText = "Чек создан";
                             window.document.getElementById("messageGood").style.display = "block";
@@ -169,9 +175,8 @@
                             window.document.getElementById(button_hide).style.display = "block";
                             modalShowHide = 'hide';
                         }
+
                     });
-                    xmlHttpRequest.open("GET", final);
-                    xmlHttpRequest.send();
                     modalShowHide = 'hide';
                 }
                 else window.document.getElementById(button_hide).style.display = "block"
