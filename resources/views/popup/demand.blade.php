@@ -171,7 +171,7 @@
                     modalShowHide = 'hide';
                 }
                 else window.document.getElementById(button_hide).style.display = "block"
-            } {
+            } else {
                 window.document.getElementById('messageAlert').innerText = 'Введите сумму больше !'
                 window.document.getElementById('message').style.display = "block"
                 window.document.getElementById(button_hide).style.display = "block";
