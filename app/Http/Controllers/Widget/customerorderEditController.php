@@ -14,7 +14,7 @@ use function view;
 
 class customerorderEditController extends Controller
 {
-    public function customerorder(Request $request): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Contracts\Foundation\Application
+    public function customerorder(Request $request)
     {
         try {
             $vendorAPI = new VendorApiController();
@@ -31,9 +31,7 @@ class customerorderEditController extends Controller
             $Client = new MsClient($Setting->TokenMoySklad);
             $body = $Client->get("https://online.moysklad.ru/api/remap/1.2/entity/employee");
 
-            if ($Workers->access == 0 or $Workers->access = null){
-                return view( 'widget.noAccess', ['accountId' => $accountId, ] );
-            }
+            if ($Workers->access == 0 or $Workers->access = null){ return view( 'widget.noAccess', ['accountId' => $accountId, ] ); }
 
             return view( 'widget.customerorder', [
                 'accountId' => $accountId,
