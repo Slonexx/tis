@@ -11,11 +11,11 @@
 
         window.addEventListener("message", function(event) {
             const receivedMessage = event.data;
-                    var sendingMessage = {
-                        name: "OpenFeedback",
-                        correlationId: receivedMessage.messageId
-                    };
-                    hostWindow.postMessage(sendingMessage, '*');
+            let sendingMessage = {
+                name: "OpenFeedback",
+                correlationId: receivedMessage.messageId
+            };
+            hostWindow.postMessage(sendingMessage, '*');
         });
 
 

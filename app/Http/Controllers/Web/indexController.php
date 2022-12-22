@@ -8,6 +8,7 @@ use App\Http\Controllers\Config\getSettingVendorController;
 use App\Http\Controllers\Config\Lib\VendorApiController;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\getData\getSetting;
+use GuzzleHttp\Exception\BadResponseException;
 use Illuminate\Http\Request;
 
 class indexController extends Controller
@@ -15,13 +16,13 @@ class indexController extends Controller
     public function Index(Request $request)
     {
 
-           $contextKey = $request->contextKey;
-            if ($contextKey == null) {
-                return view("main.dump");
-            }
-            $vendorAPI = new VendorApiController();
-            $employee = $vendorAPI->context($contextKey);
-            $accountId = $employee->accountId;
+        $contextKey = $request->contextKey;
+        if ($contextKey == null) {
+            return view("main.dump");
+        }
+        $vendorAPI = new VendorApiController();
+        $employee = $vendorAPI->context($contextKey);
+        $accountId = $employee->accountId;
 
         $isAdmin = $employee->permissions->admin->view;
 
@@ -56,8 +57,16 @@ class indexController extends Controller
 
         $url = $this->getUrlEntity($entity_type, $objectId);
         $Setting = new getSettingVendorController($accountId);
-        $Client = new MsClient($Setting->TokenMoySklad);
-        $body = $Client->get($url);
+        try {
+            $Client = new MsClient($Setting->TokenMoySklad);
+            $body = $Client->get($url);
+        } catch (BadResponseException $e){
+            return view( 'widget.Error', [
+                'status' => false,
+                'code' => 400,
+                'message' => json_decode($e->getResponse()->getBody()->getContents())->message,
+            ] );
+        }
 
         if (property_exists($body, 'attributes')){
             foreach ($body->attributes as $item){
