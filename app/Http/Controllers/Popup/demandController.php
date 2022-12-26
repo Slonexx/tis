@@ -153,9 +153,9 @@ class demandController extends Controller
         ];
 
         //dd(($body), json_encode($body));
-
+        return app(TicketController::class)->CreateTicketResponse($body);
         try {
-            return app(TicketController::class)->CreateTicketResponse($body);
+
 
         } catch (\Throwable $e){
             //dd($e->getCode());

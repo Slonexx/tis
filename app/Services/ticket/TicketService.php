@@ -198,7 +198,7 @@ class TicketService
 
 
                     foreach ($demandPos as $item_2){
-                        if ($item['id'] == $item_2->id){
+                        if ($item->id == $item_2->id){
                             if (isset($item_2->trackingCodes)){
                                 array_pop($result);
                                 foreach ($item_2->trackingCodes as $code){
