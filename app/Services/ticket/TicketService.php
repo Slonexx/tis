@@ -10,6 +10,7 @@ use App\Models\htmlResponce;
 use App\Services\AdditionalServices\DocumentService;
 use App\Services\MetaServices\MetaHook\AttributeHook;
 use GuzzleHttp\Exception\BadResponseException;
+use GuzzleHttp\Exception\ClientException;
 
 class TicketService
 {
@@ -29,8 +30,10 @@ class TicketService
 
     // Create ticket
 
-    public function createTicket($data): \Illuminate\Http\JsonResponse
-    {
+    /**
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function createTicket($data) {
         $accountId = $data['accountId'];
         $id_entity = $data['id_entity'];
         $entity_type = $data['entity_type'];
@@ -43,6 +46,8 @@ class TicketService
         $positions = $data['positions'];
 
         $Setting = new getMainSettingBD($accountId);
+
+        //dd($data);
 
         $ClientTIS = new KassClient($Setting->authtoken);
         $Client = new MsClient($Setting->tokenMs);
@@ -65,15 +70,10 @@ class TicketService
             $put = $Client->put('https://online.moysklad.ru/api/remap/1.2/entity/'.$entity_type.'/'.$id_entity, $putBody);
 
             //dd($putBody);
-                if ($payType == 'return'){
-                    $this->createReturnDocument($Setting, $put, $postTicket, $putBody, $entity_type);
-                    $put = $Client->put('https://online.moysklad.ru/api/remap/1.2/entity/'.$entity_type.'/'.$id_entity, [
-                        'description' => $this->descriptionToCreate($oldBody, $postTicket, 'Возврат, фискальный номер: '),
-                    ]);
-                }
+            if ($payType == 'return'){$this->createReturnDocument($Setting, $put, $postTicket, $putBody, $entity_type); }
 
             if ($Setting->paymentDocument != null ){
-                $this->createPaymentDocument($Setting, $Client, $entity_type, $put, $Body['payments']);
+                $this->createPaymentDocument($Setting, $put);
             }
 
             htmlResponce::create([
@@ -121,7 +121,6 @@ class TicketService
             'items' => $items,
             "total_amount" => (float) $total,
             "customer" => $customer,
-            'need_mark_code' => true,
             "as_html" => true,
         ];
     }
@@ -170,55 +169,82 @@ class TicketService
 
     private function getItems(getMainSettingBD $Setting, $positions, $idObject, $typeObject): array
     {
-        $msClient = new MsClient($Setting->tokenMs);
         $result = null;
+        if ($typeObject == 'demand'){
+            $Client = new MsClient($Setting->tokenMs);
+            $demand = $Client->get('https://online.moysklad.ru/api/remap/1.2/entity/' . $typeObject . '/' . $idObject);
+            $demandPos = $Client->get($demand->positions->meta->href)->rows;
 
-        foreach ($positions as $id => $item){
-            $is_nds = trim($item->is_nds, '%');
-            $discount = trim($item->discount, '%');
-            if ($is_nds == 'без НДС' or $is_nds == "0%"){$is_nds = false;
-            } else $is_nds = true;
+            foreach ($positions as $id => $item){
+                $is_nds = trim($item->is_nds, '%');
+                $discount = trim($item->discount, '%');
+                if ($is_nds == 'без НДС' or $is_nds == "0%"){$is_nds = false;
+                } else $is_nds = true;
 
-            if ($discount > 0){
-                $discount = round(($item->price * $item->quantity * ($discount/100)), 2);
-            }
-            if ($typeObject == 'demand'){
-                $demand = $msClient->get('https://online.moysklad.ru/api/remap/1.2/entity/' . $typeObject . '/' . $idObject);
-                $demandPos =  $msClient->get($demand->positions->meta->href)->rows;
+                if ($discount > 0){
+                    $discount = ($item->price * $item->quantity * ($discount/100));
+                }
+
+                $result[] = [
+                    'name' => (string) $item->name,
+                    'price' => (float) $item->price,
+                    'quantity' => (float) $item->quantity,
+                    'quantity_type' => (int) $item->UOM,
+                    'total_amount' => (float) ( $item->price * $item->quantity - $discount ) ,
+                    'is_nds' => $is_nds,
+                    'discount' =>(float) $discount,
+                    'section' => (int) $Setting->idDepartment,
+                ];
+
 
                 foreach ($demandPos as $item_2){
-                    if ( $item->id == $item_2->id and isset($item_2->trackingCodes) ){
-                        foreach ($item_2->trackingCodes as $code){
-                            $result[] = [
-                                'name' => (string) $item->name,
-                                'price' => (float) $item->price,
-                                'quantity' =>  1,
-                                'quantity_type' => (int) $item->UOM,
-                                'total_amount' => (float) ( round($item->price * 1 - $discount, 2) ) ,
-                                'is_nds' => $is_nds,
-                                'discount' =>(float) $discount,
-                                'section' => (int) $Setting->idDepartment,
-                                'mark_code' => (string) $code->cis,
-                            ];
+                    if ($item->id == $item_2->id){
+                        if (isset($item_2->trackingCodes)){
+                            array_pop($result);
+                            foreach ($item_2->trackingCodes as $code){
+                                $result[] = [
+                                    'name' => (string) $item['name'],
+                                    'price' => (float) $item['price'],
+                                    'quantity' => 1,
+                                    'quantity_type' => 796,
+                                    'total_amount' => (float) ($item->price * 1),
+                                    'is_nds' => $is_nds,
+                                    'discount' =>(float) $discount,
+                                    'mark_code' =>(string) $code->cis,
+                                    'section' => (int) $Setting->idDepartment,
+                                ];
+                            }
                         }
-
                     }
                 }
 
             }
-            else {
+
+        } else {
+            foreach ($positions as $id => $item){
+                $is_nds = trim($item->is_nds, '%');
+                $discount = trim($item->discount, '%');
+                if ($is_nds == 'без НДС' or $is_nds == "0%"){$is_nds = false;
+                } else $is_nds = true;
+
+                if ($discount > 0){
+                    $discount = ($item->price * $item->quantity * ($discount/100));
+                }
+
                 $result[$id] = [
                     'name' => (string) $item->name,
                     'price' => (float) $item->price,
                     'quantity' => (float) $item->quantity,
                     'quantity_type' => (int) $item->UOM,
-                    'total_amount' => (float) ( round($item->price * $item->quantity - $discount,2) ) ,
+                    'total_amount' => (float) ( $item->price * $item->quantity - $discount ) ,
                     'is_nds' => $is_nds,
                     'discount' =>(float) $discount,
                     'section' => (int) $Setting->idDepartment,
                 ];
+
             }
         }
+
 
         foreach ($result as $id => $item){
             if ($item['discount']<= 0) {
@@ -237,14 +263,7 @@ class TicketService
         $result = [];
 
         if (property_exists($agent, 'email')) { $result['email'] = $agent->email; }
-        if (property_exists($agent, 'phone')) {
-            $phone = "7".mb_substr(str_replace('+7', '',
-                    str_replace(" ", '',
-                        str_replace('(', '',
-                            str_replace(')', '',
-                                str_replace('-', '', $agent->phone))))), -10);
-            $result['phone'] = $phone;
-        }
+        if (property_exists($agent, 'phone')) { $result['phone'] = $agent->phone; }
         if (property_exists($agent, 'inn')) { $result['iin'] = $agent->inn; }
 
         return $result;
@@ -269,7 +288,8 @@ class TicketService
         $positions = $Client->get($oldBody->positions->meta->href)->rows;
         $Resul_positions = $this->setPositionsToPutBody($postTicket, $positions, $positionsBody);
 
-        $result['description'] = $this->descriptionToCreate($oldBody, $postTicket, 'Продажа, Фискальный номер: ');
+
+
 
         if ($Result_attributes != null){
             $result['attributes'] = $Result_attributes;
@@ -324,42 +344,6 @@ class TicketService
                     "value" => (string) $postTicket->data->id,
                 ];
             }
-            if ($item->name == "Тип Оплаты (ТИС)" and $check_attributes == true) {
-                $value = "";
-                foreach ($postTicket->data->transaction_payments as $item_) {
-                    switch ($item_->payment_type) {
-                        case 0 : {
-                            $value .=  "Оплата Наличными на сумму: ".$item_->amount." ";
-                            break;
-                        }
-                        case 1 : {
-                            $value .=  "Оплата Картой на сумму: ".$item_->amount." ";
-                            break;
-                        }
-                        case 2 : {
-                            $value .=  "Оплата Смешанный на сумму: ".$item_->amount." ";
-                            break;
-                        }
-                        case 3 : {
-                            $value .= "Оплата Мобильный на сумму: ".$item->amount." ";
-                            break;
-                        }
-                        default:{
-                            $value .= "";
-                            break;
-                        }
-                    }
-                }
-
-                $Result_attributes[] = [
-                    "meta"=> [
-                        "href"=> $item->meta->href,
-                        "type"=> $item->meta->type,
-                        "mediaType"=> $item->meta->mediaType,
-                    ],
-                    "value" => $value,
-                ];
-            }
         }
         return $Result_attributes;
     }
@@ -392,244 +376,64 @@ class TicketService
 
     }
 
-    private function createPaymentDocument( getMainSettingBD $Setting, MsClient $client, string $entity_type, mixed $OldBody, mixed $payments)
-    {
-        switch ($Setting->paymentDocument){
-            case "1": {
-                $url = 'https://online.moysklad.ru/api/remap/1.2/entity/';
-                if ($entity_type != 'salesreturn') {
-                    $url = $url . 'cashin';
-                } else {
-                    //$url = $url . 'cashout';
-                    break;
-                }
-                $body = [
-                    'organization' => [  'meta' => [
-                        'href' => $OldBody->organization->meta->href,
-                        'type' => $OldBody->organization->meta->type,
-                        'mediaType' => $OldBody->organization->meta->mediaType,
-                    ] ],
-                    'agent' => [ 'meta'=> [
-                        'href' => $OldBody->agent->meta->href,
-                        'type' => $OldBody->agent->meta->type,
-                        'mediaType' => $OldBody->agent->meta->mediaType,
-                    ] ],
-                    'sum' => $OldBody->sum,
-                    'operations' => [
-                        0 => [
-                            'meta'=> [
-                                'href' => $OldBody->meta->href,
-                                'metadataHref' => $OldBody->meta->metadataHref,
-                                'type' => $OldBody->meta->type,
-                                'mediaType' => $OldBody->meta->mediaType,
-                                'uuidHref' => $OldBody->meta->uuidHref,
-                            ],
-                            'linkedSum' => 0
-                        ], ]
-                ];
-                $client->post($url, $body);
-                break;
-            }
-            case "2": {
-                $url = 'https://online.moysklad.ru/api/remap/1.2/entity/';
-                if ($entity_type != 'salesreturn') {
-                    $url = $url . 'paymentin';
-                } else {
-                    //$url = $url . 'paymentout';
-                    break;
-                }
+    private function createPaymentDocument(getMainSettingBD $Setting, mixed $OldBody)
+    {   $client = new MsClient($Setting->tokenMs);
+        if ($Setting->paymentDocument == 1){
+            $url = 'https://online.moysklad.ru/api/remap/1.2/entity/cashin';
+            $body = [
+                'organization' => [  'meta' => [
+                    'href' => $OldBody->organization->meta->href,
+                    'type' => $OldBody->organization->meta->type,
+                    'mediaType' => $OldBody->organization->meta->mediaType,
+                ] ],
+                'agent' => [ 'meta'=> [
+                    'href' => $OldBody->agent->meta->href,
+                    'type' => $OldBody->agent->meta->type,
+                    'mediaType' => $OldBody->agent->meta->mediaType,
+                ] ],
+                'sum' => $OldBody->sum,
+                'operations' => [
+                    0 => [
+                        'meta'=> [
+                            'href' => $OldBody->meta->href,
+                            'metadataHref' => $OldBody->meta->metadataHref,
+                            'type' => $OldBody->meta->type,
+                            'mediaType' => $OldBody->meta->mediaType,
+                            'uuidHref' => $OldBody->meta->uuidHref,
+                        ],
+                        'linkedSum' => 0
+                    ], ]
+            ];
+            $postBodyCreateCashin = $client->post($url, $body);
+        }
+        if ($Setting->paymentDocument == 2){
+            $url = 'https://online.moysklad.ru/api/remap/1.2/entity/paymentin';
 
-                $rate_body = $client->get("https://online.moysklad.ru/api/remap/1.2/entity/currency/")->rows;
-                $rate = null;
-                foreach ($rate_body as $item){
-                    if ($item->name == "тенге" or $item->fullName == "Казахстанский тенге"){
-                        $rate =
-                            ['meta'=> [
-                                'href' => $item->meta->href,
-                                'metadataHref' => $item->meta->metadataHref,
-                                'type' => $item->meta->type,
-                                'mediaType' => $item->meta->mediaType,
-                            ],
-                            ];
-                    }
-                }
-
-                $body = [
-                    'organization' => [  'meta' => [
-                        'href' => $OldBody->organization->meta->href,
-                        'type' => $OldBody->organization->meta->type,
-                        'mediaType' => $OldBody->organization->meta->mediaType,
-                    ] ],
-                    'agent' => [ 'meta'=> [
-                        'href' => $OldBody->agent->meta->href,
-                        'type' => $OldBody->agent->meta->type,
-                        'mediaType' => $OldBody->agent->meta->mediaType,
-                    ] ],
-                    'sum' => $OldBody->sum,
-                    'operations' => [
-                        0 => [
-                            'meta'=> [
-                                'href' => $OldBody->meta->href,
-                                'metadataHref' => $OldBody->meta->metadataHref,
-                                'type' => $OldBody->meta->type,
-                                'mediaType' => $OldBody->meta->mediaType,
-                                'uuidHref' => $OldBody->meta->uuidHref,
-                            ],
-                            'linkedSum' => 0
-                        ], ],
-                    'rate' => $rate
-                ];
-                if ($body['rate'] == null) unset($body['rate']);
-                $client->post($url, $body);
-                break;
-            }
-            case "3": {
-                $url = 'https://online.moysklad.ru/api/remap/1.2/entity/';
-                $url_to_body = null;
-                foreach ($payments as $item){
-                    $change = 0;
-                    if ($item['payment_type'] == 0){
-                        if ($entity_type != 'salesreturn') {
-                            $url_to_body = $url . 'cashin';
-                        } else {
-                            //$url_to_body = $url . 'cashout';
-                            break;
-                        }
-                        if (isset($item['change'])) $change = $item['change'];
-                    } else {
-                        if ($entity_type != 'salesreturn') {
-                            $url_to_body = $url . 'paymentin';
-                        } else {
-                            //$url_to_body = $url . 'paymentout';
-                            break;
-                        }
-                    }
-
-                    $rate_body = $client->get("https://online.moysklad.ru/api/remap/1.2/entity/currency/")->rows;
-                    $rate = null;
-                    foreach ($rate_body as $item_rate){
-                        if ($item_rate->name == "тенге" or $item_rate->fullName == "Казахстанский тенге"){
-                            $rate =
-                                ['meta'=> [
-                                    'href' => $item_rate->meta->href,
-                                    'metadataHref' => $item_rate->meta->metadataHref,
-                                    'type' => $item_rate->meta->type,
-                                    'mediaType' => $item_rate->meta->mediaType,
-                                ],
-                                ];
-                        }
-                    }
-
-                    $body = [
-                        'organization' => [  'meta' => [
-                            'href' => $OldBody->organization->meta->href,
-                            'type' => $OldBody->organization->meta->type,
-                            'mediaType' => $OldBody->organization->meta->mediaType,
-                        ] ],
-                        'agent' => [ 'meta'=> [
-                            'href' => $OldBody->agent->meta->href,
-                            'type' => $OldBody->agent->meta->type,
-                            'mediaType' => $OldBody->agent->meta->mediaType,
-                        ] ],
-                        'sum' => ($item['total']-$change) * 100,
-                        'operations' => [
-                            0 => [
-                                'meta'=> [
-                                    'href' => $OldBody->meta->href,
-                                    'metadataHref' => $OldBody->meta->metadataHref,
-                                    'type' => $OldBody->meta->type,
-                                    'mediaType' => $OldBody->meta->mediaType,
-                                    'uuidHref' => $OldBody->meta->uuidHref,
-                                ],
-                                'linkedSum' => 0
-                            ], ],
-                        'rate' => $rate
-                    ];
-                    if ($body['rate'] == null) unset($body['rate']);
-                    $client->post($url_to_body, $body);
-                }
-                break;
-            }
-            case "4":{
-                $url = 'https://online.moysklad.ru/api/remap/1.2/entity/';
-                $url_to_body = null;
-                foreach ($payments as $item){
-                    $change = 0;
-                    if ($item['payment_type'] == 0){
-                        if ($entity_type != 'salesreturn') {
-                            if ($Setting->OperationCash == 1) {
-                                $url_to_body = $url . 'cashin';
-                            }
-                            if ($Setting->OperationCash == 2) {
-                                $url_to_body = $url . 'paymentin';
-                            }
-                            if ($Setting->OperationCash == 0) {
-                                continue;
-                            }
-                        }
-                        if (isset($item['change'])) $change = $item['change'];
-                    } else {
-                        if ($entity_type != 'salesreturn') {
-                            if ($Setting->OperationCard == 1) {
-                                $url_to_body = $url . 'cashin';
-                            }
-                            if ($Setting->OperationCard == 2) {
-                                $url_to_body = $url . 'paymentin';
-                            }
-                            if ($Setting->OperationCard == 0) {
-                                continue;
-                            }
-                        }
-                    }
-
-                    $rate_body = $client->get("https://online.moysklad.ru/api/remap/1.2/entity/currency/")->rows;
-                    $rate = null;
-                    foreach ($rate_body as $item_rate){
-                        if ($item_rate->name == "тенге" or $item_rate->fullName == "Казахстанский тенге"){
-                            $rate =
-                                ['meta'=> [
-                                    'href' => $item_rate->meta->href,
-                                    'metadataHref' => $item_rate->meta->metadataHref,
-                                    'type' => $item_rate->meta->type,
-                                    'mediaType' => $item_rate->meta->mediaType,
-                                ],
-                                ];
-                        }
-                    }
-
-                    $body = [
-                        'organization' => [  'meta' => [
-                            'href' => $OldBody->organization->meta->href,
-                            'type' => $OldBody->organization->meta->type,
-                            'mediaType' => $OldBody->organization->meta->mediaType,
-                        ] ],
-                        'agent' => [ 'meta'=> [
-                            'href' => $OldBody->agent->meta->href,
-                            'type' => $OldBody->agent->meta->type,
-                            'mediaType' => $OldBody->agent->meta->mediaType,
-                        ] ],
-                        'sum' => ($item['total']-$change) * 100,
-                        'operations' => [
-                            0 => [
-                                'meta'=> [
-                                    'href' => $OldBody->meta->href,
-                                    'metadataHref' => $OldBody->meta->metadataHref,
-                                    'type' => $OldBody->meta->type,
-                                    'mediaType' => $OldBody->meta->mediaType,
-                                    'uuidHref' => $OldBody->meta->uuidHref,
-                                ],
-                                'linkedSum' => 0
-                            ], ],
-                        'rate' => $rate
-                    ];
-                    if ($body['rate'] == null) unset($body['rate']);
-                    $client->post($url_to_body, $body);
-                }
-                break;
-            }
-            default:{
-                break;
-            }
+            $body = [
+                'organization' => [  'meta' => [
+                    'href' => $OldBody->organization->meta->href,
+                    'type' => $OldBody->organization->meta->type,
+                    'mediaType' => $OldBody->organization->meta->mediaType,
+                ] ],
+                'agent' => [ 'meta'=> [
+                    'href' => $OldBody->agent->meta->href,
+                    'type' => $OldBody->agent->meta->type,
+                    'mediaType' => $OldBody->agent->meta->mediaType,
+                ] ],
+                'sum' => $OldBody->sum,
+                'operations' => [
+                    0 => [
+                        'meta'=> [
+                            'href' => $OldBody->meta->href,
+                            'metadataHref' => $OldBody->meta->metadataHref,
+                            'type' => $OldBody->meta->type,
+                            'mediaType' => $OldBody->meta->mediaType,
+                            'uuidHref' => $OldBody->meta->uuidHref,
+                        ],
+                        'linkedSum' => 0
+                    ], ]
+            ];
+            $postBodyCreatePaymentin = $client->post($url, $body);
         }
 
     }
@@ -716,7 +520,7 @@ class TicketService
                         'mediaType' => $newBody->organizationAccount->meta->mediaType,
                     ]
                 ];
-            } else { unset($body['organizationAccount']); }
+            } else { unlink($body['organizationAccount']); }
 
             if (isset($newBody->store)){
                 $body['store'] = [
@@ -758,23 +562,13 @@ class TicketService
                 ];
             }
             try {
-                $client->post($url, $body);
+                $post = $client->post($url, $body);
             } catch (BadResponseException $exception){
 
             }
         }
 
 
-    }
-
-    private function descriptionToCreate(mixed $oldBody, mixed $postTicket, $message): string
-    {
-        $OldMessage = '';
-        if (property_exists($oldBody, 'description')) {
-            $OldMessage = $oldBody->description.PHP_EOL;
-        }
-
-        return (string) $OldMessage.'['.( (int) date('H') + 6 ).date(':i:s').' '. date('Y-m-d') .'] '. $message.$postTicket->data->fixed_check ;
     }
 
 
