@@ -56,6 +56,8 @@ class TicketService
 
         $Body = $this->setBodyToPostClient($Setting, $id_entity, $entity_type, $money_card, $money_cash, $payType, $total, $positions);
 
+        //dd($Body);
+
         if (isset($Body['Status'])) {
             return response()->json($Body['Message']);
         }
@@ -68,7 +70,6 @@ class TicketService
             $put = $Client->put('https://online.moysklad.ru/api/remap/1.2/entity/'.$entity_type.'/'.$id_entity, $putBody);
 
             //dd($putBody);
-
             if ($payType == 'return'){$this->createReturnDocument($Setting, $put, $postTicket, $putBody, $entity_type); }
 
             if ($Setting->paymentDocument != null ){
@@ -175,18 +176,21 @@ class TicketService
             $demandPos = $Client->get($demand->positions->meta->href)->rows;
 
             foreach ($positions as $id => $item){
-                $is_nds = trim($item['is_nds'], '%');
-                $discount = trim($item['discount'], '%');
+                $is_nds = trim($item->is_nds, '%');
+                $discount = trim($item->discount, '%');
                 if ($is_nds == 'без НДС' or $is_nds == "0%"){$is_nds = false;
                 } else $is_nds = true;
 
+                if ($discount > 0){
+                    $discount = ($item->price * $item->quantity * ($discount/100));
+                }
 
                 $result[] = [
-                    'name' => (string) $item['name'],
-                    'price' => (float) $item['price'],
-                    'quantity' => (float) $item['quantity'],
-                    'quantity_type' => (int) $item['UOM'],
-                    'total_amount' => (float) ($item['price'] * $item['quantity']),
+                    'name' => (string) $item->name,
+                    'price' => (float) $item->price,
+                    'quantity' => (float) $item->quantity,
+                    'quantity_type' => (int) $item->UOM,
+                    'total_amount' => (float) ( $item->price * $item->quantity - $discount ) ,
                     'is_nds' => $is_nds,
                     'discount' =>(float) $discount,
                     'section' => (int) $Setting->idDepartment,
@@ -194,7 +198,7 @@ class TicketService
 
 
                 foreach ($demandPos as $item_2){
-                    if ($item['id'] == $item_2->id){
+                    if ($item->id == $item_2->id){
                         if (isset($item_2->trackingCodes)){
                             array_pop($result);
                             foreach ($item_2->trackingCodes as $code){
@@ -203,7 +207,7 @@ class TicketService
                                     'price' => (float) $item['price'],
                                     'quantity' => 1,
                                     'quantity_type' => 796,
-                                    'total_amount' => (float) ($item['price'] * 1),
+                                    'total_amount' => (float) ($item->price * 1),
                                     'is_nds' => $is_nds,
                                     'discount' =>(float) $discount,
                                     'mark_code' =>(string) $code->cis,
@@ -218,17 +222,21 @@ class TicketService
 
         } else {
             foreach ($positions as $id => $item){
-                $is_nds = trim($item['is_nds'], '%');
-                $discount = trim($item['discount'], '%');
+                $is_nds = trim($item->is_nds, '%');
+                $discount = trim($item->discount, '%');
                 if ($is_nds == 'без НДС' or $is_nds == "0%"){$is_nds = false;
                 } else $is_nds = true;
 
+                if ($discount > 0){
+                    $discount = ($item->price * $item->quantity * ($discount/100));
+                }
+
                 $result[$id] = [
-                    'name' => (string) $item['name'],
-                    'price' => (float) $item['price'],
-                    'quantity' => (float) $item['quantity'],
-                    'quantity_type' => (int) $item['UOM'],
-                    'total_amount' => (float) ($item['price'] * $item['quantity']),
+                    'name' => (string) $item->name,
+                    'price' => (float) $item->price,
+                    'quantity' => (float) $item->quantity,
+                    'quantity_type' => (int) $item->UOM,
+                    'total_amount' => (float) ( $item->price * $item->quantity - $discount ) ,
                     'is_nds' => $is_nds,
                     'discount' =>(float) $discount,
                     'section' => (int) $Setting->idDepartment,
@@ -345,18 +353,18 @@ class TicketService
         $sort = null;
         foreach ($positionsBody as $id=>$one){
             foreach ($positions as $item_p){
-                if ($item_p->id == $one['id']){
+                if ($item_p->id == $one->id){
                     $sort[$id] = $item_p;
                 }
             }
         }
         foreach ($positionsBody as $id=>$item){
             $result[$id] = [
-                "id" => $item['id'],
-                "quantity" => (int) $item['quantity'],
-                "price" => (float) $item['price'] * 100,
-                "discount" => (int) $item['discount'],
-                "vat" => (int) $item['is_nds'],
+                "id" => $item->id,
+                "quantity" => (int) $item->quantity,
+                "price" => (float) $item->price * 100,
+                "discount" => (int) $item->discount,
+                "vat" => (int) $item->is_nds,
                 "assortment" => ['meta'=>[
                     "href" => $sort[$id]->assortment->meta->href,
                     "type" => $sort[$id]->assortment->meta->type,
@@ -432,8 +440,6 @@ class TicketService
 
     private function createReturnDocument(getMainSettingBD $Setting, mixed $newBody, mixed $putBody, mixed $oldBody, mixed $entity_type)
     {
-
-        //dd($newBody);
         if ($entity_type != 'salesreturn') {
             $client = new MsClient($Setting->tokenMs);
 

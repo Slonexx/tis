@@ -54,8 +54,8 @@ class fiscalizationController extends Controller
             $final = $item->price / 100 * $item->quantity;
 
             if ($vatEnabled == true) {if ($Body->vatIncluded == false) {
-                    $final = $item->price / 100 * $item->quantity;
-                    $final = $final + ( $final * ($item->vat/100) );
+                $final = $item->price / 100 * $item->quantity;
+                $final = $final + ( $final * ($item->vat/100) );
             }}
             $uom_body = $Client->get($item->assortment->meta->href);
 
@@ -63,8 +63,8 @@ class fiscalizationController extends Controller
                 $propety_uom = true;
                 $uom = $Client->get($uom_body->uom->meta->href);
                if (property_exists($uom, 'code')){
-                   $uom = ['id' => $uom->code, 'name' => $uom->name];
-                } else {
+                $uom = ['id' => $uom->code, 'name' => $uom->name];
+            } else {
                    $propety_uom = false;
                    $uom = ['id' => 796, 'name' => 'шт'];
                }
@@ -157,21 +157,9 @@ class fiscalizationController extends Controller
 
         //dd(($body), json_encode($body));
 
-        $Client = new Client();
-        $url = 'https://smarttis.kz/api/ticket';
-        //$url = 'http://tus/api/ticket';
         try {
-            $ClinetPost = $Client->post( $url, [
-                'headers' => [
-                    'Accept' => 'application/json',
-                    //'http_errors' => false,
-                    ],
-                'form_params' => $body,
-            ]);
-            //dd(json_decode($ClinetPost->getBody()));
-            $res = json_decode($ClinetPost->getBody());
 
-            return $res;
+            return app(TicketController::class)->CreateTicketResponse($body);
 
         } catch (\Throwable $e){
             //dd($e->getCode());

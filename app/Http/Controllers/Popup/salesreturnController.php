@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Popup;
 use App\Clients\MsClient;
 use App\Http\Controllers\Config\getSettingVendorController;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\TicketController;
 use App\Models\htmlResponce;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
@@ -64,8 +65,8 @@ class salesreturnController extends Controller
                 $propety_uom = true;
                 $uom = $Client->get($uom_body->uom->meta->href);
                 if (property_exists($uom, 'code')){
-                    $uom = ['id' => $uom->code, 'name' => $uom->name];
-                } else {
+                $uom = ['id' => $uom->code, 'name' => $uom->name];
+            } else {
                     $propety_uom = false;
                     $uom = ['id' => 796, 'name' => 'шт'];
                 }
@@ -158,21 +159,8 @@ class salesreturnController extends Controller
 
         //dd($body, json_encode($body));
 
-        $Client = new Client();
-        $url = 'https://smarttis.kz/api/ticket';
-        //$url = 'http://tus/api/ticket';
         try {
-            $ClinetPost = $Client->post( $url, [
-                'headers' => [
-                    'Accept' => 'application/json',
-                    //'http_errors' => false,
-                ],
-                'form_params' => $body,
-            ]);
-            //dd(json_decode($ClinetPost->getBody()));
-            $res = json_decode($ClinetPost->getBody());
-
-            return $res;
+            return app(TicketController::class)->CreateTicketResponse($body);
 
         } catch (\Throwable $e){
             //dd($e->getCode());
