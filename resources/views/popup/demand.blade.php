@@ -123,7 +123,7 @@
                 if (modalShowHide === 'show'){
                     $('#downL').modal('toggle')
                     let products = []
-                    for (let i = 0; i < 20; i++) {
+                    for (let i = 0; i < 99; i++) {
                         if ( window.document.getElementById(i).style.display === 'block' ) {
                             products[i] = {
                                 id:window.document.getElementById('productId_'+i).innerText,
@@ -276,7 +276,7 @@
                         </div>
                     </div>
                     <div id="products" class="col-12 text-black">
-                        @for( $i=0; $i<20; $i++)
+                        @for( $i=0; $i<99; $i++)
                             <div id="{{ $i }}" class="row mt-2" style="display:block;">
                                 <div class="row">
                                     <div class="col-1">{{ $i + 1 }}</div>
@@ -418,7 +418,7 @@
             thisSelectorSum.value = 0;
             SelectorSum(thisSelectorSum)
 
-            for (var i = 0; i < 20; i++) {
+            for (var i = 0; i < 99; i++) {
                 window.document.getElementById(i).style.display = "none"
                 window.document.getElementById('productName_' + i).innerHTML = ''
                 window.document.getElementById('productQuantity_' + i).innerHTML = ''
