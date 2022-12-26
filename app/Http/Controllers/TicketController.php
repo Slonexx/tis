@@ -37,6 +37,11 @@ class TicketController extends Controller
 
     }
 
+    public function CreateTicketResponse($data): \Illuminate\Http\JsonResponse
+    {
+        return  $this->ticketService->createTicket($data);
+    }
+
     public function getUrlTicket(Request $request){
         $data = $request->validate([
             "accountId" => "required|string",

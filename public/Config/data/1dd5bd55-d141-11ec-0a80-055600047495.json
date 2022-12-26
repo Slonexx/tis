@@ -1,1 +1,1 @@
-O:52:"App\Http\Controllers\Config\Lib\AppInstanceContoller":4:{s:5:"appId";s:36:"9875982f-c89b-4249-98f0-10143887bd17";s:9:"accountId";s:36:"1dd5bd55-d141-11ec-0a80-055600047495";s:13:"TokenMoySklad";s:40:"219da94f4ee9f96fa19126abee499474ae7f0c74";s:6:"status";i:100;}
+O:52:"App\Http\Controllers\Config\Lib\AppInstanceContoller":4:{s:5:"appId";s:36:"9875982f-c89b-4249-98f0-10143887bd17";s:9:"accountId";s:36:"1dd5bd55-d141-11ec-0a80-055600047495";s:13:"TokenMoySklad";s:40:"6c5b8aab610e09f42328402a6a8cf965591e41c9";s:6:"status";i:100;}
