@@ -151,22 +151,10 @@ class fiscalizationController extends Controller
         ];
 
         //dd(($body), json_encode($body));
-
-        $Client = new Client();
-        $url = 'https://dev.smarttis.kz/api/ticket';
-        //$url = 'http://tus/api/ticket';
-        return app(TicketController::class)->CreateTicketResponse($body);
+        
         try {
-            /*$ClinetPost = $Client->post( $url, [
-                'headers' => [
-                    'Accept' => 'application/json',
-                    //'http_errors' => false,
-                    ],
-                'form_params' => $body,
-            ]);
-            //dd(json_decode($ClinetPost->getBody()));
-            $res = json_decode($ClinetPost->getBody());*/
 
+            return app(TicketController::class)->CreateTicketResponse($body);
 
         } catch (\Throwable $e){
             //dd($e->getCode());
