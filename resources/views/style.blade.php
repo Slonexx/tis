@@ -13,6 +13,9 @@
     .gradient{
         background-image: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
     }
+    .gradient_invert{
+        background-image: linear-gradient(135deg, #c3cfe2 0%, #f5f7fa 100%);
+    }
 
     /* Фиксированный боковых навигационных ссылок, полной высоты */
     .sidenav {

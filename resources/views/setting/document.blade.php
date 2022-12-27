@@ -7,7 +7,7 @@
         <div class="row gradient rounded p-2 pb-2" style="margin-top: -1rem">
             <div class="col-10" style="margin-top: 1.2rem"> <span class="text-black" style="font-size: 20px"> Настройки &#8594; Документ </span> </div>
             <div class="col-2 text-center">
-                <img src="https://dev.smarttis.kz/Config/logo.png" width="50%"  alt="">
+                <img src="https://smarttis.kz/Config/logo.png" width="50%"  alt="">
                 <div style="font-size: 11px; margin-top: 8px"> <b>Топ партнёр сервиса МойСклад</b> </div>
             </div>
         </div>
@@ -23,48 +23,154 @@
         <form action="/Setting/Document/{{ $accountId }}?isAdmin={{ $isAdmin }}" method="post" class="mt-3">
         @csrf <!-- {{ csrf_field() }} -->
 
-            <div id="DOCUMENT" >
-                <div class="row mb-2">
-                    <div class="col-10">
-                        <div class="mx-3"> <h5>Документ</h5></div>
+            <div class="row p-1 gradient_invert rounded text-black">
+                <div class="col-11">
+                    <div style="font-size: 20px">Документ</div>
+                </div>
+                <div onclick="toggleClick(1)" class="col-1 d-flex justify-content-end " style="font-size: 30px; cursor: pointer">
+                    <i id="toggle_off" class="fa-solid fa-toggle-off" style="display: block"></i>
+                    <i id="toggle_on"  class="fa-solid fa-toggle-on" style="display: none"></i>
+                </div>
+            </div>
+            <div id="DOCUMENT" class="mt-2 mx-2 mb-2" style="display: block">
+                <div class="row">
+                    <div class="col-6">
+                        <label class="mt-1 mx-4"> Выберите способ создание документов: </label>
+                    </div>
+                    <div class="col-6">
+                        <select onchange="asWay(this.value)" id="createDocument_asWay" name="createDocument_asWay" class="form-select text-black" >
+                            <option value="0"> Не создавать </option>
+                            <option value="1"> Стандартный способ </option>
+                            <option value="2"> От выбора типа оплаты </option>
+                        </select>
                     </div>
                 </div>
-
-                <div class="mb-3 row mx-2">
-                    <div class="col-6">
-                        <label class="mt-1 mx-4"> Выберите какой тип платежного документа создавать: </label>
-                    </div>
-                    <div class="col-6 row">
-                        <div class="col-12">
-                            <select id="paymentDocument" name="paymentDocument" class="form-select text-black" >
-                                @if ($paymentDocument == "0")
-                                    <option selected value="0">Не создавать</option>
-                                    <option value="1">Приходной ордер</option>
-                                    <option value="2">Входящий платёж </option>
-                                @endif
-                                @if ($paymentDocument == "1")
-                                    <option value="0">Не создавать</option>
-                                    <option selected value="1">Приходной ордер</option>
-                                    <option value="2">Входящий платёж </option>
-                                @endif
-                                @if ($paymentDocument == "2")
-                                    <option value="0">Не создавать</option>
-                                    <option value="1">Приходной ордер</option>
-                                    <option selected value="2">Входящий платёж </option>
-                                @endif
-                            </select>
+                <div id="div_paymentDocument" style="display: none">
+                    <div class="row mt-1">
+                        <div class="col-6">
+                            <label class="mt-1 mx-4"> Выберите какой тип платежного документа создавать: </label>
                         </div>
+                        <div class="col-6">
+                            <select onchange="oldWay(this.value)" id="paymentDocument" name="paymentDocument" class="form-select text-black" >
+                                <option selected value="0">Не создавать</option>
+                                <option value="1">Приходной ордер</option>
+                                <option value="2">Входящий платёж </option>
+                            </select>
 
-
+                        </div>
                     </div>
                 </div>
             </div>
+
+
+            <div class="row p-1 mt-1 gradient_invert rounded text-black ">
+                <div class="col-11">
+                    <div style="font-size: 20px">Тип оплаты по умолчанию</div>
+                </div>
+                <div onclick="toggleClick(2)" class="col-1 d-flex justify-content-end " style="font-size: 30px; cursor: pointer">
+                    <i id="toggle_off_2" class="fa-solid fa-toggle-off" style="display: block"></i>
+                    <i id="toggle_on_2"  class="fa-solid fa-toggle-on" style="display: none"></i>
+                </div>
+            </div>
+            <div id="Default_payment_type" class="mt-2 mx-2 mb-2" style="display: block">
+                <div class="row">
+                    <div class="col-6">
+                        <label class="mt-1 mx-4"> Выберите тип оплаты </label>
+                    </div>
+                    <div class="col-6">
+                        <select id="payment_type" name="payment_type" class="form-select text-black" >
+                            <option value="0"> Оплата наличными </option>
+                            <option value="1"> Оплата картой </option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+
             <hr class="href_padding">
 
-            <button class="btn btn-outline-dark " data-bs-toggle="modal" data-bs-target="#modal">
-                <i class="fa-solid fa-arrow-down-to-arc"></i> Сохранить </button>
+            <button class="btn btn-outline-dark "><i class="fa-solid fa-arrow-down-to-arc"></i> Сохранить </button>
         </form>
     </div>
+
+    <script>
+
+        let createDocument = 0
+        let paymentDocument = "{{ $paymentDocument }}"
+        let payment_type = 0
+        loading(createDocument, paymentDocument, payment_type)
+
+        function loading(createDocument, paymentDocument, payment_type){
+            window.document.getElementById('createDocument_asWay').value = createDocument
+            window.document.getElementById('paymentDocument').value = paymentDocument
+            window.document.getElementById('payment_type').value = payment_type
+
+            asWay(createDocument)
+        }
+
+
+        function asWay(params){
+            let div = window.document.getElementById('div_paymentDocument')
+            div.style.display = "none"
+            if (params == 0){
+
+            }
+            if (params == 1){
+                div.style.display = "block"
+            }
+            if (params == 2){
+
+            }
+        }
+
+        function oldWay(params){
+
+        }
+
+        function toggleClick(id){
+
+            if (id === 1){
+                let toggle_off = window.document.getElementById('toggle_off')
+                let toggle_on = window.document.getElementById('toggle_on')
+
+                let DOCUMENT = window.document.getElementById('DOCUMENT')
+
+                if (toggle_off.style.display == "none"){
+                    toggle_on.style.display = "none"
+                    toggle_off.style.display = "block"
+
+                    DOCUMENT.style.display = 'block'
+                } else {
+                    toggle_on.style.display = "block"
+                    toggle_off.style.display = "none"
+
+                    DOCUMENT.style.display = 'none'
+                }
+            }
+
+            if (id === 2) {
+                let toggle_off_2 = window.document.getElementById('toggle_off_2')
+                let toggle_on_2 = window.document.getElementById('toggle_on_2')
+
+                let  Default_payment_type = window.document.getElementById('Default_payment_type')
+                if (toggle_off_2.style.display == 'none'){
+                    toggle_on_2.style.display = "none"
+                    toggle_off_2.style.display = "block"
+
+                    Default_payment_type.style.display = 'block'
+                } else {
+                    toggle_on_2.style.display = "block"
+                    toggle_off_2.style.display = "none"
+
+                    Default_payment_type.style.display = 'none'
+                }
+            }
+
+
+
+        }
+
+    </script>
 
 
 @endsection
