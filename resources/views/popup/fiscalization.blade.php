@@ -158,6 +158,7 @@
                             "position": JSON.stringify(products),
                     }
 
+                    console.log(data)
 
                     let settings = ajax_settings(url, "POST", data)
                     console.log(url + ' settings ↓ ')
