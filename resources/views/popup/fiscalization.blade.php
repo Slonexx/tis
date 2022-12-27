@@ -14,52 +14,63 @@
         let id_ticket = '';
         let html = '';
 
-        window.addEventListener("message", function(event) { openDown();
+        window.addEventListener("message", function(event) { openDown()
+            let receivedMessage = event.data
+            newPopup()
 
-            let receivedMessage = event.data;
-            newPopup();
             if (receivedMessage.name === 'OpenPopup') {
                 object_Id = receivedMessage.popupParameters.object_Id;
                 accountId = receivedMessage.popupParameters.accountId;
                 entity_type = receivedMessage.popupParameters.entity_type;
-                let params = {
+
+                let data = {
                     object_Id: object_Id,
                     accountId: accountId,
                 };
-                let final = url + formatParams(params);
-                console.log('receivedMessage = ' + final);
-                let xmlHttpRequest = new XMLHttpRequest();
-                xmlHttpRequest.addEventListener("load", function () { $('#lDown').modal('hide');
-                    let json = JSON.parse(this.responseText);
+
+                let settings = ajax_settings(url, "GET", data);
+                console.log(url + ' settings ↓ ')
+                console.log(settings)
+
+                $.ajax(settings).done(function (response) {
+                    console.log(url + ' response ↓ ')
+                    console.log(response)
+
+                    let json = response
                     id_ticket = json.attributes.ticket_id;
                     window.document.getElementById("numberOrder").innerHTML = json.name;
 
                     let products = json.products;
-                    for (var i = 0; i < products.length; i++) {
+                    for (let i = 0; i < products.length; i++) {
 
                         if (products[i].propety === true) {
-                            window.document.getElementById('productId_' + i).innerHTML = products[i].position;
-                            window.document.getElementById('productName_' + i).innerHTML = products[i].name;
-                            window.document.getElementById('productQuantity_' + i).innerHTML = products[i].quantity;
+                            window.document.getElementById('productId_' + i).innerHTML = products[i].position
+                            window.document.getElementById('productName_' + i).innerHTML = products[i].name
+                            window.document.getElementById('productQuantity_' + i).innerHTML = products[i].quantity
 
                             window.document.getElementById('productUOM_' + i).innerHTML = products[i].uom['name']
-                            window.document.getElementById('productIDUOM_' + i).innerHTML = products[i].uom['id'];
+                            window.document.getElementById('productIDUOM_' + i).innerHTML = products[i].uom['id']
 
-                            window.document.getElementById('productPrice_' + i).innerHTML = products[i].price;
-                            if (products[i].vat === 0)  window.document.getElementById('productVat_' + i).innerHTML = "без НДС";
-                            else window.document.getElementById('productVat_' + i).innerHTML = products[i].vat + '%';
-                            window.document.getElementById('productDiscount_' + i).innerHTML = products[i].discount + '%';
-                            window.document.getElementById('productFinal_' + i).innerHTML = products[i].final;
+                            window.document.getElementById('productPrice_' + i).innerHTML = products[i].price
+                            if (products[i].vat === 0)  window.document.getElementById('productVat_' + i).innerHTML = "без НДС"
+                            else window.document.getElementById('productVat_' + i).innerHTML = products[i].vat + '%'
+                            window.document.getElementById('productDiscount_' + i).innerHTML = products[i].discount + '%'
+                            window.document.getElementById('productFinal_' + i).innerHTML = products[i].final
 
-                            let sum = window.document.getElementById("sum").innerHTML;
-                            if (!sum) sum = 0;
-                            window.document.getElementById("sum").innerHTML = roundToTwo(parseFloat(sum) + parseFloat(products[i].final));
-                            window.document.getElementById(i).style.display = "block";
+                            let sum = window.document.getElementById("sum").innerHTML
+                            if (!sum) sum = 0
+                            window.document.getElementById("sum").innerHTML = roundToTwo(parseFloat(sum) + parseFloat(products[i].final))
+                            window.document.getElementById(i).style.display = "block"
                         } else {
-                            window.document.getElementById("messageAlert").innerText = "Позиции у которых нет ед. изм. не добавились ";
-                            window.document.getElementById("message").style.display = "block";
+                            window.document.getElementById("messageAlert").innerText = "Позиции у которых нет ед. изм. не добавились "
+                            window.document.getElementById("message").style.display = "block"
                         }
                     }
+
+
+                    window.document.getElementById('cash').value = window.document.getElementById("sum").innerHTML
+
+
 
                     if (json.attributes != null){
                         if (json.attributes.ticket_id != null){
@@ -69,9 +80,8 @@
                             window.document.getElementById("getKKM").style.display = "block";
                         }
                     } else  window.document.getElementById("getKKM").style.display = "block";
-                });
-                xmlHttpRequest.open("GET", final);
-                xmlHttpRequest.send();
+
+                })
             }
         });
 
@@ -120,7 +130,7 @@
                 if (modalShowHide === 'show'){
                     $('#downL').modal('toggle')
                     let products = []
-                    for (let i = 0; i < 20; i++) {
+                    for (let i = 0; i < 99; i++) {
                         if ( window.document.getElementById(i).style.display === 'block' ) {
                             products[i] = {
                                 id:window.document.getElementById('productId_'+i).innerText,
@@ -133,27 +143,37 @@
                             }
                         }
                     }
-                    let params = {
-                        accountId: accountId,
-                        object_Id: object_Id,
-                        entity_type: entity_type,
 
-                        money_card: money_card,
-                        money_cash: money_cash,
-                        //money_mobile: money_mobile,
+                    let settings = {
+                        "url": url,
+                        "method": "POST",
+                        "timeout": 0,
+                        "headers": {"Content-Type": "application/json",},
+                        "data": {
+                            "accountId": accountId,
+                            "object_Id": object_Id,
+                            "entity_type": entity_type,
 
-                        pay_type: pay_type,
-                        total: total,
+                            "money_card": money_card,
+                            "money_cash": money_cash,
 
-                        position: JSON.stringify(products),
+                            "pay_type": pay_type,
+                            "total": total,
+
+                            "position": JSON.stringify(products),
+                        },
                     };
-                    let final = url + formatParams(params);
-                    console.log('send to kkm = ' + final);
-                    let xmlHttpRequest = new XMLHttpRequest();
-                    xmlHttpRequest.addEventListener("load", function () {
-                        $('#downL').modal('hide');
-                        let json = JSON.parse(this.responseText);
-                        if (json.status == 'Ticket created'){
+                    console.log(url + ' settings ↓ ')
+                    console.log(settings)
+
+                    $.ajax(settings).done(function (response) {
+                        $('#downL').modal('hide')
+                        console.log(url + ' response ↓ ')
+                        console.log(response)
+
+                        let json = response
+
+                        if (json.status === 'Ticket created'){
                             window.document.getElementById("messageGoodAlert").innerText = "Чек создан";
                             window.document.getElementById("messageGood").style.display = "block";
                             window.document.getElementById("ShowCheck").style.display = "block";
@@ -165,9 +185,8 @@
                             window.document.getElementById(button_hide).style.display = "block";
                             modalShowHide = 'hide';
                         }
+
                     });
-                    xmlHttpRequest.open("GET", final);
-                    xmlHttpRequest.send();
                     modalShowHide = 'hide';
                 }
                 else window.document.getElementById(button_hide).style.display = "block"
@@ -276,7 +295,7 @@
                         </div>
                     </div>
                     <div id="products" class="col-12 text-black">
-                        @for( $i=0; $i<20; $i++)
+                        @for( $i=0; $i<99; $i++)
                             <div id="{{ $i }}" class="row mt-2" style="display:block;">
                                 <div class="row">
                                     <div class="col-1">{{ $i + 1 }}</div>
@@ -400,6 +419,17 @@
 
 
     <script>
+
+        function ajax_settings(url, method, data){
+            return {
+                "url": url,
+                "method": method,
+                "timeout": 0,
+                "headers": {"Content-Type": "application/json",},
+                "data": data,
+            }
+        }
+
         function newPopup(){
             window.document.getElementById("sum").innerHTML = ''
 
@@ -418,7 +448,7 @@
             thisSelectorSum.value = 0;
             SelectorSum(thisSelectorSum)
 
-            for (var i = 0; i < 20; i++) {
+            for (let i = 0; i < 99; i++) {
                 window.document.getElementById(i).style.display = "none"
                 window.document.getElementById('productName_' + i).innerHTML = ''
                 window.document.getElementById('productQuantity_' + i).innerHTML = ''
