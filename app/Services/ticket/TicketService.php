@@ -182,7 +182,7 @@ class TicketService
                 } else $is_nds = true;
 
                 if ($discount > 0){
-                    $discount = ($item->price * $item->quantity * ($discount/100));
+                    $discount = round(($item->price * $item->quantity * ($discount/100)), 2);
                 }
 
                 $result[] = [
@@ -228,7 +228,7 @@ class TicketService
                 } else $is_nds = true;
 
                 if ($discount > 0){
-                    $discount = ($item->price * $item->quantity * ($discount/100));
+                    $discount = round(($item->price * $item->quantity * ($discount/100)), 2);
                 }
 
                 $result[$id] = [
