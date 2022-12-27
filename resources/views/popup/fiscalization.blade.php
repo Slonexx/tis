@@ -14,27 +14,29 @@
         let id_ticket = '';
         let html = '';
 
-        window.addEventListener("message", function(event) { openDown();
+        window.addEventListener("message", function(event) { openDown()
+            let receivedMessage = event.data
+            newPopup()
 
-            /*var receivedMessage = {
-                "name":"OpenPopup","messageId":1,"popupName":"fiscalizationPopup","popupParameters":
-                    {"object_Id":"4f4a2e5a-4f6c-11ed-0a80-09be0003f312","accountId":"1dd5bd55-d141-11ec-0a80-055600047495"}
-            }; */
-            let receivedMessage = event.data;
-            newPopup();
             if (receivedMessage.name === 'OpenPopup') {
                 object_Id = receivedMessage.popupParameters.object_Id;
                 accountId = receivedMessage.popupParameters.accountId;
                 entity_type = receivedMessage.popupParameters.entity_type;
-                let params = {
+
+                let data = {
                     object_Id: object_Id,
                     accountId: accountId,
                 };
-                let final = url + formatParams(params);
-                console.log('receivedMessage = ' + final);
-                let xmlHttpRequest = new XMLHttpRequest();
-                xmlHttpRequest.addEventListener("load", function () { $('#lDown').modal('hide');
-                    let json = JSON.parse(this.responseText);
+
+                let settings = ajax_settings(url, "GET", data);
+                console.log(url + ' settings ↓ ')
+                console.log(settings)
+
+                $.ajax(settings).done(function (response) {
+                    console.log(url + ' response ↓ ')
+                    console.log(response)
+
+                    let json = response
                     id_ticket = json.attributes.ticket_id;
                     window.document.getElementById("numberOrder").innerHTML = json.name;
 
@@ -78,9 +80,8 @@
                             window.document.getElementById("getKKM").style.display = "block";
                         }
                     } else  window.document.getElementById("getKKM").style.display = "block";
-                });
-                xmlHttpRequest.open("GET", final);
-                xmlHttpRequest.send();
+
+                })
             }
         });
 
@@ -414,6 +415,17 @@
 
 
     <script>
+
+        function ajax_settings(url, method, data){
+            return {
+                "url": url,
+                "method": method,
+                "timeout": 0,
+                "headers": {"Content-Type": "application/json",},
+                "data": data,
+            }
+        }
+
         function newPopup(){
             window.document.getElementById("sum").innerHTML = ''
 
