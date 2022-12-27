@@ -39,31 +39,36 @@
                     window.document.getElementById("numberOrder").innerHTML = json.name;
 
                     let products = json.products;
-                    for (var i = 0; i < products.length; i++) {
+                    for (let i = 0; i < products.length; i++) {
 
                         if (products[i].propety === true) {
-                            window.document.getElementById('productId_' + i).innerHTML = products[i].position;
-                            window.document.getElementById('productName_' + i).innerHTML = products[i].name;
-                            window.document.getElementById('productQuantity_' + i).innerHTML = products[i].quantity;
+                            window.document.getElementById('productId_' + i).innerHTML = products[i].position
+                            window.document.getElementById('productName_' + i).innerHTML = products[i].name
+                            window.document.getElementById('productQuantity_' + i).innerHTML = products[i].quantity
 
                             window.document.getElementById('productUOM_' + i).innerHTML = products[i].uom['name']
-                            window.document.getElementById('productIDUOM_' + i).innerHTML = products[i].uom['id'];
+                            window.document.getElementById('productIDUOM_' + i).innerHTML = products[i].uom['id']
 
-                            window.document.getElementById('productPrice_' + i).innerHTML = products[i].price;
-                            if (products[i].vat === 0)  window.document.getElementById('productVat_' + i).innerHTML = "без НДС";
-                            else window.document.getElementById('productVat_' + i).innerHTML = products[i].vat + '%';
-                            window.document.getElementById('productDiscount_' + i).innerHTML = products[i].discount + '%';
-                            window.document.getElementById('productFinal_' + i).innerHTML = products[i].final;
+                            window.document.getElementById('productPrice_' + i).innerHTML = products[i].price
+                            if (products[i].vat === 0)  window.document.getElementById('productVat_' + i).innerHTML = "без НДС"
+                            else window.document.getElementById('productVat_' + i).innerHTML = products[i].vat + '%'
+                            window.document.getElementById('productDiscount_' + i).innerHTML = products[i].discount + '%'
+                            window.document.getElementById('productFinal_' + i).innerHTML = products[i].final
 
-                            let sum = window.document.getElementById("sum").innerHTML;
-                            if (!sum) sum = 0;
-                            window.document.getElementById("sum").innerHTML = roundToTwo(parseFloat(sum) + parseFloat(products[i].final));
-                            window.document.getElementById(i).style.display = "block";
+                            let sum = window.document.getElementById("sum").innerHTML
+                            if (!sum) sum = 0
+                            window.document.getElementById("sum").innerHTML = roundToTwo(parseFloat(sum) + parseFloat(products[i].final))
+                            window.document.getElementById(i).style.display = "block"
                         } else {
-                            window.document.getElementById("messageAlert").innerText = "Позиции у которых нет ед. изм. не добавились ";
-                            window.document.getElementById("message").style.display = "block";
+                            window.document.getElementById("messageAlert").innerText = "Позиции у которых нет ед. изм. не добавились "
+                            window.document.getElementById("message").style.display = "block"
                         }
                     }
+
+
+                    window.document.getElementById('cash').value = window.document.getElementById("sum").innerHTML
+
+
 
                     if (json.attributes != null){
                         if (json.attributes.ticket_id != null){
