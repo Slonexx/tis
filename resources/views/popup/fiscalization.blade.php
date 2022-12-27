@@ -146,19 +146,18 @@
 
                     let data = {
                         "accountId": accountId,
-                            "object_Id": object_Id,
-                            "entity_type": entity_type,
+                        "object_Id": object_Id,
+                        "entity_type": entity_type,
 
-                            "money_card": money_card,
-                            "money_cash": money_cash,
+                        "money_card": money_card,
+                        "money_cash": money_cash,
 
-                            "pay_type": pay_type,
-                            "total": total,
+                        "pay_type": pay_type,
+                        "total": total,
 
-                            "position": JSON.stringify(products),
+                        "position": JSON.stringify(products),
                     }
 
-                    console.log(data)
 
                     let settings = ajax_settings(url, "POST", data)
                     console.log(url + ' settings ↓ ')
