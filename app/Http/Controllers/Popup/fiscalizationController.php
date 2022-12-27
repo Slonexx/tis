@@ -117,7 +117,7 @@ class fiscalizationController extends Controller
 
     public function SendFiscalizationPopup(Request $request){
 
-        var_dump($request->all());
+        return response()->json($request->all());
 
         $accountId = $request->accountId;
         $object_Id = $request->object_Id;
