@@ -146,7 +146,7 @@ class fiscalizationController extends Controller
             'positions' => $position,
         ];
 
-        return response()->json(($body), json_encode($body));
+        return response()->json(($body));
 
         try {
 
