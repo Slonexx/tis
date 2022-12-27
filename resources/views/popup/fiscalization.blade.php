@@ -144,8 +144,12 @@
                         }
                     }
 
-
-                        let data = {
+                    let settings = {
+                        "url": url,
+                        "method": "POST",
+                        "timeout": 0,
+                        "headers": {"Content-Type": "application/json",},
+                        "data": {
                             "accountId": accountId,
                             "object_Id": object_Id,
                             "entity_type": entity_type,
@@ -157,12 +161,12 @@
                             "total": total,
 
                             "position": JSON.stringify(products),
-                        }
+                        },
+                    };
+                    console.log(url + ' settings ↓ ')
+                    console.log(settings)
 
-                    console.log(url + ' data ↓ ')
-                    console.log(data)
-
-                    $.post(url, data, function (response) {
+                    $.ajax(settings).done(function (response) {
                         $('#downL').modal('hide')
                         console.log(url + ' response ↓ ')
                         console.log(response)
