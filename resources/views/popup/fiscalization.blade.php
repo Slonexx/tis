@@ -146,7 +146,7 @@
 
                     let settings = {
                         "url": url,
-                        "method": "GET",
+                        "method": "POST",
                         "timeout": 0,
                         "headers": {"Content-Type": "application/json",},
                         "data": {
@@ -163,10 +163,14 @@
                             "position": JSON.stringify(products),
                         },
                     };
-                    console.log("settings = " + settings);
+                    console.log(url + ' settings ↓ ')
+                    console.log(settings)
 
                     $.ajax(settings).done(function (response) {
                         $('#downL').modal('hide')
+                        console.log(url + ' response ↓ ')
+                        console.log(response)
+
                         let json = response
 
                         if (json.status === 'Ticket created'){
