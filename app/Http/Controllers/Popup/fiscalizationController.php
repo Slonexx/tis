@@ -131,12 +131,6 @@ class fiscalizationController extends Controller
 
         $position = json_decode(stripslashes($request->position));
 
-        $positions = [];
-        foreach ($position as $item){
-            if ($item != null){
-                $positions[] = $item;
-            }
-        }
 
         $body = [
             'accountId' => $accountId,
@@ -149,7 +143,7 @@ class fiscalizationController extends Controller
 
             'total' => $total,
 
-            'positions' => $positions,
+            'positions' => $position,
         ];
 
         //dd(($body), json_encode($body));
