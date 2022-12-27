@@ -146,7 +146,7 @@
 
                     let settings = {
                         "url": url,
-                        "method": "POST",
+                        "method": "GET",
                         "timeout": 0,
                         "headers": {"Content-Type": "application/json",},
                         "data": {

@@ -92,7 +92,7 @@ Route::post('/Popup/Request/closeShift', [sendController::class, 'RequestClose']
 
 Route::get('/Popup/customerorder', [fiscalizationController::class, 'fiscalizationPopup']);
 Route::get('/Popup/customerorder/show', [fiscalizationController::class, 'ShowFiscalizationPopup']);
-Route::post('/Popup/customerorder/send', [fiscalizationController::class, 'SendFiscalizationPopup']);
+Route::get('/Popup/customerorder/send', [fiscalizationController::class, 'SendFiscalizationPopup']);
 Route::get('/Popup/customerorder/print/{accountId}', [fiscalizationController::class, 'printFiscalizationPopup']);
 
 Route::get('/Popup/demand', [demandController::class, 'demandPopup']);
