@@ -155,7 +155,7 @@
                         "pay_type": pay_type,
                         "total": total,
 
-                        "position": JSON.stringify(products),
+                        "position": (products),
                     }
 
 
@@ -177,9 +177,9 @@
                             modalShowHide = 'hide';
                             html = json.postTicket.data.html
                         } else {
-                            window.document.getElementById('messageAlert').innerText = json.errors.message;
                             window.document.getElementById('message').style.display = "block";
                             window.document.getElementById(button_hide).style.display = "block";
+                            window.document.getElementById('messageAlert').innerText = json.errors.message;
                             modalShowHide = 'hide';
                         }
 
