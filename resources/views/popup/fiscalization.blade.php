@@ -157,43 +157,35 @@
 
                         "position": JSON.stringify(products),
                     }
-
-                    let settings = ajax_settings(url, "POST", data)
-                    console.log(url + ' settings ↓ ')
-                    console.log(settings)
-
+                    console.log(url + ' data ↓ ')
+                    console.log(data)
 
                     $.ajax({
                         url: url,
                         method: 'post',
                         dataType: 'json',
                         data: data,
-                        success: function(data){
-                            alert(data);
+                        success: function(response){
+                            $('#downL').modal('hide')
+                            console.log(url + ' response ↓ ')
+                            console.log(response)
+
+                            let json = response
+
+                            if (json.status === 'Ticket created'){
+                                window.document.getElementById("messageGoodAlert").innerText = "Чек создан";
+                                window.document.getElementById("messageGood").style.display = "block";
+                                window.document.getElementById("ShowCheck").style.display = "block";
+                                modalShowHide = 'hide';
+                                html = json.postTicket.data.html
+                            } else {
+                                window.document.getElementById('message').style.display = "block";
+                                window.document.getElementById(button_hide).style.display = "block";
+                                window.document.getElementById('messageAlert').innerText = json.errors.message;
+                                modalShowHide = 'hide';
+                            }
                         }
                     });
-
-                   /* $.ajax(settings).done(function (response) {
-                        $('#downL').modal('hide')
-                        console.log(url + ' response ↓ ')
-                        console.log(response)
-
-                        let json = response
-
-                        if (json.status === 'Ticket created'){
-                            window.document.getElementById("messageGoodAlert").innerText = "Чек создан";
-                            window.document.getElementById("messageGood").style.display = "block";
-                            window.document.getElementById("ShowCheck").style.display = "block";
-                            modalShowHide = 'hide';
-                            html = json.postTicket.data.html
-                        } else {
-                            window.document.getElementById('message').style.display = "block";
-                            window.document.getElementById(button_hide).style.display = "block";
-                            window.document.getElementById('messageAlert').innerText = json.errors.message;
-                            modalShowHide = 'hide';
-                        }
-
-                    });*/
                     modalShowHide = 'hide';
                 }
                 else window.document.getElementById(button_hide).style.display = "block"

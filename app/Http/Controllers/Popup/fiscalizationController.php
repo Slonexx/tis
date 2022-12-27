@@ -117,8 +117,6 @@ class fiscalizationController extends Controller
 
     public function SendFiscalizationPopup(Request $request){
 
-        dd($request->all());
-
         $accountId = $request->accountId;
         $object_Id = $request->object_Id;
         $entity_type = $request->entity_type;
@@ -148,12 +146,9 @@ class fiscalizationController extends Controller
             'positions' => $position,
         ];
 
-        dd($body);
-
-        return app(TicketController::class)->CreateTicketResponse($body);
         try {
 
-
+            return app(TicketController::class)->CreateTicketResponse($body);
 
         } catch (\Throwable $e){
             //dd($e->getCode());
