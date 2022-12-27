@@ -159,7 +159,7 @@
                     }
 
 
-                    let settings = ajax_settings(url, "GET", data)
+                    let settings = ajax_settings(url, "post", data)
                     console.log(url + ' settings ↓ ')
                     console.log(settings)
 
