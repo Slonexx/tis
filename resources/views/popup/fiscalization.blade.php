@@ -160,7 +160,7 @@
                             "pay_type": pay_type,
                             "total": total,
 
-                            "position": JSON.stringify(products),
+                            "position": (products),
                         },
                     };
                     console.log(url + ' settings ↓ ')
