@@ -144,25 +144,21 @@
                         }
                     }
 
-                    let settings = {
-                        "url": url,
-                        "method": "POST",
-                        "timeout": 0,
-                        "headers": {"Content-Type": "application/json",},
-                        "data": {
-                            "accountId": accountId,
-                            "object_Id": object_Id,
-                            "entity_type": entity_type,
+                    let data =  {
+                        "accountId": accountId,
+                        "object_Id": object_Id,
+                        "entity_type": entity_type,
 
-                            "money_card": money_card,
-                            "money_cash": money_cash,
+                        "money_card": money_card,
+                        "money_cash": money_cash,
 
-                            "pay_type": pay_type,
-                            "total": total,
+                        "pay_type": pay_type,
+                        "total": total,
 
-                            "position": JSON.stringify(products),
-                        },
-                    };
+                        "position": JSON.stringify(products),
+                    }
+
+                    let settings = ajax_settings(url, "POST", data)
                     console.log(url + ' settings ↓ ')
                     console.log(settings)
 
