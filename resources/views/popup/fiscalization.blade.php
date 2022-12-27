@@ -144,13 +144,8 @@
                         }
                     }
 
-                    let settings = {
-                        "url": url,
-                        "method": "POST",
-                        "timeout": 0,
-                        "headers": {"Content-Type": "application/json",},
-                        "data": {
-                            "accountId": accountId,
+                    let data = {
+                        "accountId": accountId,
                             "object_Id": object_Id,
                             "entity_type": entity_type,
 
@@ -161,8 +156,10 @@
                             "total": total,
 
                             "position": JSON.stringify(products),
-                        },
-                    };
+                    }
+
+
+                    let settings = ajax_settings(url, "POST", data)
                     console.log(url + ' settings ↓ ')
                     console.log(settings)
 
