@@ -146,7 +146,7 @@ class fiscalizationController extends Controller
             'positions' => $position,
         ];
 
-        //return response()->json(($body));
+        return response()->json(($body));
         return app(TicketController::class)->CreateTicketResponse($body);
         try {
 
