@@ -167,6 +167,9 @@ class TicketService
 
     private function getItems(getMainSettingBD $Setting, $positions, $idObject, $typeObject): array
     {
+
+        dd($positions);
+
         $result = null;
         if ($typeObject == 'demand'){
             $Client = new MsClient($Setting->tokenMs);
