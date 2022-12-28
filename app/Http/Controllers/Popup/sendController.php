@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Popup;
 
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\TicketController;
+use App\Services\ticket\dev_TicketService;
 use Illuminate\Http\Request;
 
 class sendController extends Controller
@@ -23,14 +24,7 @@ class sendController extends Controller
 
         $total = $request->total;
 
-        $position = json_encode($request->positions);
-
-        $positions = [];
-        foreach (json_decode($position) as $item){
-            if ($item != null){
-                $positions[] = $item;
-            }
-        }
+        $position = json_decode(json_encode($request->positions));
 
         $body = [
             'accountId' => $accountId,
@@ -43,13 +37,15 @@ class sendController extends Controller
 
             'total' => $total,
 
-            'positions' => $positions,
+            'positions' => $position,
         ];
 
         //dd(($body), json_encode($body));
-        $ticket = json_decode(json_encode((app(TicketController::class)->CreateTicketResponse($body))));
+
 
         try {
+
+            $ticket = json_decode(json_encode((app(dev_TicketService::class)->createTicket($body))));
 
             return response()->json([
                 'message' => $ticket->original->status,
