@@ -123,7 +123,6 @@
                 }
             }
 
-            //let url = 'https://tus/Popup/customerorder/send'
             if (total-0.01 <= money_card+money_cash){
                 let url = 'https://smarttis.kz/Popup/customerorder/send'
 
