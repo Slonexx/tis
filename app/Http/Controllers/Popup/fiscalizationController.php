@@ -129,7 +129,7 @@ class fiscalizationController extends Controller
 
         $total = $request->total;
 
-        $position = json_decode(stripslashes($request->position));
+        $position = json_decode(json_encode($request->position));
 
 
         $body = [
@@ -145,6 +145,8 @@ class fiscalizationController extends Controller
 
             'positions' => $position,
         ];
+
+        //dd($body);
 
         try {
 
