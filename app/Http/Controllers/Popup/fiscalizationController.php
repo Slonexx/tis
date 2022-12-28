@@ -117,21 +117,21 @@ class fiscalizationController extends Controller
 
     public function SendFiscalizationPopup(Request $request){
 
-        $accountId = $request->accountId;
-        $object_Id = $request->object_Id;
-        $entity_type = $request->entity_type;
+        $data = $request->all();
 
-        if ($request->money_card === null) $money_card = 0;
-        else $money_card = $request->money_card;
-        if ($request->money_cash === null) $money_cash = 0;
-        else $money_cash = $request->money_cash;
-        $pay_type = $request->pay_type;
+        $accountId = $data->accountId;
+        $object_Id = $data->object_Id;
+        $entity_type = $data->entity_type;
 
-        $total = $request->total;
+        if ($data->money_card === null) $money_card = 0;
+        else $money_card = $data->money_card;
+        if ($data->money_cash === null) $money_cash = 0;
+        else $money_cash = $data->money_cash;
+        $pay_type = $data->pay_type;
 
-        dd($request->all());
+        $total = $data->total;
 
-        $position = json_decode(json_encode($request->position));
+        $position = json_decode(json_encode($data->position));
 
 
         $body = [
@@ -148,7 +148,7 @@ class fiscalizationController extends Controller
             'positions' => $position,
         ];
 
-        //dd($body);
+        dd($body);
 
         try {
 
