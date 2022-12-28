@@ -131,7 +131,7 @@ class fiscalizationController extends Controller
 
         $total = $data['total'];
 
-        $position = ($data['position']);
+        $position = json_decode($data['position']);
 
 
         $body = [
