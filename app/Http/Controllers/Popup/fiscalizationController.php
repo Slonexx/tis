@@ -129,7 +129,7 @@ class fiscalizationController extends Controller
 
         $total = $request->total;
 
-        dd($request->position);
+        dd($request->all());
 
         $position = json_decode(json_encode($request->position));
 
