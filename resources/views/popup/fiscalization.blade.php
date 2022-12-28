@@ -144,48 +144,47 @@
                         }
                     }
 
-                    let settings = {
-                        "url": url,
-                        "method": "GET",
-                        "timeout": 0,
-                        "headers": {"Content-Type": "application/json",},
-                        "data": {
-                            "accountId": accountId,
-                            "object_Id": object_Id,
-                            "entity_type": entity_type,
+                    let data =  {
+                        "accountId": accountId,
+                        "object_Id": object_Id,
+                        "entity_type": entity_type,
 
-                            "money_card": money_card,
-                            "money_cash": money_cash,
+                        "money_card": money_card,
+                        "money_cash": money_cash,
 
-                            "pay_type": pay_type,
-                            "total": total,
+                        "pay_type": pay_type,
+                        "total": total,
 
-                            "position": JSON.stringify(products),
-                        },
-                    };
-                    console.log(url + ' settings ↓ ')
-                    console.log(settings)
+                        "position": JSON.stringify(products),
+                    }
+                    console.log(url + ' data ↓ ')
+                    console.log(data)
 
-                    $.ajax(settings).done(function (response) {
-                        $('#downL').modal('hide')
-                        console.log(url + ' response ↓ ')
-                        console.log(response)
+                    $.ajax({
+                        url: url,
+                        method: 'post',
+                        dataType: 'json',
+                        data: data,
+                        success: function(response){
+                            $('#downL').modal('hide')
+                            console.log(url + ' response ↓ ')
+                            console.log(response)
 
-                        let json = response
+                            let json = response
 
-                        if (json.status === 'Ticket created'){
-                            window.document.getElementById("messageGoodAlert").innerText = "Чек создан";
-                            window.document.getElementById("messageGood").style.display = "block";
-                            window.document.getElementById("ShowCheck").style.display = "block";
-                            modalShowHide = 'hide';
-                            html = json.postTicket.data.html
-                        } else {
-                            window.document.getElementById('messageAlert').innerText = json.errors.message;
-                            window.document.getElementById('message').style.display = "block";
-                            window.document.getElementById(button_hide).style.display = "block";
-                            modalShowHide = 'hide';
+                            if (json.status === 'Ticket created'){
+                                window.document.getElementById("messageGoodAlert").innerText = "Чек создан";
+                                window.document.getElementById("messageGood").style.display = "block";
+                                window.document.getElementById("ShowCheck").style.display = "block";
+                                modalShowHide = 'hide';
+                                html = json.postTicket.data.html
+                            } else {
+                                window.document.getElementById('message').style.display = "block";
+                                window.document.getElementById(button_hide).style.display = "block";
+                                window.document.getElementById('messageAlert').innerText = json.errors.message;
+                                modalShowHide = 'hide';
+                            }
                         }
-
                     });
                     modalShowHide = 'hide';
                 }
