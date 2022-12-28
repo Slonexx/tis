@@ -78,6 +78,7 @@ Route::get('/widget/salesreturn', [salesreturnEditController::class, 'salesretur
 
 
 Route::post('/Popup/Request/send', [sendController::class, 'SendRequest']);
+Route::post('/Popup/Request/closeShift', [sendController::class, 'RequestClose']);
 
 
 Route::get('/Popup/customerorder', [fiscalizationController::class, 'fiscalizationPopup']);
