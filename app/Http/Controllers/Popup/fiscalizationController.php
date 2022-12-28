@@ -129,6 +129,8 @@ class fiscalizationController extends Controller
 
         $total = $request->total;
 
+        dd($request->position);
+
         $position = json_decode(json_encode($request->position));
 
 
@@ -147,10 +149,10 @@ class fiscalizationController extends Controller
         ];
 
         //dd($body);
-        return app(TicketController::class)->CreateTicketResponse($body);
+
         try {
 
-
+            return app(TicketController::class)->CreateTicketResponse($body);
 
         } catch (\Throwable $e){
             //dd($e->getCode());
