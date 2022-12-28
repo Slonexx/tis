@@ -45,6 +45,8 @@ class TicketService
 
         $positions = $data['positions'];
 
+        return response($data);
+
         $Setting = new getMainSettingBD($accountId);
 
         $ClientTIS = new KassClient($Setting->authtoken);
