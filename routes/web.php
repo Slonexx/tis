@@ -77,7 +77,7 @@ Route::get('/widget/salesreturn', [salesreturnEditController::class, 'salesretur
 
 
 
-Route::get('/Popup/Request/send', [sendController::class, 'SendRequest']);
+Route::post('/Popup/Request/send', [sendController::class, 'SendRequest']);
 
 
 Route::get('/Popup/customerorder', [fiscalizationController::class, 'fiscalizationPopup']);
