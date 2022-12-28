@@ -54,8 +54,6 @@ class dev_TicketService
 
         $Body = $this->setBodyToPostClient($Setting, $id_entity, $entity_type, $money_card, $money_cash, $payType, $total, $positions);
 
-        //dd($Body);
-
         if (isset($Body['Status'])) {
             return response()->json($Body['Message']);
         }
@@ -65,13 +63,16 @@ class dev_TicketService
           //  dd($postTicket);
 
             $putBody = $this->putBodyMS($entity_type, $postTicket, $Client, $Setting, $oldBody, $positions);
-            $put = $Client->put('https://online.moysklad.ru/api/remap/1.2/entity/'.$entity_type.'/'.$id_entity, $putBody);
+            if ($putBody != []) {
+                $put = $Client->put('https://online.moysklad.ru/api/remap/1.2/entity/'.$entity_type.'/'.$id_entity, $putBody);
 
-            //dd($putBody);
-            if ($payType == 'return'){$this->createReturnDocument($Setting, $put, $postTicket, $putBody, $entity_type); }
 
-            if ($Setting->paymentDocument != null ){
-                $this->createPaymentDocument($Setting, $put);
+                //dd($putBody);
+                if ($payType == 'return'){$this->createReturnDocument($Setting, $put, $postTicket, $putBody, $entity_type); }
+
+                if ($Setting->paymentDocument != null ){
+                    $this->createPaymentDocument($Setting, $put);
+                }
             }
 
             htmlResponce::create([
@@ -273,29 +274,32 @@ class dev_TicketService
         $Result_attributes = null;
         $Resul_positions = null;
         $check_attributes_in_value_name = false;
-        foreach ($oldBody->attributes as $item){
-            if ($item->name == 'Фискальный номер (ТИС)' and $item->name != ''){
-                $check_attributes_in_value_name = false;
-                break;
-            } else $check_attributes_in_value_name = true;
+        if (property_exists($oldBody, 'attributes'))  {
+            foreach ($oldBody->attributes as $item){
+                if ($item->name == 'Фискальный номер (ТИС)' and $item->name != ''){
+                    $check_attributes_in_value_name = false;
+                    break;
+                } else $check_attributes_in_value_name = true;
+            }
+
+            $attributes = $Client->get('https://online.moysklad.ru/api/remap/1.2/entity/'.$entity_type.'/metadata/attributes/')->rows;
+            $Result_attributes = $this->setAttributesToPutBody($postTicket, $check_attributes_in_value_name, $attributes);
+
+            $positions = $Client->get($oldBody->positions->meta->href)->rows;
+            $Resul_positions = $this->setPositionsToPutBody($postTicket, $positions, $positionsBody);
+
+
+
+
+            if ($Result_attributes != null){
+                $result['attributes'] = $Result_attributes;
+            }
+            if ($Resul_positions != null){
+                $result['positions'] = $Resul_positions;
+            }
+            return $result;
         }
-
-        $attributes = $Client->get('https://online.moysklad.ru/api/remap/1.2/entity/'.$entity_type.'/metadata/attributes/')->rows;
-        $Result_attributes = $this->setAttributesToPutBody($postTicket, $check_attributes_in_value_name, $attributes);
-
-        $positions = $Client->get($oldBody->positions->meta->href)->rows;
-        $Resul_positions = $this->setPositionsToPutBody($postTicket, $positions, $positionsBody);
-
-
-
-
-        if ($Result_attributes != null){
-            $result['attributes'] = $Result_attributes;
-        }
-        if ($Resul_positions != null){
-            $result['positions'] = $Resul_positions;
-        }
-        return $result;
+        else return [];
     }
 
     private function setAttributesToPutBody(mixed $postTicket, bool $check_attributes, $attributes): array
