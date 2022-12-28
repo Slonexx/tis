@@ -25,7 +25,6 @@ class fiscalizationController extends Controller
         $Setting = new getSettingVendorController($accountId);
 
         $json = $this->info_object_Id($object_Id, $Setting);
-
         return response()->json($json);
     }
 
@@ -62,13 +61,9 @@ class fiscalizationController extends Controller
             if (property_exists($uom_body, 'uom')){
                 $propety_uom = true;
                 $uom = $Client->get($uom_body->uom->meta->href);
-               if (property_exists($uom, 'code')){
                 $uom = ['id' => $uom->code, 'name' => $uom->name];
             } else {
-                   $propety_uom = false;
-                   $uom = ['id' => 796, 'name' => 'шт'];
-               }
-            } else {
+
                 if (property_exists($uom_body, 'characteristics')){
                     $check_uom = $Client->get($uom_body->product->meta->href);
 
@@ -121,6 +116,7 @@ class fiscalizationController extends Controller
 
 
     public function SendFiscalizationPopup(Request $request){
+
         $accountId = $request->accountId;
         $object_Id = $request->object_Id;
         $entity_type = $request->entity_type;
@@ -133,13 +129,8 @@ class fiscalizationController extends Controller
 
         $total = $request->total;
 
-        $position = json_decode($request->position);
-        $positions = [];
-        foreach ($position as $item){
-            if ($item != null){
-                $positions[] = $item;
-            }
-        }
+        $position = json_decode(stripslashes($request->position));
+
 
         $body = [
             'accountId' => $accountId,
@@ -152,10 +143,8 @@ class fiscalizationController extends Controller
 
             'total' => $total,
 
-            'positions' => $positions,
+            'positions' => $position,
         ];
-
-        //dd(($body), json_encode($body));
 
         try {
 
