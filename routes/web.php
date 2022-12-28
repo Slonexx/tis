@@ -6,8 +6,6 @@ use App\Http\Controllers\Config\DeleteVendorApiController;
 use App\Http\Controllers\Popup\demandController;
 use App\Http\Controllers\Popup\fiscalizationController;
 use App\Http\Controllers\Popup\salesreturnController;
-use App\Http\Controllers\Popup\sendController;
-use App\Http\Controllers\Web\AutomationController;
 use App\Http\Controllers\Web\cash_operationController;
 use App\Http\Controllers\Web\changeController;
 use App\Http\Controllers\Web\close_z_shiftController;
@@ -51,12 +49,6 @@ Route::get('/Setting/Worker/{accountId}', [AccessController::class, 'getWorker']
 Route::post('/Setting/Worker/{accountId}', [AccessController::class, 'postWorker']);
 
 
-Route::get('/Setting/Automation/{accountId}', [AutomationController::class, 'getAutomation'])->name('getAutomation');
-Route::post('/Setting/Automation/{accountId}', [AutomationController::class, 'postAutomation']);
-
-
-
-
 
 Route::get('/kassa/change/{accountId}', [changeController::class, 'getChange']);
 
@@ -84,23 +76,20 @@ Route::get('/widget/salesreturn', [salesreturnEditController::class, 'salesretur
 
 
 
-Route::post('/Popup/CreateRequest/send', [sendController::class, 'SendCreateRequest']);
-
-Route::post('/Popup/Request/send', [sendController::class, 'SendRequest']);
-Route::post('/Popup/Request/closeShift', [sendController::class, 'RequestClose']);
+//Route::get('/Popup/Request/send', [sendController::class, 'SendRequest']);
 
 
 Route::get('/Popup/customerorder', [fiscalizationController::class, 'fiscalizationPopup']);
 Route::get('/Popup/customerorder/show', [fiscalizationController::class, 'ShowFiscalizationPopup']);
-Route::get('/Popup/customerorder/send', [fiscalizationController::class, 'SendFiscalizationPopup']);
+Route::post('/Popup/customerorder/send', [fiscalizationController::class, 'SendFiscalizationPopup']);
 Route::get('/Popup/customerorder/print/{accountId}', [fiscalizationController::class, 'printFiscalizationPopup']);
 
 Route::get('/Popup/demand', [demandController::class, 'demandPopup']);
 Route::get('/Popup/demand/show', [demandController::class, 'ShowDemandPopup']);
-Route::post('/Popup/demand/send', [demandController::class, 'SendDemandPopup']);
+Route::get('/Popup/demand/send', [demandController::class, 'SendDemandPopup']);
 Route::get('/Popup/demand/print/{accountId}', [demandController::class, 'printDemandPopup']);
 
 Route::get('/Popup/salesreturn', [salesreturnController::class, 'salesreturnPopup']);
 Route::get('/Popup/salesreturn/show', [salesreturnController::class, 'ShowSalesreturnPopup']);
-Route::post('/Popup/salesreturn/send', [salesreturnController::class, 'SendSalesreturnPopup']);
+Route::get('/Popup/salesreturn/send', [salesreturnController::class, 'SendSalesreturnPopup']);
 Route::get('/Popup/salesreturn/print/{accountId}', [salesreturnController::class, 'printSalesreturnPopup']);
