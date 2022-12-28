@@ -45,7 +45,7 @@ class TicketService
 
         $positions = $data['positions'];
 
-        return response($data);
+        return response()->json($data);
 
         $Setting = new getMainSettingBD($accountId);
 
