@@ -119,19 +119,19 @@ class fiscalizationController extends Controller
 
         $data = $request->all();
 
-        $accountId = $data->accountId;
-        $object_Id = $data->object_Id;
-        $entity_type = $data->entity_type;
+        $accountId = $data['accountId'];
+        $object_Id = $data['object_Id'];
+        $entity_type = $data['entity_type'];
 
-        if ($data->money_card === null) $money_card = 0;
-        else $money_card = $data->money_card;
-        if ($data->money_cash === null) $money_cash = 0;
-        else $money_cash = $data->money_cash;
-        $pay_type = $data->pay_type;
+        if ($data['money_card'] === null) $money_card = 0;
+        else $money_card = $data["money_card"];
+        if ($data['money_cash'] === null) $money_cash = 0;
+        else $money_cash = $data['money_cash'];
+        $pay_type = $data['pay_type'];
 
-        $total = $data->total;
+        $total = $data['total'];
 
-        $position = json_decode(json_encode($data->position));
+        $position = json_decode(json_encode($data['position']));
 
 
         $body = [
