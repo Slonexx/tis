@@ -214,6 +214,7 @@
         function updateQuantity(id, params){
             let object_Quantity = window.document.getElementById('productQuantity_'+id);
             let Quantity = parseInt(object_Quantity.innerText)
+            let Discount = parseInt(window.document.getElementById('productDiscount_'+id).innerText);
 
             let object_price = window.document.getElementById('productPrice_'+id).innerText;
             let object_Final = window.document.getElementById('productFinal_'+id);
@@ -223,12 +224,12 @@
 
             if (params === 'plus'){
                 object_Quantity.innerText = Quantity + 1
-                object_Final.innerText = object_Quantity.innerText * object_price
+                object_Final.innerText = object_Quantity.innerText * object_price - ((object_Quantity.innerText * object_price) / 100 * Discount)
                 object_sum.innerText = parseFloat(sum + parseFloat(object_Final.innerText))
             }
             if (params === 'minus'){
                 object_Quantity.innerText = Quantity - 1
-                object_Final.innerText = object_Quantity.innerText * object_price
+                object_Final.innerText = object_Quantity.innerText * object_price - ((object_Quantity.innerText * object_price) / 100 * Discount)
                 object_sum.innerText = parseFloat(sum + parseFloat(object_Final.innerText))
             }
         }
