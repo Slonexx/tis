@@ -62,7 +62,7 @@ class TicketService
 
         try {
             $postTicket = $ClientTIS->POSTClient($Config->apiURL_ukassa.'v2/operation/ticket/', $Body);
-          //  dd($postTicket);
+            //  dd($postTicket);
 
             $putBody = $this->putBodyMS($entity_type, $postTicket, $Client, $Setting, $oldBody, $positions);
             $put = $Client->put('https://online.moysklad.ru/api/remap/1.2/entity/'.$entity_type.'/'.$id_entity, $putBody);
@@ -195,26 +195,26 @@ class TicketService
                 ];
 
 
-                    foreach ($demandPos as $item_2){
-                        if ($item->id == $item_2->id){
-                            if (isset($item_2->trackingCodes)){
-                                array_pop($result);
-                                foreach ($item_2->trackingCodes as $code){
-                                    $result[] = [
-                                        'name' => (string) $item['name'],
-                                        'price' => (float) $item['price'],
-                                        'quantity' => 1,
-                                        'quantity_type' => 796,
-                                        'total_amount' => (float) ($item->price * 1),
-                                        'is_nds' => $is_nds,
-                                        'discount' =>(float) $discount,
-                                        'mark_code' =>(string) $code->cis,
-                                        'section' => (int) $Setting->idDepartment,
-                                    ];
-                                }
+                foreach ($demandPos as $item_2){
+                    if ($item->id == $item_2->id){
+                        if (isset($item_2->trackingCodes)){
+                            array_pop($result);
+                            foreach ($item_2->trackingCodes as $code){
+                                $result[] = [
+                                    'name' => (string) $item['name'],
+                                    'price' => (float) $item['price'],
+                                    'quantity' => 1,
+                                    'quantity_type' => 796,
+                                    'total_amount' => (float) ($item->price * 1),
+                                    'is_nds' => $is_nds,
+                                    'discount' =>(float) $discount,
+                                    'mark_code' =>(string) $code->cis,
+                                    'section' => (int) $Setting->idDepartment,
+                                ];
                             }
                         }
                     }
+                }
 
             }
 
@@ -377,32 +377,32 @@ class TicketService
     private function createPaymentDocument(getMainSettingBD $Setting, mixed $OldBody)
     {   $client = new MsClient($Setting->tokenMs);
         if ($Setting->paymentDocument == 1){
-        $url = 'https://online.moysklad.ru/api/remap/1.2/entity/cashin';
-        $body = [
-            'organization' => [  'meta' => [
-                'href' => $OldBody->organization->meta->href,
-                'type' => $OldBody->organization->meta->type,
-                'mediaType' => $OldBody->organization->meta->mediaType,
-            ] ],
-            'agent' => [ 'meta'=> [
-                'href' => $OldBody->agent->meta->href,
-                'type' => $OldBody->agent->meta->type,
-                'mediaType' => $OldBody->agent->meta->mediaType,
-            ] ],
-            'sum' => $OldBody->sum,
-            'operations' => [
-                0 => [
-                    'meta'=> [
-                        'href' => $OldBody->meta->href,
-                        'metadataHref' => $OldBody->meta->metadataHref,
-                        'type' => $OldBody->meta->type,
-                        'mediaType' => $OldBody->meta->mediaType,
-                        'uuidHref' => $OldBody->meta->uuidHref,
-                    ],
-                    'linkedSum' => 0
-                ], ]
-        ];
-        $postBodyCreateCashin = $client->post($url, $body);
+            $url = 'https://online.moysklad.ru/api/remap/1.2/entity/cashin';
+            $body = [
+                'organization' => [  'meta' => [
+                    'href' => $OldBody->organization->meta->href,
+                    'type' => $OldBody->organization->meta->type,
+                    'mediaType' => $OldBody->organization->meta->mediaType,
+                ] ],
+                'agent' => [ 'meta'=> [
+                    'href' => $OldBody->agent->meta->href,
+                    'type' => $OldBody->agent->meta->type,
+                    'mediaType' => $OldBody->agent->meta->mediaType,
+                ] ],
+                'sum' => $OldBody->sum,
+                'operations' => [
+                    0 => [
+                        'meta'=> [
+                            'href' => $OldBody->meta->href,
+                            'metadataHref' => $OldBody->meta->metadataHref,
+                            'type' => $OldBody->meta->type,
+                            'mediaType' => $OldBody->meta->mediaType,
+                            'uuidHref' => $OldBody->meta->uuidHref,
+                        ],
+                        'linkedSum' => 0
+                    ], ]
+            ];
+            $postBodyCreateCashin = $client->post($url, $body);
         }
         if ($Setting->paymentDocument == 2){
             $url = 'https://online.moysklad.ru/api/remap/1.2/entity/paymentin';
