@@ -231,8 +231,6 @@
             let object_Quantity = window.document.getElementById('productQuantity_'+id);
             let Quantity = parseInt(object_Quantity.innerText)
             let Discount = parseInt(window.document.getElementById('productDiscount_'+id).innerText);
-            console.log("Discount =")
-            console.log(Discount )
 
             let object_price = window.document.getElementById('productPrice_'+id).innerText;
             let object_Final = window.document.getElementById('productFinal_'+id);
