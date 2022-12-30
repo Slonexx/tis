@@ -118,7 +118,6 @@ class fiscalizationController extends Controller
     public function SendFiscalizationPopup(Request $request){
 
         $data = $request->all();
-
         $accountId = $data['accountId'];
         $object_Id = $data['object_Id'];
         $entity_type = $data['entity_type'];
@@ -132,6 +131,9 @@ class fiscalizationController extends Controller
         $total = $data['total'];
 
         $position = json_decode($data['position']);
+
+      /*  //Чисто для постмаана
+        $position = json_decode(json_encode($data['position']));*/
 
 
         $body = [
