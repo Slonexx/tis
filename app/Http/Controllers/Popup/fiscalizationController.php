@@ -53,8 +53,8 @@ class fiscalizationController extends Controller
             $final = $item->price / 100 * $item->quantity;
 
             if ($vatEnabled == true) {if ($Body->vatIncluded == false) {
-                    $final = $item->price / 100 * $item->quantity;
-                    $final = $final + ( $final * ($item->vat/100) );
+                $final = $item->price / 100 * $item->quantity;
+                $final = $final + ( $final * ($item->vat/100) );
             }}
             $uom_body = $Client->get($item->assortment->meta->href);
 
@@ -117,19 +117,21 @@ class fiscalizationController extends Controller
 
     public function SendFiscalizationPopup(Request $request){
 
-        $accountId = $request->accountId;
-        $object_Id = $request->object_Id;
-        $entity_type = $request->entity_type;
+        $data = $request->all();
 
-        if ($request->money_card === null) $money_card = 0;
-        else $money_card = $request->money_card;
-        if ($request->money_cash === null) $money_cash = 0;
-        else $money_cash = $request->money_cash;
-        $pay_type = $request->pay_type;
+        $accountId = $data['accountId'];
+        $object_Id = $data['object_Id'];
+        $entity_type = $data['entity_type'];
 
-        $total = $request->total;
+        if ($data['money_card'] === null) $money_card = 0;
+        else $money_card = $data["money_card"];
+        if ($data['money_cash'] === null) $money_cash = 0;
+        else $money_cash = $data['money_cash'];
+        $pay_type = $data['pay_type'];
 
-        $position = json_decode(json_encode($request->position));
+        $total = $data['total'];
+
+        $position = json_decode($data['position']);
 
 
         $body = [
