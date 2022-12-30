@@ -230,7 +230,7 @@
         function updateQuantity(id, params){
             let object_Quantity = window.document.getElementById('productQuantity_'+id);
             let Quantity = parseInt(object_Quantity.innerText)
-            let Discount = parseInt(window.document.getElementById('productQuantity_'+id).innerText);
+            let Discount = parseInt(window.document.getElementById('productDiscount_'+id).innerText);
             console.log("Discount =")
             console.log(Discount )
 
