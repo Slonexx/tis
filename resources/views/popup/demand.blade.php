@@ -130,7 +130,7 @@
             }
 
             if (total-0.01 <= money_card+money_cash){
-                let url = 'https://smarttis.kz/Popup/demand/send'
+                let url = 'https://dev.smarttis.kz/Popup/demand/send'
 
                 if (modalShowHide === 'show'){
                     $('#downL').modal('toggle')
