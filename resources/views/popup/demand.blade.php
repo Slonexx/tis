@@ -39,68 +39,72 @@
 
                 window.document.getElementById("numberOrder").innerHTML = json.name
                 payment_type = json.application.payment_type
-                id_ticket = json.attributes.ticket_id
-                id_ticket = json.attributes.ticket_id
-                products_length = json.products.length
 
-                let products = json.products;
-                for (let i = 0; i < products.length; i++) {
+                if (payment_type == null || payment_type == undefined) {
+                    window.document.getElementById("messageAlert").innerText = "Отсутствуют настройки приложения "
+                    window.document.getElementById("message").style.display = "block"
+                } else {
+                    id_ticket = json.attributes.ticket_id
+                    products_length = json.products.length
 
-                    if (products[i].propety === true) {
+                    let products = json.products;
+                    for (let i = 0; i < products.length; i++) {
 
-                        let vat =  products[i].vat + '%'
-                        if (products[i].vat === 0)  vat = "без НДС"
+                        if (products[i].propety === true) {
 
-                        $('#main').append('<div id="'+i+'" class="divTableRow" >' +
-                            '<div class="divTableCell">'+i+'</div>' +
-                            '<div id="productId_'+i+'" class="divTableCell" style="display: none">'+products[i].position+'</div>' +
-                            '<div id="productName_'+i+'" class="divTableCell"> '+products[i].name+'</div>' +
+                            let vat = products[i].vat + '%'
+                            if (products[i].vat === 0) vat = "без НДС"
 
-                            '<div class="divTableCell">' +
-                            '<span><i onclick="updateQuantity('+ i +', "minus")" class="fa-solid fa-circle-minus text-danger" style="cursor: pointer"></i></span>' +
-                            '<span id="productQuantity_'+ i +'" class="mx-3">' + products[i].quantity + '</span>' +
-                            '<span><i onclick="updateQuantity( '+ i +', "plus")" class="fa-solid fa-circle-plus text-success" style="cursor: pointer"></i></span>' +
-                            '</div>' +
+                            $('#main').append('<div id="' + i + '" class="divTableRow" >' +
+                                '<div class="divTableCell">' + i + '</div>' +
+                                '<div id="productId_' + i + '" class="divTableCell" style="display: none">' + products[i].position + '</div>' +
+                                '<div id="productName_' + i + '" class="divTableCell"> ' + products[i].name + '</div>' +
 
-                            '<div id="productUOM_'+i+'" class="divTableCell">'+products[i].uom['name']+'</div>' +
-                            '<div id="productIDUOM_'+i+'" class="divTableCell" style="display: none">'+products[i].uom['id']+'</div>' +
+                                '<div class="divTableCell">' +
+                                '<span><i onclick="updateQuantity(' + i + ', "minus")" class="fa-solid fa-circle-minus text-danger" style="cursor: pointer"></i></span>' +
+                                '<span id="productQuantity_' + i + '" class="mx-3">' + products[i].quantity + '</span>' +
+                                '<span><i onclick="updateQuantity( ' + i + ', "plus")" class="fa-solid fa-circle-plus text-success" style="cursor: pointer"></i></span>' +
+                                '</div>' +
 
-                            '<div id="productPrice_'+ i +'" class="divTableCell"> '+ products[i].price +' </div>' +
+                                '<div id="productUOM_' + i + '" class="divTableCell">' + products[i].uom['name'] + '</div>' +
+                                '<div id="productIDUOM_' + i + '" class="divTableCell" style="display: none">' + products[i].uom['id'] + '</div>' +
 
-                            '<div id="productVat_'+ i +'" class="divTableCell"> '+ vat + ' </div>' +
+                                '<div id="productPrice_' + i + '" class="divTableCell"> ' + products[i].price + ' </div>' +
 
-                            '<div id="productDiscount_'+ i +'" class="divTableCell"> '+ products[i].discount + '%' + ' </div>' +
+                                '<div id="productVat_' + i + '" class="divTableCell"> ' + vat + ' </div>' +
 
-                            '<div id="productFinal_'+ i +'" class="divTableCell"> '+ products[i].final + ' </div>' +
+                                '<div id="productDiscount_' + i + '" class="divTableCell"> ' + products[i].discount + '%' + ' </div>' +
 
-                            '<span onclick="deleteBTNClick('+ i +')" class="divTableCell" > <i class="fa-solid fa-rectangle-xmark" style="cursor: pointer; margin-left: 2rem" ></i> </span>' +
+                                '<div id="productFinal_' + i + '" class="divTableCell"> ' + products[i].final + ' </div>' +
 
-                            " </div>")
+                                '<span onclick="deleteBTNClick(' + i + ')" class="divTableCell" > <i class="fa-solid fa-rectangle-xmark" style="cursor: pointer; margin-left: 2rem" ></i> </span>' +
 
-                        let sum = window.document.getElementById("sum").innerHTML
-                        if (!sum) sum = 0
-                        window.document.getElementById("sum").innerHTML = roundToTwo(parseFloat(sum) + parseFloat(products[i].final))
+                                " </div>")
 
-                    } else {
+                            let sum = window.document.getElementById("sum").innerHTML
+                            if (!sum) sum = 0
+                            window.document.getElementById("sum").innerHTML = roundToTwo(parseFloat(sum) + parseFloat(products[i].final))
 
-                        $('#main').append('<div id="'+i+'" class="divTableRow" style="display: none">' + " </div>")
+                        } else {
 
-                        window.document.getElementById("messageAlert").innerText = "Позиции у которых нет ед. изм. не добавились "
-                        window.document.getElementById("message").style.display = "block"
+                            $('#main').append('<div id="' + i + '" class="divTableRow" style="display: none">' + " </div>")
+
+                            window.document.getElementById("messageAlert").innerText = "Позиции у которых нет ед. изм. не добавились "
+                            window.document.getElementById("message").style.display = "block"
+                        }
                     }
+
+                    payment_type_on_set_option(payment_type, window.document.getElementById("sum").innerHTML)
+
+                    if (json.attributes != null) {
+                        if (json.attributes.ticket_id != null) {
+                            //window.document.getElementById("ShowCheck").style.display = "block";
+                            window.document.getElementById("refundCheck").style.display = "block";
+                        } else {
+                            window.document.getElementById("getKKM").style.display = "block";
+                        }
+                    } else window.document.getElementById("getKKM").style.display = "block";
                 }
-
-                payment_type_on_set_option(payment_type, window.document.getElementById("sum").innerHTML)
-
-                if (json.attributes != null){
-                    if (json.attributes.ticket_id != null){
-                        //window.document.getElementById("ShowCheck").style.display = "block";
-                        window.document.getElementById("refundCheck").style.display = "block";
-                    } else {
-                        window.document.getElementById("getKKM").style.display = "block";
-                    }
-                } else  window.document.getElementById("getKKM").style.display = "block";
-
             })
         });
 

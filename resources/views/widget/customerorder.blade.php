@@ -25,13 +25,12 @@
                 };
 
                 let settings = ajax_settings('https://dev.smarttis.kz/widget/InfoAttributes/', 'GET', data)
-                console.log('widget setting attributes:	&#8744;')
+                console.log('widget setting attributes: ↓')
                 console.log(settings)
 
                 $.ajax(settings).done(function (response) {
-
-                    //чекнуть ответ
-                    console.log(response)
+                    console.log(url + ' response ↓ ')
+                    console.log(settings)
 
                     let sendingMessage = {
                         name: "OpenFeedback",
