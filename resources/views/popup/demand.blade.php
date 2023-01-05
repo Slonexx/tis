@@ -20,7 +20,7 @@
 
 
         window.addEventListener("message", function(event) {
-            // let receivedMessage = event.data
+            let receivedMessage = event.data
             newPopup()
 
             object_Id = receivedMessage.popupParameters.object_Id;
