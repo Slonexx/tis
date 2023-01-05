@@ -42,7 +42,7 @@ class KassaController extends Controller
         $isAdmin = $request->isAdmin;
 
         try {
-            DataBaseService::createDocumentSetting($accountId, $request->idKassa, $request->idDepartment, null);
+            DataBaseService::createDocumentSetting($accountId, $request->idKassa, $request->idDepartment, null, null);
             return to_route('getDocument', ['accountId' => $accountId, 'isAdmin' => $isAdmin]);
         } catch (\Throwable $e){
             $SettingBD = new getMainSettingBD($accountId);

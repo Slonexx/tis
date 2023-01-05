@@ -73,13 +73,16 @@ class DataBaseService
         ]);
     }
 
-    public static function createDocumentSetting($accountId, $idKassa, $idDepartment, $paymentDocument){
+    public static function createDocumentSetting($accountId, $idKassa, $idDepartment, $paymentDocument, $payment_type){
         addSettingModel::create([
             'accountId' => $accountId,
             'idKassa' => $idKassa,
             'idDepartment' => $idDepartment,
             'paymentDocument' => $paymentDocument,
+            'payment_type' => $payment_type,
         ]);
+
+
     }
     public static function showDocumentSetting($accountId): array
     {
@@ -92,6 +95,7 @@ class DataBaseService
                 'idKassa' => null,
                 'idDepartment' => null,
                 'paymentDocument' => null,
+                'payment_type' => null,
             ];
         }
         return $result;

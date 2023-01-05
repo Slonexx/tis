@@ -4,36 +4,45 @@
 @section('content')
 
     <script>
-        const hostWindow = window.parent;
-        let Global_messageId = 0;
-        let Global_accountId = "{{$accountId}}";
-        let Global_object_Id;
-        let entity_type = 'customerorder';
+        const hostWindow = window.parent
+        let Global_messageId = 0
+        let Global_accountId = "{{$accountId}}"
+        let Global_object_Id
+        let entity_type = 'customerorder'
 
         window.addEventListener("message", function(event) {
 
             window.document.getElementById('messageGoodAlert').style.display = 'none'
 
             const receivedMessage = event.data;
-            $('#workerAccess_yes').show();
-            //workerAccess();
             if (receivedMessage.name === 'Open') {
+
                 Global_object_Id = receivedMessage.objectId;
-                let params = {
+                let data = {
                     accountId: Global_accountId,
                     entity_type: entity_type,
                     objectId: Global_object_Id,
                 };
-                let url = 'https://smarttis.kz/widget/InfoAttributes/';
-                let final = url + formatParams(params);
-                //console.log('InfoAttributes = ' + final)
-                const xmlHttpRequest = new XMLHttpRequest();
-                xmlHttpRequest.addEventListener("load", function() {
-                    var json = JSON.parse(this.responseText);
+
+                let settings = ajax_settings('https://smarttis.kz/widget/InfoAttributes/', 'GET', data)
+                console.log('widget setting attributes: ↓')
+                console.log(settings)
+
+                $.ajax(settings).done(function (response) {
+                    console.log(url + ' response ↓ ')
+                    console.log(settings)
+
+                    let sendingMessage = {
+                        name: "OpenFeedback",
+                        correlationId: receivedMessage.messageId
+                    };
+                    hostWindow.postMessage(sendingMessage, '*');
+
+
                     let btnF = window.document.getElementById('btnF')
                     let TIS_search = window.document.getElementById('TIS_search')
 
-                    if (json.ticket_id == null){
+                    if (response.ticket_id == null){
                         btnF.innerText = 'Фискализация';
                         window.document.getElementById('messageGoodAlert').style.display = 'none'
                         window.document.getElementById("messageGoodAlert").innerText = ""
@@ -41,35 +50,19 @@
                     } else {
                         btnF.innerText = 'Действие с чеком';
                         window.document.getElementById('messageGoodAlert').style.display = 'block'
-                        window.document.getElementById("messageGoodAlert").innerText = "Чек уже создан. Фискальный номер:  " + json.ticket_id
+                        window.document.getElementById("messageGoodAlert").innerText = "Чек уже создан. Фискальный номер:  " + response.ticket_id
                         TIS_search.style.display = 'block'
                     }
 
-                    var sendingMessage = {
-                        name: "OpenFeedback",
-                        correlationId: receivedMessage.messageId
-                    };
-                    hostWindow.postMessage(sendingMessage, '*');
                 });
-                xmlHttpRequest.open("GET", final);
-                xmlHttpRequest.send();
             }
 
         });
 
-        function formatParams(params) {
-            return "?" + Object
-                .keys(params)
-                .map(function (key) {
-                    return key + "=" + encodeURIComponent(params[key])
-                })
-                .join("&")
-        }
-
         function fiscalization(){
 
             Global_messageId++;
-            var sendingMessage = {
+            let sendingMessage = {
                 name: "ShowPopupRequest",
                 messageId: Global_messageId,
                 popupName: "fiscalizationPopup",
@@ -99,7 +92,7 @@
 
 
 
-        <div id="workerAccess_yes" class="mt-1 mx-4 text-center" style="display:none;">
+        <div  class="mt-1 mx-4 text-center">
             <div class="row">
                 <div class="col-6">
                     <button id="btnF" onclick="fiscalization()" class="btn p-1 btn-warning text-white rounded-pill" style="font-size: 14px">  </button>
@@ -114,12 +107,24 @@
 
     <script>
         function logSendingMessage(msg) {
-            var messageAsString = JSON.stringify(msg);
+            let messageAsString = JSON.stringify(msg);
             console.log("← Sending" + " message: " + messageAsString);
         }
         function getSearchToTIS(){
             window.open('https://ukassa.kz/kassa/report/search/')
         }
+
+
+        function ajax_settings(url, method, data){
+            return {
+                 "url": url,
+                 "method": "GET",
+                 "timeout": 0,
+                 "headers": {"Content-Type": "application/json",},
+                 "data": data,
+             }
+        }
+
     </script>
 
 @endsection

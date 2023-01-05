@@ -17,6 +17,8 @@ class documentController extends Controller
         $SettingBD = new getMainSettingBD($accountId);
         $tokenMs = $SettingBD->tokenMs;
         $paymentDocument = $SettingBD->paymentDocument;
+        $payment_type = $SettingBD->payment_type;
+
         if ($tokenMs == null){
             return view('setting.no', [
                 'accountId' => $accountId,
@@ -26,23 +28,29 @@ class documentController extends Controller
         if ($paymentDocument == null) {
             $paymentDocument = "0";
         }
+        if ($payment_type == null) {
+            $payment_type = "0";
+        }
 
         return view('setting.document', [
             'accountId' => $accountId,
             'isAdmin' => $isAdmin,
 
             'paymentDocument' => $paymentDocument,
+            'payment_type' => $payment_type,
         ]);
     }
 
 
-    public function postDocument(Request $request, $accountId){
+    public function postDocument(Request $request, $accountId): \Illuminate\Http\RedirectResponse
+    {
+
         $isAdmin = $request->isAdmin;
 
         $SettingBD = new getMainSettingBD($accountId);
 
         try {
-            DataBaseService::createDocumentSetting($accountId,$SettingBD->idKassa, $SettingBD->idDepartment, $request->paymentDocument);
+            DataBaseService::createDocumentSetting($accountId,$SettingBD->idKassa, $SettingBD->idDepartment, $request->createDocument_asWay, $request->payment_type);
         } catch (\Throwable $e){
             $message["alert"] = " alert alert-danger alert-dismissible fade show in text-center ";
             $message["message"] = "Ошибка " . $e->getCode();
