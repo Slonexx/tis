@@ -78,7 +78,7 @@
         let params = false
         switch (index_option) {
             case 1 && "1": {
-                if (!money_cash) {
+                if (!money_card) {
                     window.document.getElementById('messageAlert').innerText = 'Вы не ввели сумму наличных'
                     window.document.getElementById('message').style.display = "block"
                     params = true
