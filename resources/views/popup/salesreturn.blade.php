@@ -312,7 +312,7 @@
                 <div class="col-3"></div>
                 <div class="col-2 d-flex justify-content-end">
                     <button onclick="sendKKM('return')" id="refundCheck" class="btn btn-danger">возврат</button>
-                    <button onclick="sendKKM('getKKM')" id="refundCheck" class="btn btn-danger">возврат</button>
+                    <button onclick="sendKKM('return')" id="getKKM" class="btn btn-danger">возврат</button>
                 </div>
 
 
