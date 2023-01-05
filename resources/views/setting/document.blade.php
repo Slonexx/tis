@@ -81,8 +81,11 @@
 
     <script>
 
-        let createDocument = "{{ $paymentDocument }}"
-        let payment_type = "{{ $payment_type }}"
+        let createDocument = "{{ $paymentDocument }}" > 0 ? "{{ $paymentDocument }}" : '0'
+        let payment_type = "{{ $payment_type }}" > 0 ? "{{ $payment_type }}" : '1'
+
+        console.log(payment_type);
+
         loading(createDocument, payment_type)
 
         function loading(createDocument, payment_type){
