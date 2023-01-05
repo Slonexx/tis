@@ -71,7 +71,7 @@ class TicketService
             if ($payType == 'return'){$this->createReturnDocument($Setting, $put, $postTicket, $putBody, $entity_type); }
 
             if ($Setting->paymentDocument != null ){
-                $this->createPaymentDocument($Setting->paymentDocument, $Client, $put, $Body['payments']);
+                $this->createPaymentDocument($Setting->paymentDocument, $Client, $entity_type, $put, $Body['payments']);
             }
 
             htmlResponce::create([
@@ -374,11 +374,16 @@ class TicketService
 
     }
 
-    private function createPaymentDocument( string $paymentDocument, MsClient $client, mixed $OldBody, mixed $payments)
+    private function createPaymentDocument( string $paymentDocument, MsClient $client, string $entity_type, mixed $OldBody, mixed $payments)
     {
         switch ($paymentDocument){
             case "1": {
-                $url = 'https://online.moysklad.ru/api/remap/1.2/entity/cashin';
+                $url = 'https://online.moysklad.ru/api/remap/1.2/entity/';
+                if ($entity_type != 'salesreturn') {
+                    $url = $url . 'cashout';
+                } else {
+                    $url = $url . 'cashin';
+                }
                 $body = [
                     'organization' => [  'meta' => [
                         'href' => $OldBody->organization->meta->href,
@@ -407,7 +412,13 @@ class TicketService
                 break;
             }
             case "2": {
-                $url = 'https://online.moysklad.ru/api/remap/1.2/entity/paymentin';
+
+                $url = 'https://online.moysklad.ru/api/remap/1.2/entity/';
+                if ($entity_type != 'salesreturn') {
+                    $url = $url . 'paymentout';
+                } else {
+                    $url = $url . 'paymentin';
+                }
                 $body = [
                     'organization' => [  'meta' => [
                         'href' => $OldBody->organization->meta->href,
@@ -441,10 +452,18 @@ class TicketService
                 foreach ($payments as $item){
                     $change = 0;
                     if ($item['payment_type'] == 0){
-                        $url_to_body = $url . 'cashin';
+                        if ($entity_type != 'salesreturn') {
+                            $url_to_body = $url . 'cashout';
+                        } else {
+                            $url_to_body = $url . 'cashin';
+                        }
                         if (isset($item['change'])) $change = $item['change'];
                     } else {
-                        $url_to_body = $url . 'paymentin';
+                        if ($entity_type != 'salesreturn') {
+                            $url_to_body = $url . 'paymentout';
+                        } else {
+                            $url_to_body = $url . 'paymentin';
+                        }
                     }
 
                     $body = [
