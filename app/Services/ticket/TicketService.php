@@ -380,9 +380,10 @@ class TicketService
             case "1": {
                 $url = 'https://online.moysklad.ru/api/remap/1.2/entity/';
                 if ($entity_type != 'salesreturn') {
-                    $url = $url . 'cashout';
-                } else {
                     $url = $url . 'cashin';
+                } else {
+                    //$url = $url . 'cashout';
+                    break;
                 }
                 $body = [
                     'organization' => [  'meta' => [
@@ -412,12 +413,12 @@ class TicketService
                 break;
             }
             case "2": {
-
                 $url = 'https://online.moysklad.ru/api/remap/1.2/entity/';
                 if ($entity_type != 'salesreturn') {
-                    $url = $url . 'paymentout';
-                } else {
                     $url = $url . 'paymentin';
+                } else {
+                    //$url = $url . 'paymentout';
+                    break;
                 }
                 $body = [
                     'organization' => [  'meta' => [
@@ -453,16 +454,18 @@ class TicketService
                     $change = 0;
                     if ($item['payment_type'] == 0){
                         if ($entity_type != 'salesreturn') {
-                            $url_to_body = $url . 'cashout';
-                        } else {
                             $url_to_body = $url . 'cashin';
+                        } else {
+                            //$url_to_body = $url . 'cashout';
+                            break;
                         }
                         if (isset($item['change'])) $change = $item['change'];
                     } else {
                         if ($entity_type != 'salesreturn') {
-                            $url_to_body = $url . 'paymentout';
-                        } else {
                             $url_to_body = $url . 'paymentin';
+                        } else {
+                            //$url_to_body = $url . 'paymentout';
+                            break;
                         }
                     }
 
@@ -490,7 +493,8 @@ class TicketService
                                 'linkedSum' => 0
                             ], ]
                     ];
-                    $client->post($url_to_body, $body);
+
+                        $client->post($url_to_body, $body);
 
                 }
                 break;
