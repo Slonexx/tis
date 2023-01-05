@@ -139,6 +139,8 @@
 
 
     function newPopup(){
+        window.document.getElementById('main').innerText = ''
+
         window.document.getElementById("sum").innerHTML = ''
 
         window.document.getElementById("message").style.display = "none"
@@ -154,6 +156,8 @@
         window.document.getElementById("cash").style.display = "block"
         window.document.getElementById("valueSelector").value = 1
         SelectorSum(0)
+
+
     }
 
 
