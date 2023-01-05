@@ -13,6 +13,7 @@ class addSettingModel extends Model
         'idKassa',
         'idDepartment',
         'paymentDocument',
+        'payment_type',
     ];
 
     use HasFactory;

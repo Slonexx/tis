@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Popup;
 
 use App\Clients\MsClient;
+use App\Http\Controllers\BD\getMainSettingBD;
 use App\Http\Controllers\Config\getSettingVendorController;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\TicketController;
@@ -22,21 +23,24 @@ class fiscalizationController extends Controller
     {
         $object_Id = $request->object_Id;
         $accountId = $request->accountId;
-        $Setting = new getSettingVendorController($accountId);
+        $Setting = new getMainSettingBD($accountId);
 
-        $json = $this->info_object_Id($object_Id, $Setting);
+        $url = "https://online.moysklad.ru/api/remap/1.2/entity/customerorder/".$object_Id;
+
+
+        $Client = new MsClient($Setting->tokenMs);
+        $Body = $Client->get($url);
+
+        $json = $this->info_object_Id($Body, $Client,  $Setting);
         return response()->json($json);
     }
 
-    public function info_object_Id($object_Id, $Setting){
-        $url = "https://online.moysklad.ru/api/remap/1.2/entity/customerorder/".$object_Id;
-        $Client = new MsClient($Setting->TokenMoySklad);
-        $Body = $Client->get($url);
-        $attributes = null;
+    public function info_object_Id(mixed $Body, MsClient $Client, getMainSettingBD $Setting ): array
+    {
+        $attributes = [ 'ticket_id' => null, ];
+        $payment_type = $Setting->payment_type;
+
         if (property_exists($Body, 'attributes')){
-            $attributes = [
-                'ticket_id' => null,
-            ];
             foreach ($Body->attributes as $item){
                 if ($item->name == 'фискальный номер (ТИС)'){
                     $attributes['ticket_id'] = $item->value;
@@ -44,6 +48,9 @@ class fiscalizationController extends Controller
                 }
             }
         }
+
+        if ($payment_type == null) $payment_type == "0";
+
         $vatEnabled = $Body->vatEnabled;
         $vat = null;
         $products = [];
@@ -110,6 +117,10 @@ class fiscalizationController extends Controller
             'vat' => $vat,
             'attributes' => $attributes,
             'products' => $products,
+
+            'application' => [
+                'payment_type' => $payment_type
+            ],
         ];
     }
 
@@ -118,6 +129,7 @@ class fiscalizationController extends Controller
     public function SendFiscalizationPopup(Request $request){
 
         $data = $request->all();
+
         $accountId = $data['accountId'];
         $object_Id = $data['object_Id'];
         $entity_type = $data['entity_type'];
@@ -130,11 +142,15 @@ class fiscalizationController extends Controller
 
         $total = $data['total'];
 
-        $position = json_decode($data['position']);
+        //$positions = json_decode($data['position']);
+        $positions =  json_decode($data['position']) ;
+        $position = null;
+        foreach ($positions as $id=>$item){
 
-      /*  //Чисто для постмаана
-        $position = json_decode(json_encode($data['position']));*/
-
+            if ($item != null){
+                $position[] = $item;
+            } else continue;
+        }
 
         $body = [
             'accountId' => $accountId,
@@ -149,8 +165,6 @@ class fiscalizationController extends Controller
 
             'positions' => $position,
         ];
-
-        //dd($body);
 
         try {
 
@@ -172,3 +186,4 @@ class fiscalizationController extends Controller
     }
 
 }
+

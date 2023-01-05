@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Popup;
 
 use App\Clients\MsClient;
+use App\Http\Controllers\BD\getMainSettingBD;
 use App\Http\Controllers\Config\getSettingVendorController;
 use App\Http\Controllers\Config\Lib\VendorApiController;
 use App\Http\Controllers\Controller;
@@ -25,22 +26,24 @@ class demandController extends Controller
     {
         $object_Id = $request->object_Id;
         $accountId = $request->accountId;
-        $Setting = new getSettingVendorController($accountId);
+        $Setting = new getMainSettingBD($accountId);
 
-        $json = $this->info_object_Id($object_Id, $Setting);
+        $url = "https://online.moysklad.ru/api/remap/1.2/entity/demand/".$object_Id;
 
+
+        $Client = new MsClient($Setting->tokenMs);
+        $Body = $Client->get($url);
+
+        $json = $this->info_object_Id($Body, $Client,  $Setting);
         return response()->json($json);
     }
 
-    private function info_object_Id($object_Id, $Setting){
-        $url = "https://online.moysklad.ru/api/remap/1.2/entity/demand/".$object_Id;
-        $Client = new MsClient($Setting->TokenMoySklad);
-        $Body = $Client->get($url);
-        $attributes = null;
+    public function info_object_Id(mixed $Body, MsClient $Client, getMainSettingBD $Setting ): array
+    {
+        $attributes = [ 'ticket_id' => null, ];
+        $payment_type = $Setting->payment_type;
+
         if (property_exists($Body, 'attributes')){
-            $attributes = [
-                'ticket_id' => null,
-            ];
             foreach ($Body->attributes as $item){
                 if ($item->name == 'фискальный номер (ТИС)'){
                     $attributes['ticket_id'] = $item->value;
@@ -48,6 +51,9 @@ class demandController extends Controller
                 }
             }
         }
+
+        if ($payment_type == null) $payment_type == "0";
+
         $vatEnabled = $Body->vatEnabled;
         $vat = null;
         $products = [];
@@ -85,6 +91,7 @@ class demandController extends Controller
                 }
             }
 
+
             $products[$id] = [
                 'position' => $item->id,
                 'propety' => $propety_uom,
@@ -113,29 +120,38 @@ class demandController extends Controller
             'vat' => $vat,
             'attributes' => $attributes,
             'products' => $products,
+
+            'application' => [
+                'payment_type' => $payment_type
+            ],
         ];
     }
 
 
     public function SendDemandPopup(Request $request){
-        $accountId = $request->accountId;
-        $object_Id = $request->object_Id;
-        $entity_type = $request->entity_type;
 
-        if ($request->money_card === null) $money_card = 0;
-        else $money_card = $request->money_card;
-        if ($request->money_cash === null) $money_cash = 0;
-        else $money_cash = $request->money_cash;
-        $pay_type = $request->pay_type;
+        $data = $request->all();
 
-        $total = $request->total;
+        $accountId = $data['accountId'];
+        $object_Id = $data['object_Id'];
+        $entity_type = $data['entity_type'];
 
-        $position = json_decode($request->position);
-        $positions = [];
-        foreach ($position as $item){
+        if ($data['money_card'] === null) $money_card = 0;
+        else $money_card = $data["money_card"];
+        if ($data['money_cash'] === null) $money_cash = 0;
+        else $money_cash = $data['money_cash'];
+        $pay_type = $data['pay_type'];
+
+        $total = $data['total'];
+
+        //$positions = json_decode($data['position']);
+        $positions =  json_decode($data['position']) ;
+        $position = null;
+        foreach ($positions as $id=>$item){
+
             if ($item != null){
-                $positions[] = $item;
-            }
+                $position[] = $item;
+            } else continue;
         }
 
         $body = [
@@ -149,10 +165,8 @@ class demandController extends Controller
 
             'total' => $total,
 
-            'positions' => $positions,
+            'positions' => $position,
         ];
-
-        //dd(($body), json_encode($body));
 
         try {
 

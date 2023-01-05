@@ -35,29 +35,15 @@
             <div id="DOCUMENT" class="mt-2 mx-2 mb-2" style="display: block">
                 <div class="row">
                     <div class="col-6">
-                        <label class="mt-1 mx-4"> Выберите способ создание документов: </label>
+                        <label class="mt-1 mx-4"> Выберите какой тип платежного документа создавать: </label>
                     </div>
                     <div class="col-6">
-                        <select onchange="asWay(this.value)" id="createDocument_asWay" name="createDocument_asWay" class="form-select text-black" >
+                        <select id="createDocument_asWay" name="createDocument_asWay" class="form-select text-black" >
                             <option value="0"> Не создавать </option>
-                            <option value="1"> Стандартный способ </option>
-                            <option value="2"> От выбора типа оплаты </option>
+                            <option value="1">Приходной ордер</option>
+                            <option value="2">Входящий платёж </option>
+                            <option value="3"> От выбора типа оплаты </option>
                         </select>
-                    </div>
-                </div>
-                <div id="div_paymentDocument" style="display: none">
-                    <div class="row mt-1">
-                        <div class="col-6">
-                            <label class="mt-1 mx-4"> Выберите какой тип платежного документа создавать: </label>
-                        </div>
-                        <div class="col-6">
-                            <select onchange="oldWay(this.value)" id="paymentDocument" name="paymentDocument" class="form-select text-black" >
-                                <option selected value="0">Не создавать</option>
-                                <option value="1">Приходной ордер</option>
-                                <option value="2">Входящий платёж </option>
-                            </select>
-
-                        </div>
                     </div>
                 </div>
             </div>
@@ -79,8 +65,8 @@
                     </div>
                     <div class="col-6">
                         <select id="payment_type" name="payment_type" class="form-select text-black" >
-                            <option value="0"> Оплата наличными </option>
-                            <option value="1"> Оплата картой </option>
+                            <option value="1"> Оплата наличными </option>
+                            <option value="2"> Оплата картой </option>
                         </select>
                     </div>
                 </div>
@@ -95,32 +81,14 @@
 
     <script>
 
-        let createDocument = 0
-        let paymentDocument = "{{ $paymentDocument }}"
-        let payment_type = 0
-        loading(createDocument, paymentDocument, payment_type)
+        let createDocument = "{{ $paymentDocument }}"
+        let payment_type = "{{ $payment_type }}"
+        loading(createDocument, payment_type)
 
-        function loading(createDocument, paymentDocument, payment_type){
+        function loading(createDocument, payment_type){
             window.document.getElementById('createDocument_asWay').value = createDocument
-            window.document.getElementById('paymentDocument').value = paymentDocument
             window.document.getElementById('payment_type').value = payment_type
 
-            asWay(createDocument)
-        }
-
-
-        function asWay(params){
-            let div = window.document.getElementById('div_paymentDocument')
-            div.style.display = "none"
-            if (params == 0){
-
-            }
-            if (params == 1){
-                div.style.display = "block"
-            }
-            if (params == 2){
-
-            }
         }
 
         function oldWay(params){

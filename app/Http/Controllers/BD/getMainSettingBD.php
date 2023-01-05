@@ -14,6 +14,7 @@ class getMainSettingBD extends Controller
     public $idKassa;
     public $idDepartment;
     public $paymentDocument;
+    public $payment_type;
 
     /**
      * @param $accountId
@@ -32,6 +33,7 @@ class getMainSettingBD extends Controller
         $this->idKassa = $json['idKassa'];
         $this->idDepartment = $json['idDepartment'];
         $this->paymentDocument = $json['paymentDocument'];
+        $this->payment_type = $json['payment_type'];
 
     }
 

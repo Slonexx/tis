@@ -90,10 +90,10 @@ Route::get('/Popup/customerorder/print/{accountId}', [fiscalizationController::c
 
 Route::get('/Popup/demand', [demandController::class, 'demandPopup']);
 Route::get('/Popup/demand/show', [demandController::class, 'ShowDemandPopup']);
-Route::get('/Popup/demand/send', [demandController::class, 'SendDemandPopup']);
+Route::post('/Popup/demand/send', [demandController::class, 'SendDemandPopup']);
 Route::get('/Popup/demand/print/{accountId}', [demandController::class, 'printDemandPopup']);
 
 Route::get('/Popup/salesreturn', [salesreturnController::class, 'salesreturnPopup']);
 Route::get('/Popup/salesreturn/show', [salesreturnController::class, 'ShowSalesreturnPopup']);
-Route::get('/Popup/salesreturn/send', [salesreturnController::class, 'SendSalesreturnPopup']);
+Route::post('/Popup/salesreturn/send', [salesreturnController::class, 'SendSalesreturnPopup']);
 Route::get('/Popup/salesreturn/print/{accountId}', [salesreturnController::class, 'printSalesreturnPopup']);

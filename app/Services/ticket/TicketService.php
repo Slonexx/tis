@@ -71,7 +71,7 @@ class TicketService
             if ($payType == 'return'){$this->createReturnDocument($Setting, $put, $postTicket, $putBody, $entity_type); }
 
             if ($Setting->paymentDocument != null ){
-                $this->createPaymentDocument($Setting, $put);
+                $this->createPaymentDocument($Setting->paymentDocument, $Client, $put, $Body['payments']);
             }
 
             htmlResponce::create([
@@ -374,64 +374,111 @@ class TicketService
 
     }
 
-    private function createPaymentDocument(getMainSettingBD $Setting, mixed $OldBody)
-    {   $client = new MsClient($Setting->tokenMs);
-        if ($Setting->paymentDocument == 1){
-            $url = 'https://online.moysklad.ru/api/remap/1.2/entity/cashin';
-            $body = [
-                'organization' => [  'meta' => [
-                    'href' => $OldBody->organization->meta->href,
-                    'type' => $OldBody->organization->meta->type,
-                    'mediaType' => $OldBody->organization->meta->mediaType,
-                ] ],
-                'agent' => [ 'meta'=> [
-                    'href' => $OldBody->agent->meta->href,
-                    'type' => $OldBody->agent->meta->type,
-                    'mediaType' => $OldBody->agent->meta->mediaType,
-                ] ],
-                'sum' => $OldBody->sum,
-                'operations' => [
-                    0 => [
-                        'meta'=> [
-                            'href' => $OldBody->meta->href,
-                            'metadataHref' => $OldBody->meta->metadataHref,
-                            'type' => $OldBody->meta->type,
-                            'mediaType' => $OldBody->meta->mediaType,
-                            'uuidHref' => $OldBody->meta->uuidHref,
-                        ],
-                        'linkedSum' => 0
-                    ], ]
-            ];
-            $postBodyCreateCashin = $client->post($url, $body);
-        }
-        if ($Setting->paymentDocument == 2){
-            $url = 'https://online.moysklad.ru/api/remap/1.2/entity/paymentin';
+    private function createPaymentDocument( string $paymentDocument, MsClient $client, mixed $OldBody, mixed $payments)
+    {
+        switch ($paymentDocument){
+            case "1": {
+                $url = 'https://online.moysklad.ru/api/remap/1.2/entity/cashin';
+                $body = [
+                    'organization' => [  'meta' => [
+                        'href' => $OldBody->organization->meta->href,
+                        'type' => $OldBody->organization->meta->type,
+                        'mediaType' => $OldBody->organization->meta->mediaType,
+                    ] ],
+                    'agent' => [ 'meta'=> [
+                        'href' => $OldBody->agent->meta->href,
+                        'type' => $OldBody->agent->meta->type,
+                        'mediaType' => $OldBody->agent->meta->mediaType,
+                    ] ],
+                    'sum' => $OldBody->sum,
+                    'operations' => [
+                        0 => [
+                            'meta'=> [
+                                'href' => $OldBody->meta->href,
+                                'metadataHref' => $OldBody->meta->metadataHref,
+                                'type' => $OldBody->meta->type,
+                                'mediaType' => $OldBody->meta->mediaType,
+                                'uuidHref' => $OldBody->meta->uuidHref,
+                            ],
+                            'linkedSum' => 0
+                        ], ]
+                ];
+                $client->post($url, $body);
+                break;
+            }
+            case "2": {
+                $url = 'https://online.moysklad.ru/api/remap/1.2/entity/paymentin';
+                $body = [
+                    'organization' => [  'meta' => [
+                        'href' => $OldBody->organization->meta->href,
+                        'type' => $OldBody->organization->meta->type,
+                        'mediaType' => $OldBody->organization->meta->mediaType,
+                    ] ],
+                    'agent' => [ 'meta'=> [
+                        'href' => $OldBody->agent->meta->href,
+                        'type' => $OldBody->agent->meta->type,
+                        'mediaType' => $OldBody->agent->meta->mediaType,
+                    ] ],
+                    'sum' => $OldBody->sum,
+                    'operations' => [
+                        0 => [
+                            'meta'=> [
+                                'href' => $OldBody->meta->href,
+                                'metadataHref' => $OldBody->meta->metadataHref,
+                                'type' => $OldBody->meta->type,
+                                'mediaType' => $OldBody->meta->mediaType,
+                                'uuidHref' => $OldBody->meta->uuidHref,
+                            ],
+                            'linkedSum' => 0
+                        ], ]
+                ];
+                $client->post($url, $body);
+                break;
+            }
+            case "3": {
+                $url = 'https://online.moysklad.ru/api/remap/1.2/entity/';
+                $url_to_body = null;
+                foreach ($payments as $item){
+                    $change = 0;
+                    if ($item['payment_type'] == 0){
+                        $url_to_body = $url . 'cashin';
+                        if (isset($item['change'])) $change = $item['change'];
+                    } else {
+                        $url_to_body = $url . 'paymentin';
+                    }
 
-            $body = [
-                'organization' => [  'meta' => [
-                    'href' => $OldBody->organization->meta->href,
-                    'type' => $OldBody->organization->meta->type,
-                    'mediaType' => $OldBody->organization->meta->mediaType,
-                ] ],
-                'agent' => [ 'meta'=> [
-                    'href' => $OldBody->agent->meta->href,
-                    'type' => $OldBody->agent->meta->type,
-                    'mediaType' => $OldBody->agent->meta->mediaType,
-                ] ],
-                'sum' => $OldBody->sum,
-                'operations' => [
-                    0 => [
-                        'meta'=> [
-                            'href' => $OldBody->meta->href,
-                            'metadataHref' => $OldBody->meta->metadataHref,
-                            'type' => $OldBody->meta->type,
-                            'mediaType' => $OldBody->meta->mediaType,
-                            'uuidHref' => $OldBody->meta->uuidHref,
-                        ],
-                        'linkedSum' => 0
-                    ], ]
-            ];
-            $postBodyCreatePaymentin = $client->post($url, $body);
+                    $body = [
+                        'organization' => [  'meta' => [
+                            'href' => $OldBody->organization->meta->href,
+                            'type' => $OldBody->organization->meta->type,
+                            'mediaType' => $OldBody->organization->meta->mediaType,
+                        ] ],
+                        'agent' => [ 'meta'=> [
+                            'href' => $OldBody->agent->meta->href,
+                            'type' => $OldBody->agent->meta->type,
+                            'mediaType' => $OldBody->agent->meta->mediaType,
+                        ] ],
+                        'sum' => ($item['total']-$change) * 100,
+                        'operations' => [
+                            0 => [
+                                'meta'=> [
+                                    'href' => $OldBody->meta->href,
+                                    'metadataHref' => $OldBody->meta->metadataHref,
+                                    'type' => $OldBody->meta->type,
+                                    'mediaType' => $OldBody->meta->mediaType,
+                                    'uuidHref' => $OldBody->meta->uuidHref,
+                                ],
+                                'linkedSum' => 0
+                            ], ]
+                    ];
+                    $client->post($url_to_body, $body);
+
+                }
+                break;
+            }
+            default:{
+               break;
+            }
         }
 
     }
