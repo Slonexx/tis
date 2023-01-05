@@ -29,8 +29,6 @@
 
             let data = { object_Id: object_Id, accountId: accountId, };
 
-            receivedMessage = null
-
             let settings = ajax_settings(url, "GET", data);
             console.log(url + ' settings ↓ ')
             console.log(settings)
