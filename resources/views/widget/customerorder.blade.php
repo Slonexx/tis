@@ -29,7 +29,7 @@
                 console.log(settings)
 
                 $.ajax(settings).done(function (response) {
-                    console.log(url + ' response ↓ ')
+                    console.log("https://smarttis.kz/widget/InfoAttributes/" + ' response ↓ ')
                     console.log(settings)
 
                     let sendingMessage = {
