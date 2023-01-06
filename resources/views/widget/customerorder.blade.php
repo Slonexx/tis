@@ -30,7 +30,7 @@
 
                 $.ajax(settings).done(function (response) {
                     console.log("https://smarttis.kz/widget/InfoAttributes/" + ' response ↓ ')
-                    console.log(settings)
+                    console.log(response)
 
                     let sendingMessage = {
                         name: "OpenFeedback",
