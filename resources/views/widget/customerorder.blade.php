@@ -57,7 +57,8 @@
                 });
             }
             if(receivedMessage.popupResolution === "closedByUser" && receivedMessage.name === 'ShowPopupResponse'){
-                window.location.reload();
+                window.location.reload()
+                location.reload()
             }
         });
 
