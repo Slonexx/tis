@@ -56,7 +56,9 @@
 
                 });
             }
-
+            if(receivedMessage.popupResolution === "closedByUser"){
+                parent.location.reload();
+            }
         });
 
         function fiscalization(){
