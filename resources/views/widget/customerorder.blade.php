@@ -29,7 +29,7 @@
                 console.log(settings)
 
                 $.ajax(settings).done(function (response) {
-                    console.log("https://dev.smarttis.kz/widget/InfoAttributes/" + ' response ↓ ')
+                    console.log(' https://dev.smarttis.kz/widget/InfoAttributes/ response ↓ ')
                     console.log(settings)
 
                     let sendingMessage = {
@@ -56,10 +56,7 @@
 
                 });
             }
-            if(receivedMessage.popupResolution === "closedByUser" && receivedMessage.name === 'ShowPopupResponse'){
-                window.location.reload()
-                location.reload()
-            }
+
         });
 
         function fiscalization(){
