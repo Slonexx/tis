@@ -525,7 +525,7 @@ class TicketService
                         'rate' => $rate
                     ];
                     if ($body['rate'] == null) unlink($body['rate']);
-                    $client->post($url, $body);
+                    $client->post($url_to_body, $body);
                 }
                 break;
             }
