@@ -10,7 +10,6 @@ use App\Models\htmlResponce;
 use App\Services\AdditionalServices\DocumentService;
 use App\Services\MetaServices\MetaHook\AttributeHook;
 use GuzzleHttp\Exception\BadResponseException;
-use GuzzleHttp\Exception\ClientException;
 
 class TicketService
 {
@@ -30,10 +29,8 @@ class TicketService
 
     // Create ticket
 
-    /**
-     * @throws \GuzzleHttp\Exception\GuzzleException
-     */
-    public function createTicket($data) {
+    public function createTicket($data): \Illuminate\Http\JsonResponse
+    {
         $accountId = $data['accountId'];
         $id_entity = $data['id_entity'];
         $entity_type = $data['entity_type'];
@@ -420,6 +417,22 @@ class TicketService
                     //$url = $url . 'paymentout';
                     break;
                 }
+
+                $rate_body = $client->get("https://online.moysklad.ru/api/remap/1.2/entity/currency/")->rows;
+                $rate = null;
+                foreach ($rate_body as $item){
+                    if ($item->name == "тенге" or $item->fullName == "Казахстанский тенге"){
+                        $rate =
+                            ['meta'=> [
+                                'href' => $item->meta->href,
+                                'metadataHref' => $item->meta->metadataHref,
+                                'type' => $item->meta->type,
+                                'mediaType' => $item->meta->mediaType,
+                            ],
+                            ];
+                    }
+                }
+
                 $body = [
                     'organization' => [  'meta' => [
                         'href' => $OldBody->organization->meta->href,
@@ -442,8 +455,10 @@ class TicketService
                                 'uuidHref' => $OldBody->meta->uuidHref,
                             ],
                             'linkedSum' => 0
-                        ], ]
+                        ], ],
+                    'rate' => $rate
                 ];
+                if ($body['rate'] == null) unlink($body['rate']);
                 $client->post($url, $body);
                 break;
             }
@@ -469,6 +484,21 @@ class TicketService
                         }
                     }
 
+                    $rate_body = $client->get("https://online.moysklad.ru/api/remap/1.2/entity/currency/")->rows;
+                    $rate = null;
+                    foreach ($rate_body as $item_rate){
+                        if ($item_rate->name == "тенге" or $item_rate->fullName == "Казахстанский тенге"){
+                            $rate =
+                                ['meta'=> [
+                                    'href' => $item_rate->meta->href,
+                                    'metadataHref' => $item_rate->meta->metadataHref,
+                                    'type' => $item_rate->meta->type,
+                                    'mediaType' => $item_rate->meta->mediaType,
+                                ],
+                                ];
+                        }
+                    }
+
                     $body = [
                         'organization' => [  'meta' => [
                             'href' => $OldBody->organization->meta->href,
@@ -491,16 +521,16 @@ class TicketService
                                     'uuidHref' => $OldBody->meta->uuidHref,
                                 ],
                                 'linkedSum' => 0
-                            ], ]
+                            ], ],
+                        'rate' => $rate
                     ];
-
-                        $client->post($url_to_body, $body);
-
+                    if ($body['rate'] == null) unlink($body['rate']);
+                    $client->post($url_to_body, $body);
                 }
                 break;
             }
             default:{
-               break;
+                break;
             }
         }
 
@@ -630,7 +660,7 @@ class TicketService
                 ];
             }
             try {
-                $post = $client->post($url, $body);
+                $client->post($url, $body);
             } catch (BadResponseException $exception){
 
             }
