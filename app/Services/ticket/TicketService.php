@@ -10,7 +10,6 @@ use App\Models\htmlResponce;
 use App\Services\AdditionalServices\DocumentService;
 use App\Services\MetaServices\MetaHook\AttributeHook;
 use GuzzleHttp\Exception\BadResponseException;
-use GuzzleHttp\Exception\ClientException;
 
 class TicketService
 {
@@ -30,10 +29,8 @@ class TicketService
 
     // Create ticket
 
-    /**
-     * @throws \GuzzleHttp\Exception\GuzzleException
-     */
-    public function createTicket($data) {
+    public function createTicket($data): \Illuminate\Http\JsonResponse
+    {
         $accountId = $data['accountId'];
         $id_entity = $data['id_entity'];
         $entity_type = $data['entity_type'];
@@ -71,7 +68,7 @@ class TicketService
             if ($payType == 'return'){$this->createReturnDocument($Setting, $put, $postTicket, $putBody, $entity_type); }
 
             if ($Setting->paymentDocument != null ){
-                $this->createPaymentDocument($Setting, $put);
+                $this->createPaymentDocument($Setting->paymentDocument, $Client, $entity_type, $put, $Body['payments']);
             }
 
             htmlResponce::create([
@@ -374,64 +371,167 @@ class TicketService
 
     }
 
-    private function createPaymentDocument(getMainSettingBD $Setting, mixed $OldBody)
-    {   $client = new MsClient($Setting->tokenMs);
-        if ($Setting->paymentDocument == 1){
-            $url = 'https://online.moysklad.ru/api/remap/1.2/entity/cashin';
-            $body = [
-                'organization' => [  'meta' => [
-                    'href' => $OldBody->organization->meta->href,
-                    'type' => $OldBody->organization->meta->type,
-                    'mediaType' => $OldBody->organization->meta->mediaType,
-                ] ],
-                'agent' => [ 'meta'=> [
-                    'href' => $OldBody->agent->meta->href,
-                    'type' => $OldBody->agent->meta->type,
-                    'mediaType' => $OldBody->agent->meta->mediaType,
-                ] ],
-                'sum' => $OldBody->sum,
-                'operations' => [
-                    0 => [
-                        'meta'=> [
-                            'href' => $OldBody->meta->href,
-                            'metadataHref' => $OldBody->meta->metadataHref,
-                            'type' => $OldBody->meta->type,
-                            'mediaType' => $OldBody->meta->mediaType,
-                            'uuidHref' => $OldBody->meta->uuidHref,
-                        ],
-                        'linkedSum' => 0
-                    ], ]
-            ];
-            $postBodyCreateCashin = $client->post($url, $body);
-        }
-        if ($Setting->paymentDocument == 2){
-            $url = 'https://online.moysklad.ru/api/remap/1.2/entity/paymentin';
+    private function createPaymentDocument( string $paymentDocument, MsClient $client, string $entity_type, mixed $OldBody, mixed $payments)
+    {
+        switch ($paymentDocument){
+            case "1": {
+                $url = 'https://online.moysklad.ru/api/remap/1.2/entity/';
+                if ($entity_type != 'salesreturn') {
+                    $url = $url . 'cashin';
+                } else {
+                    //$url = $url . 'cashout';
+                    break;
+                }
+                $body = [
+                    'organization' => [  'meta' => [
+                        'href' => $OldBody->organization->meta->href,
+                        'type' => $OldBody->organization->meta->type,
+                        'mediaType' => $OldBody->organization->meta->mediaType,
+                    ] ],
+                    'agent' => [ 'meta'=> [
+                        'href' => $OldBody->agent->meta->href,
+                        'type' => $OldBody->agent->meta->type,
+                        'mediaType' => $OldBody->agent->meta->mediaType,
+                    ] ],
+                    'sum' => $OldBody->sum,
+                    'operations' => [
+                        0 => [
+                            'meta'=> [
+                                'href' => $OldBody->meta->href,
+                                'metadataHref' => $OldBody->meta->metadataHref,
+                                'type' => $OldBody->meta->type,
+                                'mediaType' => $OldBody->meta->mediaType,
+                                'uuidHref' => $OldBody->meta->uuidHref,
+                            ],
+                            'linkedSum' => 0
+                        ], ]
+                ];
+                $client->post($url, $body);
+                break;
+            }
+            case "2": {
+                $url = 'https://online.moysklad.ru/api/remap/1.2/entity/';
+                if ($entity_type != 'salesreturn') {
+                    $url = $url . 'paymentin';
+                } else {
+                    //$url = $url . 'paymentout';
+                    break;
+                }
 
-            $body = [
-                'organization' => [  'meta' => [
-                    'href' => $OldBody->organization->meta->href,
-                    'type' => $OldBody->organization->meta->type,
-                    'mediaType' => $OldBody->organization->meta->mediaType,
-                ] ],
-                'agent' => [ 'meta'=> [
-                    'href' => $OldBody->agent->meta->href,
-                    'type' => $OldBody->agent->meta->type,
-                    'mediaType' => $OldBody->agent->meta->mediaType,
-                ] ],
-                'sum' => $OldBody->sum,
-                'operations' => [
-                    0 => [
-                        'meta'=> [
-                            'href' => $OldBody->meta->href,
-                            'metadataHref' => $OldBody->meta->metadataHref,
-                            'type' => $OldBody->meta->type,
-                            'mediaType' => $OldBody->meta->mediaType,
-                            'uuidHref' => $OldBody->meta->uuidHref,
-                        ],
-                        'linkedSum' => 0
-                    ], ]
-            ];
-            $postBodyCreatePaymentin = $client->post($url, $body);
+                $rate_body = $client->get("https://online.moysklad.ru/api/remap/1.2/entity/currency/")->rows;
+                $rate = null;
+                foreach ($rate_body as $item){
+                    if ($item->name == "тенге" or $item->fullName == "Казахстанский тенге"){
+                        $rate =
+                            ['meta'=> [
+                                'href' => $item->meta->href,
+                                'metadataHref' => $item->meta->metadataHref,
+                                'type' => $item->meta->type,
+                                'mediaType' => $item->meta->mediaType,
+                            ],
+                            ];
+                    }
+                }
+
+                $body = [
+                    'organization' => [  'meta' => [
+                        'href' => $OldBody->organization->meta->href,
+                        'type' => $OldBody->organization->meta->type,
+                        'mediaType' => $OldBody->organization->meta->mediaType,
+                    ] ],
+                    'agent' => [ 'meta'=> [
+                        'href' => $OldBody->agent->meta->href,
+                        'type' => $OldBody->agent->meta->type,
+                        'mediaType' => $OldBody->agent->meta->mediaType,
+                    ] ],
+                    'sum' => $OldBody->sum,
+                    'operations' => [
+                        0 => [
+                            'meta'=> [
+                                'href' => $OldBody->meta->href,
+                                'metadataHref' => $OldBody->meta->metadataHref,
+                                'type' => $OldBody->meta->type,
+                                'mediaType' => $OldBody->meta->mediaType,
+                                'uuidHref' => $OldBody->meta->uuidHref,
+                            ],
+                            'linkedSum' => 0
+                        ], ],
+                    'rate' => $rate
+                ];
+                if ($body['rate'] == null) unlink($body['rate']);
+                $client->post($url, $body);
+                break;
+            }
+            case "3": {
+                $url = 'https://online.moysklad.ru/api/remap/1.2/entity/';
+                $url_to_body = null;
+                foreach ($payments as $item){
+                    $change = 0;
+                    if ($item['payment_type'] == 0){
+                        if ($entity_type != 'salesreturn') {
+                            $url_to_body = $url . 'cashin';
+                        } else {
+                            //$url_to_body = $url . 'cashout';
+                            break;
+                        }
+                        if (isset($item['change'])) $change = $item['change'];
+                    } else {
+                        if ($entity_type != 'salesreturn') {
+                            $url_to_body = $url . 'paymentin';
+                        } else {
+                            //$url_to_body = $url . 'paymentout';
+                            break;
+                        }
+                    }
+
+                    $rate_body = $client->get("https://online.moysklad.ru/api/remap/1.2/entity/currency/")->rows;
+                    $rate = null;
+                    foreach ($rate_body as $item_rate){
+                        if ($item_rate->name == "тенге" or $item_rate->fullName == "Казахстанский тенге"){
+                            $rate =
+                                ['meta'=> [
+                                    'href' => $item_rate->meta->href,
+                                    'metadataHref' => $item_rate->meta->metadataHref,
+                                    'type' => $item_rate->meta->type,
+                                    'mediaType' => $item_rate->meta->mediaType,
+                                ],
+                                ];
+                        }
+                    }
+
+                    $body = [
+                        'organization' => [  'meta' => [
+                            'href' => $OldBody->organization->meta->href,
+                            'type' => $OldBody->organization->meta->type,
+                            'mediaType' => $OldBody->organization->meta->mediaType,
+                        ] ],
+                        'agent' => [ 'meta'=> [
+                            'href' => $OldBody->agent->meta->href,
+                            'type' => $OldBody->agent->meta->type,
+                            'mediaType' => $OldBody->agent->meta->mediaType,
+                        ] ],
+                        'sum' => ($item['total']-$change) * 100,
+                        'operations' => [
+                            0 => [
+                                'meta'=> [
+                                    'href' => $OldBody->meta->href,
+                                    'metadataHref' => $OldBody->meta->metadataHref,
+                                    'type' => $OldBody->meta->type,
+                                    'mediaType' => $OldBody->meta->mediaType,
+                                    'uuidHref' => $OldBody->meta->uuidHref,
+                                ],
+                                'linkedSum' => 0
+                            ], ],
+                        'rate' => $rate
+                    ];
+                    if ($body['rate'] == null) unlink($body['rate']);
+                    $client->post($url_to_body, $body);
+                }
+                break;
+            }
+            default:{
+                break;
+            }
         }
 
     }
@@ -560,7 +660,7 @@ class TicketService
                 ];
             }
             try {
-                $post = $client->post($url, $body);
+                $client->post($url, $body);
             } catch (BadResponseException $exception){
 
             }
