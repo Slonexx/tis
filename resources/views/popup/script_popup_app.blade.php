@@ -120,12 +120,12 @@
             let object_sum = window.document.getElementById('sum');
             let sum = parseFloat(object_sum.innerText - object_Final.innerText)
 
-            if (params === 'plus' || params == 'plus'){
+            if (params === 'plus' || params == "plus"){
                 object_Quantity.innerText = Quantity + 1
                 object_Final.innerText = object_Quantity.innerText * object_price
                 object_sum.innerText = parseFloat(sum + parseFloat(object_Final.innerText))
             }
-            if (params === 'minus' || params == 'minus'){
+            if (params === 'minus' || params == "minus"){
                 object_Quantity.innerText = Quantity - 1
                 object_Final.innerText = object_Quantity.innerText * object_price
                 object_sum.innerText = parseFloat(sum + parseFloat(object_Final.innerText))
