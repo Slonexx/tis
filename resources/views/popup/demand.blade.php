@@ -52,32 +52,34 @@
 
                         if (products[i].propety === true) {
 
-                            let vat = products[i].vat + '%'
-                            if (products[i].vat === 0) vat = "без НДС"
+                            let vat =  products[i].vat + '%'
+                            let minus = 0
+                            let plus = 1
+                            if (products[i].vat === 0)  vat = "без НДС"
 
-                            $('#main').append('<div id="' + i + '" class="divTableRow" >' +
-                                '<div class="divTableCell">' + i + '</div>' +
-                                '<div id="productId_' + i + '" class="divTableCell" style="display: none">' + products[i].position + '</div>' +
-                                '<div id="productName_' + i + '" class="divTableCell"> ' + products[i].name + '</div>' +
+                            $('#main').append('<div id="'+i+'" class="divTableRow" >' +
+                                '<div class="divTableCell">'+i+'</div>' +
+                                '<div id="productId_'+i+'" class="divTableCell" style="display: none">'+products[i].position+'</div>' +
+                                '<div id="productName_'+i+'" class="divTableCell"> '+products[i].name+'</div>' +
 
                                 '<div class="divTableCell">' +
-                                '<span><i onclick="updateQuantity(' + i + ', "minus")" class="fa-solid fa-circle-minus text-danger" style="cursor: pointer"></i></span>' +
-                                '<span id="productQuantity_' + i + '" class="mx-3">' + products[i].quantity + '</span>' +
-                                '<span><i onclick="updateQuantity( ' + i + ', "plus")" class="fa-solid fa-circle-plus text-success" style="cursor: pointer"></i></span>' +
+                                '<span><i onclick="updateQuantity('+ i +', '+minus+')" class="fa-solid fa-circle-minus text-danger" style="cursor: pointer"></i></span>' +
+                                '<span id="productQuantity_'+ i +'" class="mx-3">' + products[i].quantity + '</span>' +
+                                '<span><i onclick="updateQuantity( '+ i +', '+plus+')" class="fa-solid fa-circle-plus text-success" style="cursor: pointer"></i></span>' +
                                 '</div>' +
 
-                                '<div id="productUOM_' + i + '" class="divTableCell">' + products[i].uom['name'] + '</div>' +
-                                '<div id="productIDUOM_' + i + '" class="divTableCell" style="display: none">' + products[i].uom['id'] + '</div>' +
+                                '<div id="productUOM_'+i+'" class="divTableCell">'+products[i].uom['name']+'</div>' +
+                                '<div id="productIDUOM_'+i+'" class="divTableCell" style="display: none">'+products[i].uom['id']+'</div>' +
 
-                                '<div id="productPrice_' + i + '" class="divTableCell"> ' + products[i].price + ' </div>' +
+                                '<div id="productPrice_'+ i +'" class="divTableCell"> '+ products[i].price +' </div>' +
 
-                                '<div id="productVat_' + i + '" class="divTableCell"> ' + vat + ' </div>' +
+                                '<div id="productVat_'+ i +'" class="divTableCell"> '+ vat + ' </div>' +
 
-                                '<div id="productDiscount_' + i + '" class="divTableCell"> ' + products[i].discount + '%' + ' </div>' +
+                                '<div id="productDiscount_'+ i +'" class="divTableCell"> '+ products[i].discount + '%' + ' </div>' +
 
-                                '<div id="productFinal_' + i + '" class="divTableCell"> ' + products[i].final + ' </div>' +
+                                '<div id="productFinal_'+ i +'" class="divTableCell"> '+ products[i].final + ' </div>' +
 
-                                '<span onclick="deleteBTNClick(' + i + ')" class="divTableCell" > <i class="fa-solid fa-rectangle-xmark" style="cursor: pointer; margin-left: 2rem" ></i> </span>' +
+                                '<span onclick="deleteBTNClick('+ i +')" class="divTableCell" > <i class="fa-solid fa-rectangle-xmark" style="cursor: pointer; margin-left: 2rem" ></i> </span>' +
 
                                 " </div>")
 
