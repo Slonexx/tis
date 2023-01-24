@@ -55,8 +55,8 @@
                             if (products[i].propety === true) {
 
                                 let vat =  products[i].vat + '%'
-                                let minus = "minus";
-                                let plus = "plus";
+                                let minus = 0
+                                let plus = 1
                                 if (products[i].vat === 0)  vat = "без НДС"
 
                                 $('#main').append('<div id="'+i+'" class="divTableRow" >' +
