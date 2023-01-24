@@ -75,9 +75,9 @@
                                     '<div id="productName_'+i+'" class="divTableCell"> '+products[i].name+'</div>' +
 
                                     '<div class="divTableCell">' +
-                                    '<span><i onclick="updateQuantity('+ i +','+'"minus"'+' )" class="fa-solid fa-circle-minus text-danger" style="cursor: pointer"></i></span>' +
+                                    '<span><i onclick="updateQuantity('+ i +', '+minus+')" class="fa-solid fa-circle-minus text-danger" style="cursor: pointer"></i></span>' +
                                     '<span id="productQuantity_'+ i +'" class="mx-3">' + products[i].quantity + '</span>' +
-                                    '<span><i onclick="updateQuantity( '+ i +', '+'"plus"'+')" class="fa-solid fa-circle-plus text-success" style="cursor: pointer"></i></span>' +
+                                    '<span><i onclick="updateQuantity( '+ i +', 'plus')" class="fa-solid fa-circle-plus text-success" style="cursor: pointer"></i></span>' +
                                     '</div>' +
 
                                     '<div id="productUOM_'+i+'" class="divTableCell">'+products[i].uom['name']+'</div>' +
