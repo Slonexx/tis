@@ -45,7 +45,7 @@
 
 
     function PrintCheck(){
-        let url = 'https://smarttis.kz/Popup/customerorder/print';
+        let url = 'https://dev.smarttis.kz/Popup/customerorder/print';
         let final = url + '/' + accountId;
         window.open(final)
     }
@@ -116,18 +116,19 @@
 
             let object_price = window.document.getElementById('productPrice_'+id).innerText;
             let object_Final = window.document.getElementById('productFinal_'+id);
+            let object_Discount = window.document.getElementById('productDiscount_'+id);
 
             let object_sum = window.document.getElementById('sum');
             let sum = parseFloat(object_sum.innerText - object_Final.innerText)
 
-            if (params === 'plus'){
+            if (params === 'plus' || params == 1){
                 object_Quantity.innerText = Quantity + 1
-                object_Final.innerText = object_Quantity.innerText * object_price
+                object_Final.innerText = (object_Quantity.innerText * object_price - (object_Quantity.innerText * object_price * (parseFloat(object_Discount.innerText) / 100))).toFixed(2)
                 object_sum.innerText = parseFloat(sum + parseFloat(object_Final.innerText))
             }
-            if (params === 'minus'){
+            if (params === 'minus' || params == 0){
                 object_Quantity.innerText = Quantity - 1
-                object_Final.innerText = object_Quantity.innerText * object_price
+                object_Final.innerText = (object_Quantity.innerText * object_price - (object_Quantity.innerText * object_price * (parseFloat(object_Discount.innerText) / 100))).toFixed(2)
                 object_sum.innerText = parseFloat(sum + parseFloat(object_Final.innerText))
                 if (parseInt(object_Quantity.innerText) === 0){
                     deleteBTNClick( id )
