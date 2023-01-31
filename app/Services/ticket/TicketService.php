@@ -283,7 +283,7 @@ class TicketService
         $positions = $Client->get($oldBody->positions->meta->href)->rows;
         $Resul_positions = $this->setPositionsToPutBody($postTicket, $positions, $positionsBody);
 
-
+        $description = $this->descriptionToCreate($postTicket, $positionsBody);
 
 
         if ($Result_attributes != null){
