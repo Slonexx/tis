@@ -65,7 +65,12 @@ class TicketService
             $put = $Client->put('https://online.moysklad.ru/api/remap/1.2/entity/'.$entity_type.'/'.$id_entity, $putBody);
 
             //dd($putBody);
-            if ($payType == 'return'){$this->createReturnDocument($Setting, $put, $postTicket, $putBody, $entity_type); }
+            if ($payType == 'return'){
+                $this->createReturnDocument($Setting, $put, $postTicket, $putBody, $entity_type);
+                $put = $Client->put('https://online.moysklad.ru/api/remap/1.2/entity/'.$entity_type.'/'.$id_entity, [
+                    'description' => $this->descriptionToCreate($oldBody, $postTicket, 'Возврат, фискальный номер: '),
+                ]);
+            }
 
             if ($Setting->paymentDocument != null ){
                 $this->createPaymentDocument($Setting->paymentDocument, $Client, $entity_type, $put, $Body['payments']);
@@ -283,8 +288,7 @@ class TicketService
         $positions = $Client->get($oldBody->positions->meta->href)->rows;
         $Resul_positions = $this->setPositionsToPutBody($postTicket, $positions, $positionsBody);
 
-
-
+        $result['description'] = $this->descriptionToCreate($oldBody, $postTicket, 'Продажа, Фискальный номер: ');
 
         if ($Result_attributes != null){
             $result['attributes'] = $Result_attributes;
@@ -667,6 +671,16 @@ class TicketService
         }
 
 
+    }
+
+    private function descriptionToCreate(mixed $oldBody, mixed $postTicket, $message): string
+    {
+        $OldMessage = '';
+        if (property_exists($oldBody, 'description')) {
+            $OldMessage = $oldBody->description.PHP_EOL;
+        }
+
+        return (string) $OldMessage.'['.( (int) date('H') + 6 ).date(':i:s').' '. date('Y-m-d') .'] '. $message.$postTicket->data->fixed_check ;
     }
 
 
