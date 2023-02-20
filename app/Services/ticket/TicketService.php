@@ -29,7 +29,7 @@ class TicketService
 
     // Create ticket
 
-    public function createTicket($data): \Illuminate\Http\JsonResponse
+    public function createTicket($data)
     {
         $accountId = $data['accountId'];
         $id_entity = $data['id_entity'];
