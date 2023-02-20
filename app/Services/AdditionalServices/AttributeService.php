@@ -10,124 +10,154 @@ class AttributeService
     public function setAllAttributesMs($data): void
     {
         $apiKeyMs = $data['tokenMs'];
-        //$accountId = $data['accountId'];
+        $accountId = $data['accountId'];
 
         try {
-            $docAttributes = $this->getDocAttributes();
-            $payDocAttributes = $this->getPayDocAttributes();
+            $this->createOrderAttributes($apiKeyMs);
+            $this->createDemandAttributes($apiKeyMs);
+            $this->createSalesReturn($apiKeyMs);
 
-            $this->createAttributes($apiKeyMs, 'customerorder', $docAttributes);
-            $this->createAttributes($apiKeyMs, 'demand', $docAttributes);
-            $this->createAttributes($apiKeyMs, 'salesreturn', $docAttributes);
-            $this->createAttributesCustomentity($apiKeyMs);
+            $this->createPaymentInAttributes($apiKeyMs);
+            $this->createPaymentOutAttributes($apiKeyMs);
+            $this->createCashInAttributes($apiKeyMs);
+            $this->createCashOutAttributes($apiKeyMs);
+        } catch (ClientException $e){
 
-            $this->createAttributes($apiKeyMs, 'paymentin', $payDocAttributes);
-            $this->createAttributes($apiKeyMs, 'paymentout', $payDocAttributes);
-            $this->createAttributes($apiKeyMs, 'cashin', $payDocAttributes);
-            $this->createAttributes($apiKeyMs, 'cashout', $payDocAttributes);
-        } catch (ClientException) {
         }
     }
 
-    private function createAttributes($apiKeyMs, $entityType, $attributes): void
+    private function createOrderAttributes($apiKeyMs): void
     {
-        $url = "https://online.moysklad.ru/api/remap/1.2/entity/" . $entityType . "/metadata/attributes";
+        $bodyAttributes = $this->getDocAttributes();
+        $url = "https://online.moysklad.ru/api/remap/1.2/entity/customerorder/metadata/attributes";
         $client = new MsClient($apiKeyMs);
-        $json = $client->get($url);
-
-        foreach ($attributes as $attribute) {
-            if (!$this->isAttributeExists($json, $attribute['name'])) {
-                $client->post($url, $attribute);
-            }
-        }
+        $this->getBodyToAdd($client, $url, $bodyAttributes);
     }
 
-    private function isAttributeExists($json, $attributeName): bool
+    private function createDemandAttributes($apiKeyMs): void
     {
-        foreach ($json->rows as $row) {
-            if ($attributeName == $row->name) {
-                return true;
-            }
-        }
-        return false;
+        $bodyAttributes = $this->getDocAttributes();
+        $url = "https://online.moysklad.ru/api/remap/1.2/entity/demand/metadata/attributes";
+        $client = new MsClient($apiKeyMs);
+        $this->getBodyToAdd($client, $url, $bodyAttributes);
+    }
+
+    private function createSalesReturn($apiKeyMs){
+        $bodyAttributes = $this->getDocAttributes();
+        $url = "https://online.moysklad.ru/api/remap/1.2/entity/salesreturn/metadata/attributes";
+        $client = new MsClient($apiKeyMs);
+        $this->getBodyToAdd($client, $url, $bodyAttributes);
+    }
+
+    private function createPaymentInAttributes($apiKeyMs):void
+    {
+        $bodyAttributes = $this->getPayDocAttributes();
+        $url = "https://online.moysklad.ru/api/remap/1.2/entity/paymentin/metadata/attributes";
+        $client = new MsClient($apiKeyMs);
+        $this->getBodyToAdd($client, $url, $bodyAttributes);
+    }
+
+    private function createPaymentOutAttributes($apiKeyMs):void
+    {
+        $bodyAttributes = $this->getPayDocAttributes();
+        $url = "https://online.moysklad.ru/api/remap/1.2/entity/paymentout/metadata/attributes";
+        $client = new MsClient($apiKeyMs);
+        $this->getBodyToAdd($client, $url, $bodyAttributes);
+    }
+
+    private function createCashInAttributes($apiKeyMs):void
+    {
+        $bodyAttributes = $this->getPayDocAttributes();
+        $url = "https://online.moysklad.ru/api/remap/1.2/entity/cashin/metadata/attributes";
+        $client = new MsClient($apiKeyMs);
+        $this->getBodyToAdd($client, $url, $bodyAttributes);
+    }
+
+    public function createCashOutAttributes($apiKeyMs)
+    {
+        $bodyAttributes = $this->getPayDocAttributes();
+        $url = "https://online.moysklad.ru/api/remap/1.2/entity/cashout/metadata/attributes";
+        $client = new MsClient($apiKeyMs);
+        $this->getBodyToAdd($client, $url, $bodyAttributes);
     }
 
     public function getDocAttributes(): array
     {
         return [
             0 => [
-                "name" => "фискальный номер (фискальный номер (ТИС)",
+                "name" => "фискальный номер (ТИС)",
                 "type" => "string",
                 "required" => false,
                 "show" => false,
-                "description" => "данное дополнительнее поле отвечает за фискальный номер чека (Онлайн ккм)",
+                "description" => "данное дополнительнее поле отвечает за фискальный номер чека (ТИС)",
             ],
             1 => [
                 "name" => "Ссылка для QR-кода (ТИС)",
                 "type" => "link",
                 "required" => false,
-                "description" => "данное дополнительнее поле отвечает за ссылку на QR-код чека (Онлайн ккм)",
+                "show" => false,
+                "description" => "данное дополнительнее поле отвечает за ссылку на QR-код чека (ТИС)",
             ],
             2 => [
                 "name" => "Фискализация (ТИС)",
                 "type" => "boolean",
                 "required" => false,
                 "show" => false,
-                "description" => "данное дополнительное поле отвечает за проведения фискализации, если стоит галочка то фискализация была (Онлайн ккм)",
+                "description" => "данное дополнительное поле отвечает за проведения фискализации, если стоит галочка то фискализация была (ТИС)",
             ],
             3 => [
                 "name" => "ID (ТИС)",
                 "type" => "string",
                 "required" => false,
                 "show" => false,
-                "description" => "уникальный идентификатор по данному дополнительному полю идёт синхронизация с WebKassa (Онлайн ккм)",
-            ],
-            4 => [
-                "name" => "Тип Оплаты (ТИС)",
-                "type" => "string",
-                "required" => false,
-                "description" => "Данное дополнительно поле отвечает за тип оплаты после фискализации (ТИС)",
+                "description" => "уникальный идентификатор по данному дополнительному полю идёт синхронизация с ТИС (ТИС)",
             ],
         ];
     }
 
-    public function getPayDocAttributes(): array
-    {
+    public function getPayDocAttributes(){
         return [
             0 => [
                 "name" => "Фискализация (ТИС)",
                 "type" => "boolean",
                 "required" => false,
-                "description" => "Данное дополнительное поле отвечает за проведения фискализации, если стоит галочка то фискализация была (Онлайн ККМ)",
+                "show" => false,
+                "description" => "данное дополнительное поле отвечает за проведения фискализации, если стоит галочка то фискализация была (ТИС)",
             ],
         ];
     }
 
-    private function createAttributesCustomentity(mixed $apiKeyMs): void
+    /**
+     * @param MsClient $client
+     * @param string $url
+     * @param array $bodyAttributes
+     * @return void
+     */
+    private function getBodyToAdd(MsClient $client, string $url, array $bodyAttributes): void
     {
-        $client = new MsClient($apiKeyMs);
-        $json = $client->post("https://online.moysklad.ru/api/remap/1.2/entity/customentity/", ['name' => 'Тип оплаты (Онлайн ККМ)']);
-        $client->post("https://online.moysklad.ru/api/remap/1.2/entity/customentity/" . $json->id, [
-            ['name' => "Наличные"],
-            ['name' => "Картой"],
-            ['name' => "Мобильная"],
-        ]);
+        $json = $client->get($url);
+        //$bodyToAdd = [];
 
+        foreach ($bodyAttributes as $body) {
+            $foundedAttrib = false;
+            foreach ($json->rows as $row) {
+                if ($body["name"] == $row->name) {
+                    $foundedAttrib = true;
+                    break;
+                }
+            }
+            if (!$foundedAttrib) {
+                $client->post($url,$body);
+                //array_push($bodyToAdd, $body);
+            }
+        }
 
+        //dd($bodyToAdd);
 
-        $client->post("https://online.moysklad.ru/api/remap/1.2/entity/customerorder/metadata/attributes",
-            [
-                "customEntityMeta" => [
-                    "href" => 'https://online.moysklad.ru/api/remap/1.2/context/companysettings/metadata/customEntities/'. $json->id,
-                    "type" => "customentitymetadata",
-                    "mediaType" => "application/json",
-                ],
-                "name" => "Тип оплаты (Онлайн ККМ)",
-                "type" => "customentity",
-                "required" => false,
-            ]
-        );
-
+//        if (count($bodyToAdd) > 0) {
+//            $client->multiPost($url, $bodyToAdd);
+//        }
+        //return $bodyToAdd;
     }
 
 }
