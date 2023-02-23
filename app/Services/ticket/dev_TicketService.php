@@ -59,8 +59,8 @@ class dev_TicketService
         }
 
         try {
-            //dd($Body);
             $postTicket = $ClientTIS->POSTClient($Config->apiURL_ukassa.'v2/operation/ticket/', $Body);
+          //  dd($postTicket);
 
             $putBody = $this->putBodyMS($entity_type, $postTicket, $Client, $Setting, $oldBody, $positions);
             if ($putBody != []) {
@@ -87,7 +87,6 @@ class dev_TicketService
             ]);
 
         } catch (BadResponseException  $e){
-            return $e->getResponse()->getBody()->getContents();
             return response()->json([
                 'status'    => 'error',
                 'code'      => $e->getCode(),
