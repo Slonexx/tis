@@ -58,7 +58,7 @@ class dev_TicketService
             return response()->json($Body['Message']);
         }
 
-        try {
+        //try {
             //dd($Body);
             $postTicket = $ClientTIS->POSTClient($Config->apiURL_ukassa.'v2/operation/ticket/', $Body);
             dd($postTicket, $Body);
@@ -87,13 +87,13 @@ class dev_TicketService
                 'postTicket' => $postTicket,
             ]);
 
-        } catch (BadResponseException  $e){
+       /* } catch (BadResponseException  $e){
             return response()->json([
                 'status'    => 'error',
                 'code'      => $e->getCode(),
                 'errors'    => json_decode($e->getResponse()->getBody()->getContents(), true)
             ]);
-        }
+        }*/
         //$postTicket = null;
 
 
