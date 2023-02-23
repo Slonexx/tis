@@ -61,7 +61,7 @@ class dev_TicketService
         //try {
             //dd($Body);
             $postTicket = $ClientTIS->POSTClient($Config->apiURL_ukassa.'v2/operation/ticket/', $Body);
-            dd($postTicket, $Body);
+            return response()->json([$postTicket, $Body]);
 
             $putBody = $this->putBodyMS($entity_type, $postTicket, $Client, $Setting, $oldBody, $positions);
             if ($putBody != []) {
