@@ -51,11 +51,11 @@ class sendController extends Controller
 
 
 
-        try {
+       // try {
 
-            $ticket = json_decode(json_encode((app(dev_TicketService::class)->createTicket($body))));
+            return (app(dev_TicketService::class)->createTicket($body));
 
-            if ($ticket->original->status == 'error'){
+           /* if ($ticket->original->status == 'error'){
                 return response()->json($ticket->original);
             } else {
                 return response()->json([
@@ -72,7 +72,7 @@ class sendController extends Controller
             }
         } catch (\Throwable $e){
             return response()->json($e->getMessage());
-        }
+        }*/
     }
 
     public function SendCreateRequest(Request $request){
