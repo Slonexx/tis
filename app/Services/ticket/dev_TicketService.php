@@ -58,7 +58,7 @@ class dev_TicketService
             return response()->json($Body['Message']);
         }
 
-        dd($Config->apiURL_ukassa.'v2/operation/ticket/', $Body, json_encode($Body));
+        //dd($Config->apiURL_ukassa.'v2/operation/ticket/', $Body, json_encode($Body));
 
         try {
             $postTicket = $ClientTIS->POSTClient($Config->apiURL_ukassa.'v2/operation/ticket/', $Body);
