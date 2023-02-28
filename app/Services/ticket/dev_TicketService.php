@@ -58,7 +58,7 @@ class dev_TicketService
             return response()->json($Body['Message']);
         }
 
-        dd($Config->apiURL_ukassa.'v2/operation/ticket/', $Body, json_encode($Body));
+        //dd($Config->apiURL_ukassa.'v2/operation/ticket/', $Body, json_encode($Body));
 
         try {
             $postTicket = $ClientTIS->POSTClient($Config->apiURL_ukassa.'v2/operation/ticket/', $Body);
@@ -265,7 +265,11 @@ class dev_TicketService
 
         if (property_exists($agent, 'email')) { $result['email'] = $agent->email; }
         if (property_exists($agent, 'phone')) {
-            $phone = "7".mb_substr(str_replace('+7', '', str_replace(" ", '', str_replace('(', '', str_replace(')', '', str_replace('-', '', $agent->phone))))), -10);
+            $phone = "7".mb_substr(str_replace('+7', '',
+                    str_replace(" ", '',
+                        str_replace('(', '',
+                            str_replace(')', '',
+                                str_replace('-', '', $agent->phone))))), -10);
             $result['phone'] = $phone;
 
         }

@@ -264,7 +264,14 @@ class TicketService
         $result = [];
 
         if (property_exists($agent, 'email')) { $result['email'] = $agent->email; }
-        if (property_exists($agent, 'phone')) { $result['phone'] = $agent->phone; }
+        if (property_exists($agent, 'phone')) {
+            $phone = "7".mb_substr(str_replace('+7', '',
+                    str_replace(" ", '',
+                        str_replace('(', '',
+                            str_replace(')', '',
+                                str_replace('-', '', $agent->phone))))), -10);
+            $result['phone'] = $phone;
+        }
         if (property_exists($agent, 'inn')) { $result['iin'] = $agent->inn; }
 
         return $result;
