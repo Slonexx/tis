@@ -470,7 +470,7 @@ class TicketService
                         ], ],
                     'rate' => $rate
                 ];
-                if ($body['rate'] == null) unlink($body['rate']);
+                if ($body['rate'] == null) unset($body['rate']);
                 $client->post($url, $body);
                 break;
             }
@@ -536,7 +536,7 @@ class TicketService
                             ], ],
                         'rate' => $rate
                     ];
-                    if ($body['rate'] == null) unlink($body['rate']);
+                    if ($body['rate'] == null) unset($body['rate']);
                     $client->post($url_to_body, $body);
                 }
                 break;
@@ -630,7 +630,7 @@ class TicketService
                         'mediaType' => $newBody->organizationAccount->meta->mediaType,
                     ]
                 ];
-            } else { unlink($body['organizationAccount']); }
+            } else { unset($body['organizationAccount']); }
 
             if (isset($newBody->store)){
                 $body['store'] = [
