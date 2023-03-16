@@ -7,7 +7,7 @@
 
         //const url = 'http://tus/Popup/salesreturn/show';
 
-        const url = 'https://smarttis.kz/Popup/salesreturn/show';
+        const url = 'https://main.smarttis.kz/Popup/salesreturn/show';
 
         let object_Id = ''
         let accountId = ''
@@ -134,7 +134,7 @@
             }
 
             if (total-0.01 <= money_card+money_cash){
-                let url = 'https://smarttis.kz/Popup/salesreturn/send'
+                let url = 'https://main.smarttis.kz/Popup/salesreturn/send'
 
                 if (modalShowHide === 'show'){
                     $('#downL').modal('toggle')

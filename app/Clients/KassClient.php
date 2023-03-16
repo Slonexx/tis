@@ -14,7 +14,7 @@ class KassClient
     public function __construct($authToken)
     {
         $this->client = new Client([
-            'base_uri' => 'https://ukassa.kz/api/',
+            'base_uri' => 'https://test.ukassa.kz/api/',
             'headers' => [
                 'Authorization' => 'Token '.$authToken,
                 'Content-Type' => 'application/json',

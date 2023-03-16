@@ -45,7 +45,7 @@
 
 
     function PrintCheck(){
-        let url = 'https://smarttis.kz/Popup/customerorder/print';
+        let url = 'https://main.smarttis.kz/Popup/customerorder/print';
         let final = url + '/' + accountId;
         window.open(final)
     }

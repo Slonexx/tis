@@ -42,7 +42,7 @@ class InstallOrDelete extends Command
 
         $client = new Client();
         //$url = "http://tus/api/installOfDelete";
-        $url = "https://smarttis.kz/api/installOfDelete";
+        $url = "https://main.smarttis.kz/api/installOfDelete";
         $countFailSettings = 0;
 
         $promises = (function () use ($accountIds, $client, $url, &$countFailSettings){

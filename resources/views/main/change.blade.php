@@ -7,7 +7,7 @@
         <div class="row gradient rounded p-2 pb-2" style="margin-top: -1rem">
             <div class="col-10" style="margin-top: 1.2rem"> <span class="text-black" style="font-size: 20px"> Смена </span> </div>
             <div class="col-2 text-center">
-                <img src="https://smarttis.kz/Config/logo.png" width="50%"  alt="">
+                <img src="https://main.smarttis.kz/Config/logo.png" width="50%"  alt="">
                 <div style="font-size: 11px; margin-top: 8px"> <b>Топ партнёр сервиса МойСклад</b> </div>
             </div>
         </div>
@@ -60,7 +60,7 @@
             let params = {
                 idKassa: idKassa,
             };
-            let url = 'https://smarttis.kz/kassa/get_shift_report/info/'+accountId;
+            let url = 'https://main.smarttis.kz/kassa/get_shift_report/info/'+accountId;
             //let url = 'https://tus/kassa/get_shift_report/info/'+accountId;
             let final = url + formatParams(params);
 
@@ -94,7 +94,7 @@
                 operation_type: window.document.getElementById('operations').value,
                 amount: window.document.getElementById('inputSum').value,
             };
-            let url = 'https://smarttis.kz/operation/cash_operation/'+accountId;
+            let url = 'https://main.smarttis.kz/operation/cash_operation/'+accountId;
             //let url = 'https://tus/operation/cash_operation/'+accountId;
             let final = url + formatParams(params);
             console.log(final)

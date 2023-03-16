@@ -23,7 +23,7 @@
                     entity_type: entity_type,
                     objectId: Global_object_Id,
                 };
-                let url = 'https://smarttis.kz/widget/InfoAttributes/';
+                let url = 'https://main.smarttis.kz/widget/InfoAttributes/';
                 let final = url + formatParams(params);
 
                 const xmlHttpRequest = new XMLHttpRequest();
@@ -88,7 +88,7 @@
         }
 
         function getSearchToTIS(){
-            window.open('https://ukassa.kz/kassa/report/search/')
+            window.open('https://test.ukassa.kz/api/kassa/report/search/')
         }
 
     </script>
