@@ -1,8 +1,8 @@
 <?php
 
 return [
-    'appId' => '7bd5e7ce-8d4b-4225-9d8a-4a2568690121',
-    'appUid' => 'ukassa.smartinnovations',
-    'secretKey' => 'kh4M8ESbQmphrLVsYDqHO3qPVGi6MQexOWmu20QQVZia854ExZzcLdfTWuwiI3n0Ca3MoaFcF7HGPQWgn4DgMwjVz6JaisTsQ23xf56FSc3G1tE8oooTPiRjmrSZTKGn',
-    'appBaseUrl' => 'https://smarttis.kz/',
+    'appId' => '88d2dc2f-130e-412d-a7a4-c662195c1a12',
+    'appUid' => 'tus.smartinnovations',
+    'secretKey' => 'c2bPgCSvr7lnbs1GYsMbhbfl5jbMJLdk7lu75cvGW9y34BEDd4F6QVnGy30zoSRU5huqkGZTiOM8uWqYuOM234SvNdoPZxlMPYs0Hll9MboxFbQ6hLP8x61b6vT6m5n3',
+    'appBaseUrl' => 'https://smartuchettis.bitrix24.site',
 ];
