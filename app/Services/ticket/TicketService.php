@@ -73,7 +73,7 @@ class TicketService
             }
 
             if ($Setting->paymentDocument != null ){
-                $this->createPaymentDocument($Setting->paymentDocument, $Client, $entity_type, $put, $Body['payments']);
+                $this->createPaymentDocument($Setting, $Client, $entity_type, $put, $Body['payments']);
             }
 
             htmlResponce::create([
@@ -383,9 +383,9 @@ class TicketService
 
     }
 
-    private function createPaymentDocument( string $paymentDocument, MsClient $client, string $entity_type, mixed $OldBody, mixed $payments)
+    private function createPaymentDocument( getMainSettingBD $Setting, MsClient $client, string $entity_type, mixed $OldBody, mixed $payments)
     {
-        switch ($paymentDocument){
+        switch ($Setting->paymentDocument){
             case "1": {
                 $url = 'https://online.moysklad.ru/api/remap/1.2/entity/';
                 if ($entity_type != 'salesreturn') {
@@ -493,6 +493,83 @@ class TicketService
                         } else {
                             //$url_to_body = $url . 'paymentout';
                             break;
+                        }
+                    }
+
+                    $rate_body = $client->get("https://online.moysklad.ru/api/remap/1.2/entity/currency/")->rows;
+                    $rate = null;
+                    foreach ($rate_body as $item_rate){
+                        if ($item_rate->name == "тенге" or $item_rate->fullName == "Казахстанский тенге"){
+                            $rate =
+                                ['meta'=> [
+                                    'href' => $item_rate->meta->href,
+                                    'metadataHref' => $item_rate->meta->metadataHref,
+                                    'type' => $item_rate->meta->type,
+                                    'mediaType' => $item_rate->meta->mediaType,
+                                ],
+                                ];
+                        }
+                    }
+
+                    $body = [
+                        'organization' => [  'meta' => [
+                            'href' => $OldBody->organization->meta->href,
+                            'type' => $OldBody->organization->meta->type,
+                            'mediaType' => $OldBody->organization->meta->mediaType,
+                        ] ],
+                        'agent' => [ 'meta'=> [
+                            'href' => $OldBody->agent->meta->href,
+                            'type' => $OldBody->agent->meta->type,
+                            'mediaType' => $OldBody->agent->meta->mediaType,
+                        ] ],
+                        'sum' => ($item['total']-$change) * 100,
+                        'operations' => [
+                            0 => [
+                                'meta'=> [
+                                    'href' => $OldBody->meta->href,
+                                    'metadataHref' => $OldBody->meta->metadataHref,
+                                    'type' => $OldBody->meta->type,
+                                    'mediaType' => $OldBody->meta->mediaType,
+                                    'uuidHref' => $OldBody->meta->uuidHref,
+                                ],
+                                'linkedSum' => 0
+                            ], ],
+                        'rate' => $rate
+                    ];
+                    if ($body['rate'] == null) unset($body['rate']);
+                    $client->post($url_to_body, $body);
+                }
+                break;
+            }
+            case "4":{
+                $url = 'https://online.moysklad.ru/api/remap/1.2/entity/';
+                $url_to_body = null;
+                foreach ($payments as $item){
+                    $change = 0;
+                    if ($item['payment_type'] == 0){
+                        if ($entity_type != 'salesreturn') {
+                            if ($Setting->OperationCash == 1) {
+                                $url_to_body = $url . 'cashin';
+                            }
+                            if ($Setting->OperationCash == 2) {
+                                $url_to_body = $url . 'paymentin';
+                            }
+                            if ($Setting->OperationCash == 0) {
+                                continue;
+                            }
+                        }
+                        if (isset($item['change'])) $change = $item['change'];
+                    } else {
+                        if ($entity_type != 'salesreturn') {
+                            if ($Setting->OperationCard == 1) {
+                                $url_to_body = $url . 'cashin';
+                            }
+                            if ($Setting->OperationCard == 2) {
+                                $url_to_body = $url . 'paymentin';
+                            }
+                            if ($Setting->OperationCard == 0) {
+                                continue;
+                            }
                         }
                     }
 

@@ -13,8 +13,11 @@ class getMainSettingBD extends Controller
     public $authtoken;
     public $idKassa;
     public $idDepartment;
-    public $paymentDocument;
-    public $payment_type;
+
+    public mixed $paymentDocument;
+    public mixed $payment_type;
+    public mixed $OperationCash;
+    public mixed $OperationCard;
 
     /**
      * @param $accountId
@@ -34,6 +37,8 @@ class getMainSettingBD extends Controller
         $this->idDepartment = $json['idDepartment'];
         $this->paymentDocument = $json['paymentDocument'];
         $this->payment_type = $json['payment_type'];
+        $this->OperationCash = $json['OperationCash'];
+        $this->OperationCard = $json['OperationCard'];
 
     }
 

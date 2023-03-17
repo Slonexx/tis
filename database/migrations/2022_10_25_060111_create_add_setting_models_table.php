@@ -20,6 +20,9 @@ return new class extends Migration
             $table->string('idKassa')->nullable();
             $table->string('idDepartment')->nullable();
             $table->string('paymentDocument')->nullable();
+            $table->string('payment_type')->nullable();
+            $table->string('OperationCash')->nullable();
+            $table->string('OperationCard')->nullable();
             $table->timestamps();
         });
     }
