@@ -8,13 +8,16 @@ use Illuminate\Http\Request;
 
 class getMainSettingBD extends Controller
 {
-    public $accountId;
-    public $tokenMs;
-    public $authtoken;
-    public $idKassa;
-    public $idDepartment;
-    public $paymentDocument;
-    public $payment_type;
+    public mixed $accountId;
+    public mixed $tokenMs;
+    public mixed $authtoken;
+    public mixed $idKassa;
+    public mixed $idDepartment;
+
+    public mixed $paymentDocument;
+    public mixed $payment_type;
+    public mixed $OperationCash;
+    public mixed $OperationCard;
 
     /**
      * @param $accountId
@@ -34,6 +37,8 @@ class getMainSettingBD extends Controller
         $this->idDepartment = $json['idDepartment'];
         $this->paymentDocument = $json['paymentDocument'];
         $this->payment_type = $json['payment_type'];
+        $this->OperationCash = $json['OperationCash'];
+        $this->OperationCard = $json['OperationCard'];
 
     }
 
