@@ -27,7 +27,8 @@ return new class extends Migration
     public function down()
     {
         Schema::table('add_setting_models', function (Blueprint $table) {
-            //
+            $table->dropColumn('OperationCash');
+            $table->dropColumn('OperationCard');
         });
     }
 };
