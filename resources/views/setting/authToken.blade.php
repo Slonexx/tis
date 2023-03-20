@@ -3,13 +3,11 @@
 @section('content')
     <script>
         //let url = 'https://tus/';
-        let url = 'https://dev.smarttis.kz/';
+        let url = 'https://smarttis.kz/';
         let accountId = '{{ $accountId }}'
     </script>
     <div class="p-4 mx-1 mt-1 bg-white rounded py-3">
-        @include('div.TopServicePartner')
-
-
+        @include('div.TopServicePartner')<script>NAME_HEADER_TOP_SERVICE("Настройки → настройки интеграции ")</script>
         @isset($message)
 
             <div class="mt-2 alert alert-danger alert-dismissible fade show in text-center "> {{ $message }}
@@ -73,7 +71,6 @@
 
     <script>
         let token = window.document.getElementById('token')
-        NAME_HEADER_TOP_SERVICE("Настройки → настройки интеграции")
         if (token.value !== ''){
 
         } else {  sendCollection('show') }

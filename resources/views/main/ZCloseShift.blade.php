@@ -3,9 +3,7 @@
 @section('content')
 
     <div class="p-4 mx-1 mt-1 bg-white rounded py-3">
-        @include('div.TopServicePartner')
-        <script> NAME_HEADER_TOP_SERVICE("Смена → Z-отчёт") </script>
-
+        @include('div.TopServicePartner')<script>NAME_HEADER_TOP_SERVICE("Смена → Z-отчёт ")</script>
         @isset($message_good)
 
             <div class="mt-2 alert alert-success alert-dismissible fade show in text-center "> {{ $message_good }}
@@ -87,7 +85,7 @@
         }
         function PrintCheck(){
             //let url = 'http://rekassa/Popup/customerorder/closeShift';
-            let url = 'https://dev.smarttis.kz/operation/close_z_shift/print';
+            let url = 'https://smarttis.kz/operation/close_z_shift/print';
             let final = url + '/' + accountId;
             window.open(final)
         }

@@ -3,8 +3,8 @@
 @section('content')
 
     <div class="p-4 mx-1 mt-1 bg-white rounded py-3">
-        @include('div.TopServicePartner')
-        <script> NAME_HEADER_TOP_SERVICE("Смена") </script>
+
+        @include('div.TopServicePartner')<script>NAME_HEADER_TOP_SERVICE("Смена")</script>
 
             <div id="message_good" class="mt-2 alert alert-success alert-dismissible fade show in text-center" style="display: none">
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -54,7 +54,7 @@
             let params = {
                 idKassa: idKassa,
             };
-            let url = 'https://dev.smarttis.kz/kassa/get_shift_report/info/'+accountId;
+            let url = 'https://smarttis.kz/kassa/get_shift_report/info/'+accountId;
             //let url = 'https://tus/kassa/get_shift_report/info/'+accountId;
             let final = url + formatParams(params);
 
@@ -88,7 +88,7 @@
                 operation_type: window.document.getElementById('operations').value,
                 amount: window.document.getElementById('inputSum').value,
             };
-            let url = 'https://dev.smarttis.kz/operation/cash_operation/'+accountId;
+            let url = 'https://smarttis.kz/operation/cash_operation/'+accountId;
             //let url = 'https://tus/operation/cash_operation/'+accountId;
             let final = url + formatParams(params);
             console.log(final)

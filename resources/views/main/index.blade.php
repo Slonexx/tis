@@ -3,7 +3,7 @@
 @section('content')
     <script>
         //let url = 'https://tus/';
-        let url = 'https://dev.smarttis.kz/';
+        let url = 'https://smarttis.kz/';
         let accountId = '{{ $accountId }}'
     </script>
     <div class="p-4 mx-1 mt-1 bg-white rounded py-3">
@@ -16,7 +16,7 @@
             <div id="message" class="mt-2 alert alert-info alert-dismissible fade show in text-center" style="display: none">
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
-            @include('div.TopServicePartner')
+            @include('div.TopServicePartner')<script>NAME_HEADER_TOP_SERVICE("Возможности интеграции")</script>
 
             <div class="row mt-3">
                 <div class="col-6">
@@ -96,7 +96,6 @@
     </div>
     <script>
         let hideOrShow = "{{ $hideOrShow }}"
-        NAME_HEADER_TOP_SERVICE(" Возможности интеграции ")
 
         document.getElementById('message').style.display = 'none'
         sendCollection(hideOrShow);

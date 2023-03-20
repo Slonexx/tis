@@ -3,8 +3,7 @@
 @section('content')
 
     <div class="p-4 mx-1 mt-1 bg-white rounded py-3">
-        @include('div.TopServicePartner')
-        <script> NAME_HEADER_TOP_SERVICE("Смена → Х-отчёт") </script>
+        @include('div.TopServicePartner')<script>NAME_HEADER_TOP_SERVICE("Смена → Х-отчёт ")</script>
 
         @isset($message_good)
 
@@ -86,7 +85,7 @@
             }
         }
         function PrintCheck(){
-            let url = 'https://dev.smarttis.kz/kassa/get_shift_report/print';
+            let url = 'https://smarttis.kz/kassa/get_shift_report/print';
             let final = url + '/' + accountId;
             window.open(final)
         }
@@ -109,7 +108,7 @@
             let params = {
                 idKassa: idKassa,
             };
-            let url = 'https://dev.smarttis.kz/kassa/get_shift_report/info/'+accountId;
+            let url = 'https://smarttis.kz/kassa/get_shift_report/info/'+accountId;
             let final = url + formatParams(params);
 
             const xmlHttpRequest = new XMLHttpRequest();

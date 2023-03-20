@@ -3,8 +3,7 @@
 @section('content')
 
     <div class="p-4 mx-1 mt-1 bg-white rounded py-3">
-
-        @include('div.TopServicePartner')
+        @include('div.TopServicePartner')<script>NAME_HEADER_TOP_SERVICE("Настройки → касса")</script>
 
         @isset($message)
 
@@ -49,10 +48,9 @@
 
     <script>
         //let url = 'https://tus/';
-        let url = 'https://dev.smarttis.kz/';
+        let url = 'https://smarttis.kz/';
         let accountId = '{{ $accountId }}'
         let kassa = @json($kassa);
-        NAME_HEADER_TOP_SERVICE("Настройки → касса")
 
         get_is_activated()
 
