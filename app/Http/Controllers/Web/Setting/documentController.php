@@ -50,7 +50,7 @@ class documentController extends Controller
         $SettingBD = new getMainSettingBD($accountId);
 
         try {
-            DataBaseService::createDocumentSetting($accountId,$SettingBD->idKassa, $SettingBD->idDepartment, $request->createDocument_asWay, $request->payment_type);
+            DataBaseService::createDocumentSetting($accountId,$SettingBD->idKassa, $SettingBD->idDepartment, $request->createDocument_asWay, $request->payment_type,   $request->OperationCash, $request->OperationCard );
         } catch (\Throwable $e){
             $message["alert"] = " alert alert-danger alert-dismissible fade show in text-center ";
             $message["message"] = "Ошибка " . $e->getCode();
