@@ -65,12 +65,15 @@ class TicketService
             $put = $Client->put('https://online.moysklad.ru/api/remap/1.2/entity/'.$entity_type.'/'.$id_entity, $putBody);
 
             //dd($putBody);
-            if ($payType == 'return'){
-                $this->createReturnDocument($Setting, $put, $postTicket, $putBody, $entity_type);
-                $put = $Client->put('https://online.moysklad.ru/api/remap/1.2/entity/'.$entity_type.'/'.$id_entity, [
-                    'description' => $this->descriptionToCreate($oldBody, $postTicket, 'Возврат, фискальный номер: '),
-                ]);
+            if ($Setting->accountId != "f0eb536d-d41f-11e6-7a69-971100005224") {
+                if ($payType == 'return'){
+                    $this->createReturnDocument($Setting, $put, $postTicket, $putBody, $entity_type);
+                    $put = $Client->put('https://online.moysklad.ru/api/remap/1.2/entity/'.$entity_type.'/'.$id_entity, [
+                        'description' => $this->descriptionToCreate($oldBody, $postTicket, 'Возврат, фискальный номер: '),
+                    ]);
+                }
             }
+
 
             if ($Setting->paymentDocument != null ){
                 $this->createPaymentDocument($Setting, $Client, $entity_type, $put, $Body['payments']);
