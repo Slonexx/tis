@@ -3,7 +3,8 @@
 @section('content')
 
     <div class="p-4 mx-1 mt-1 bg-white rounded py-3">
-        @include('div.TopServicePartner')
+
+        @include('div.TopServicePartner')<script>NAME_HEADER_TOP_SERVICE("Настройки → Документ")</script>
 
         @isset($message)
 
@@ -108,7 +109,6 @@
 
         loading(createDocument, payment_type, OperationCash, OperationCard)
         NAME_HEADER_TOP_SERVICE("Настройки → Документ")
-
 
         function loading(createDocument, payment_type){
             window.document.getElementById('createDocument_asWay').value = createDocument
