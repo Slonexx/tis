@@ -26,7 +26,7 @@ Route::get('setAttributes/{accountId}/{tokenMs}', [AttributeController::class, '
 //для админа
 Route::get('/web/getPersonalInformation/', [collectionOfPersonalController::class, 'getPersonal']);
 Route::get('/collectionOfPersonalInformation/{accountId}/', [collectionOfPersonalController::class, 'getCollection']);
-Route::get('web/getInstallPersonalForID/{accountId}/', [collectionOfPersonalController::class, 'getCollection']);
+Route::get('web/getInstallPersonalForID/{accountId}/', [collectionOfPersonalController::class, 'getInstallPersonalForID']);
 
 
 
