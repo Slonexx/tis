@@ -54,9 +54,8 @@ class collectionOfPersonalController extends Controller
     public function getInstallPersonalForID($accountId): \Illuminate\Http\JsonResponse
     {
         $Setting = new getSettingVendorController($accountId);
-        $Client = new MsClient($Setting->TokenMoySklad);
-
         try {
+            $Client = new MsClient($Setting->TokenMoySklad);
             $CheckBody = $Client->get("https://online.moysklad.ru/api/remap/1.2/entity/employee");
             return response()->json([
                 'StatusCode' => 200,
