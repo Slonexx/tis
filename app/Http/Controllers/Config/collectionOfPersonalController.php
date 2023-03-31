@@ -7,6 +7,7 @@ use App\Http\Controllers\BD\getPersonal;
 use App\Http\Controllers\Controller;
 use App\Models\userLoadModel;
 use App\Services\workWithBD\DataBaseService;
+use GuzzleHttp\Exception\BadResponseException;
 use Illuminate\Http\Request;
 
 class collectionOfPersonalController extends Controller
@@ -50,4 +51,22 @@ class collectionOfPersonalController extends Controller
         return view("main.getPersonal", ['Personal'=>$Personals]);
     }
 
+    public function getInstallPersonalForID($accountId): \Illuminate\Http\JsonResponse
+    {
+        $Setting = new getSettingVendorController($accountId);
+        $Client = new MsClient($Setting->TokenMoySklad);
+
+        try {
+            $CheckBody = $Client->get("https://online.moysklad.ru/api/remap/1.2/entity/employee");
+            return response()->json([
+                'StatusCode' => 200,
+                'message' => "Все работает",
+            ]);
+        } catch (BadResponseException $e){
+            return response()->json([
+                'StatusCode' => 500,
+                'message' => $e->getMessage(),
+            ]);
+        }
+    }
 }
