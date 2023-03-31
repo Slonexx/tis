@@ -8,6 +8,7 @@ use App\Http\Controllers\Config\getSettingVendorController;
 use App\Http\Controllers\Config\Lib\VendorApiController;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\getData\getSetting;
+use GuzzleHttp\Client;
 use GuzzleHttp\Exception\BadResponseException;
 use Illuminate\Http\Request;
 
@@ -40,11 +41,30 @@ class indexController extends Controller
             $hideOrShow = "show";
         } else  $hideOrShow = "hide";
 
-        return view("main.index" , [
-            'accountId' => $accountId,
-            'isAdmin' => $isAdmin,
-            'hideOrShow' => $hideOrShow,
-        ] );
+        try {
+            $Client = new Client();
+            $body = json_decode($Client->get("https://smarttis.kz/web/getInstallPersonalForID/".$accountId)->getBody()->getContents());
+            if ($body->StatusCode == 200){
+                return view("main.index" , [
+                    'accountId' => $accountId,
+                    'isAdmin' => $isAdmin,
+                    'hideOrShow' => $hideOrShow,
+                ] );
+            } else {
+                return view("main.accept" , [
+                    'accountId' => $accountId,
+                    'isAdmin' => $isAdmin,
+                ] );
+            }
+        } catch (BadResponseException $e){
+            return view("main.error" , [
+                'accountId' => $accountId,
+                'isAdmin' => $isAdmin,
+                'message' => $e->getMessage(),
+            ] );
+        }
+
+
     }
 
     public function widgetInfoAttributes(Request $request)
