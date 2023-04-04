@@ -78,6 +78,11 @@ Route::get('/widget/salesreturn', [salesreturnEditController::class, 'salesretur
 
 
 
+Route::post('/Popup/DevRequest/send', [sendController::class, 'DevRequest']);
+
+
+
+
 Route::post('/Popup/CreateRequest/send', [sendController::class, 'SendCreateRequest']);
 
 Route::post('/Popup/Request/send', [sendController::class, 'SendRequest']);
