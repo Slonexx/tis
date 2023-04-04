@@ -88,7 +88,7 @@
         }
 
         function getSearchToTIS(){
-            window.open('https://test.ukassa.kz/api/kassa/report/search/')
+            window.open('https://ukassa.kz/api/kassa/report/search/')
         }
 
     </script>
