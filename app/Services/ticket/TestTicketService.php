@@ -57,8 +57,8 @@ class TestTicketService
             return response()->json($Body['Message']);
         }
 
-        dd($Body, json_encode($Body));
-
+       // dd($Body, json_encode($Body));
+unset($Body['customer']['email']);
         try {
             $postTicket = $ClientTIS->POSTClient($Config->apiURL_ukassa.'v2/operation/ticket/', $Body);
             //  dd($postTicket);
