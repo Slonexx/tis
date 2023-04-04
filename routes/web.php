@@ -6,6 +6,7 @@ use App\Http\Controllers\Config\DeleteVendorApiController;
 use App\Http\Controllers\Popup\demandController;
 use App\Http\Controllers\Popup\fiscalizationController;
 use App\Http\Controllers\Popup\salesreturnController;
+use App\Http\Controllers\Popup\sendController;
 use App\Http\Controllers\Web\cash_operationController;
 use App\Http\Controllers\Web\changeController;
 use App\Http\Controllers\Web\close_z_shiftController;
@@ -77,7 +78,15 @@ Route::get('/widget/salesreturn', [salesreturnEditController::class, 'salesretur
 
 
 
-//Route::get('/Popup/Request/send', [sendController::class, 'SendRequest']);
+Route::post('/Popup/DevRequest/send', [sendController::class, 'DevRequest']);
+
+
+
+
+Route::post('/Popup/CreateRequest/send', [sendController::class, 'SendCreateRequest']);
+
+Route::post('/Popup/Request/send', [sendController::class, 'SendRequest']);
+Route::post('/Popup/Request/closeShift', [sendController::class, 'RequestClose']);
 
 
 Route::get('/Popup/customerorder', [fiscalizationController::class, 'fiscalizationPopup']);
@@ -87,10 +96,10 @@ Route::get('/Popup/customerorder/print/{accountId}', [fiscalizationController::c
 
 Route::get('/Popup/demand', [demandController::class, 'demandPopup']);
 Route::get('/Popup/demand/show', [demandController::class, 'ShowDemandPopup']);
-Route::get('/Popup/demand/send', [demandController::class, 'SendDemandPopup']);
+Route::post('/Popup/demand/send', [demandController::class, 'SendDemandPopup']);
 Route::get('/Popup/demand/print/{accountId}', [demandController::class, 'printDemandPopup']);
 
 Route::get('/Popup/salesreturn', [salesreturnController::class, 'salesreturnPopup']);
 Route::get('/Popup/salesreturn/show', [salesreturnController::class, 'ShowSalesreturnPopup']);
-Route::get('/Popup/salesreturn/send', [salesreturnController::class, 'SendSalesreturnPopup']);
+Route::post('/Popup/salesreturn/send', [salesreturnController::class, 'SendSalesreturnPopup']);
 Route::get('/Popup/salesreturn/print/{accountId}', [salesreturnController::class, 'printSalesreturnPopup']);
