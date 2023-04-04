@@ -143,7 +143,7 @@ class sendController extends Controller
 
         $total = $request->total;
 
-        $position = json_decode(json_encode($request->positions));
+        $position = json_decode(($request->positions));
 
         $body = [
             'accountId' => $accountId,
@@ -159,7 +159,7 @@ class sendController extends Controller
             'positions' => $position,
         ];
 
-        //dd(($body), json_encode($body));
+
             $ticket = json_decode(json_encode((app(TestTicketService::class)->createTicket($body))));
     }
 
