@@ -1,11 +1,18 @@
+{!! str_replace("!important", "", $html) !!}
+
 <style>
     body {
-        font-family: 'Times New Roman', 'Arial', sans-serif !important;
+        font-family: 'Calibri', 'Arial', sans-serif !important;
+        font-size: 14px !important;
+    }
+    div {
+        font-size: 14px !important;
+    }
+    td {
+        font-size: 13px !important;
     }
 
 </style>
-{!! $html !!}
-
 <script>
     window.print()
 </script>
