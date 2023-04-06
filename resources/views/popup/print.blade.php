@@ -1,4 +1,4 @@
-{!! str_replace("!important", "", $html) !!}
+{!! $html !!}
 
 <style>
     body {
