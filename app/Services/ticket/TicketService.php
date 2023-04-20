@@ -172,68 +172,41 @@ class TicketService
 
     private function getItems(getMainSettingBD $Setting, $positions, $idObject, $typeObject): array
     {
+        $msClient = new MsClient($Setting->tokenMs);
         $result = null;
-        if ($typeObject == 'demand'){
-            $Client = new MsClient($Setting->tokenMs);
-            $demand = $Client->get('https://online.moysklad.ru/api/remap/1.2/entity/' . $typeObject . '/' . $idObject);
-            $demandPos = $Client->get($demand->positions->meta->href)->rows;
 
-            foreach ($positions as $id => $item){
-                $is_nds = trim($item->is_nds, '%');
-                $discount = trim($item->discount, '%');
-                if ($is_nds == 'без НДС' or $is_nds == "0%"){$is_nds = false;
-                } else $is_nds = true;
+        foreach ($positions as $id => $item){
+            $is_nds = trim($item->is_nds, '%');
+            $discount = trim($item->discount, '%');
+            if ($is_nds == 'без НДС' or $is_nds == "0%"){$is_nds = false;
+            } else $is_nds = true;
 
-                if ($discount > 0){
-                    $discount = round(($item->price * $item->quantity * ($discount/100)), 2);
-                }
-
-                $result[] = [
-                    'name' => (string) $item->name,
-                    'price' => (float) $item->price,
-                    'quantity' => (float) $item->quantity,
-                    'quantity_type' => (int) $item->UOM,
-                    'total_amount' => (float) ( round($item->price * $item->quantity - $discount, 2) ) ,
-                    'is_nds' => $is_nds,
-                    'discount' =>(float) $discount,
-                    'section' => (int) $Setting->idDepartment,
-                ];
-
+            if ($discount > 0){
+                $discount = round(($item->price * $item->quantity * ($discount/100)), 2);
+            }
+            if ($typeObject == 'demand'){
+                $demand = $msClient->get('https://online.moysklad.ru/api/remap/1.2/entity/' . $typeObject . '/' . $idObject);
+                $demandPos =  $msClient->get($demand->positions->meta->href)->rows;
 
                 foreach ($demandPos as $item_2){
-                    if ($item->id == $item_2->id){
-                        if (isset($item_2->trackingCodes)){
-                            array_pop($result);
-                            foreach ($item_2->trackingCodes as $code){
-                                $result[] = [
-                                    'name' => (string) $item['name'],
-                                    'price' => (float) $item['price'],
-                                    'quantity' => 1,
-                                    'quantity_type' => 796,
-                                    'total_amount' => (float) ($item->price * 1),
-                                    'is_nds' => $is_nds,
-                                    'discount' =>(float) $discount,
-                                    'mark_code' =>(string) $code->cis,
-                                    'section' => (int) $Setting->idDepartment,
-                                ];
-                            }
+                    if ( $item->id == $item_2->id and isset($item_2->trackingCodes) ){
+                        foreach ($item_2->trackingCodes as $code){
+                            $result[] = [
+                                'name' => (string) $item->name,
+                                'price' => (float) $item->price,
+                                'quantity' => (float) $item->quantity,
+                                'quantity_type' => (int) $item->UOM,
+                                'total_amount' => (float) ( round($item->price * $item->quantity - $discount, 2) ) ,
+                                'is_nds' => $is_nds,
+                                'discount' =>(float) $discount,
+                                'section' => (int) $Setting->idDepartment,
+                            ];
                         }
+
                     }
                 }
-
             }
-
-        } else {
-            foreach ($positions as $id => $item){
-                $is_nds = trim($item->is_nds, '%');
-                $discount = trim($item->discount, '%');
-                if ($is_nds == 'без НДС' or $is_nds == "0%"){$is_nds = false;
-                } else $is_nds = true;
-
-                if ($discount > 0){
-                    $discount = round(($item->price * $item->quantity * ($discount/100)), 2);
-                }
-
+            else {
                 $result[$id] = [
                     'name' => (string) $item->name,
                     'price' => (float) $item->price,
@@ -244,10 +217,8 @@ class TicketService
                     'discount' =>(float) $discount,
                     'section' => (int) $Setting->idDepartment,
                 ];
-
             }
         }
-
 
         foreach ($result as $id => $item){
             if ($item['discount']<= 0) {
