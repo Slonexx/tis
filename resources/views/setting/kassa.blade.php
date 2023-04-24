@@ -52,7 +52,7 @@
         let url = 'https://main.smarttis.kz/';
         let accountId = '{{ $accountId }}'
         let kassa = @json($kassa);
-
+        console.log(kassa)
         get_is_activated()
 
         function get_is_activated(){
@@ -76,8 +76,6 @@
 
                 }
                 index++ }
-
-            console.log(kassaID)
         }
 
         function getDepartment(){
