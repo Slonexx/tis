@@ -203,6 +203,7 @@ class TestTicketService
                                 'is_nds' => $is_nds,
                                 'discount' =>(float) $discount,
                                 'section' => (int) $Setting->idDepartment,
+                                'mark_code' => (int) $code->cis,
                             ];
                         }
 
