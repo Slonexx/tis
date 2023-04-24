@@ -52,7 +52,12 @@
         let url = 'https://main.smarttis.kz/';
         let accountId = '{{ $accountId }}'
         let kassa = @json($kassa);
-        console.log(kassa)
+        let kassaValue = "{{$kassaValue}}";
+
+        if (kassaValue != undefined || kassaValue != ''){
+            window.document.getElementById('idKassa').value = kassaValue
+        }
+
         get_is_activated()
 
         function get_is_activated(){
