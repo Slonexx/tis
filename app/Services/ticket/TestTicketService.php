@@ -119,7 +119,15 @@ class TestTicketService
         if ($Setting->idKassa == null) return ['Status' => false, 'Message' => 'Не были пройдены настройки !'];
         if ($payments == null) return ['Status' => false, 'Message' => 'Не были введены суммы !'];
 
-
+        dd([
+            'operation' => (int) $operation,
+            'kassa' => (int) $Setting->idKassa,
+            'payments' => $payments,
+            'items' => $items,
+            "total_amount" => (float) $total,
+            "customer" => $customer,
+            "as_html" => true,
+        ], $items);
         return [
             'operation' => (int) $operation,
             'kassa' => (int) $Setting->idKassa,
@@ -129,6 +137,7 @@ class TestTicketService
             "customer" => $customer,
             "as_html" => true,
         ];
+
     }
 
 
@@ -177,6 +186,9 @@ class TestTicketService
     {
         $msClient = new MsClient($Setting->tokenMs);
         $result = null;
+        $CheckSum = 0;
+
+
         foreach ($positions as $id => $item){
 
             $is_nds = trim($item->is_nds, '%');
@@ -206,7 +218,7 @@ class TestTicketService
                                 'mark_code' => (string) $code->cis,
                             ];
                         }
-
+                        $CheckSum = $CheckSum +  $item->price;
                     }
                 }
 
