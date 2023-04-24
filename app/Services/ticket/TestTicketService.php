@@ -128,6 +128,7 @@ class TestTicketService
             "customer" => $customer,
             "as_html" => true,
         ], $items);
+
         return [
             'operation' => (int) $operation,
             'kassa' => (int) $Setting->idKassa,
