@@ -205,10 +205,13 @@ class TestTicketService
                                 'section' => (int) $Setting->idDepartment,
                                 'mark_code' => (string) $code->cis,
                             ];
+                            $all = $all+ $item->price * $item->quantity;
                         }
 
                     }
                 }
+
+                dd($result, $all);
             }
             else {
                 $result[$id] = [
