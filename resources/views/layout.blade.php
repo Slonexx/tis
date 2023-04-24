@@ -52,9 +52,9 @@
         if (item.replace(/[^+\d]/g, '') > 1 && item.replace(/[^+\d]/g, '') <= 5){
            this_click(window.document.getElementById('btn_1'))
         }
-        if (item.replace(/[^+\d]/g, '') > 5 && item.replace(/[^+\d]/g, '') <= 8){
+      /*  if (item.replace(/[^+\d]/g, '') > 5 && item.replace(/[^+\d]/g, '') <= 8){
             this_click(window.document.getElementById('btn_2'))
-        }
+        }*/
 
         function this_click(btn){
             btn.classList.toggle("active");
