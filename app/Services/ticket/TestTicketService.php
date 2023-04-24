@@ -177,9 +177,9 @@ class TestTicketService
     {
         $msClient = new MsClient($Setting->tokenMs);
         $result = null;
-
+        $all = 0;
         foreach ($positions as $id => $item){
-            $all = 0;
+
             $is_nds = trim($item->is_nds, '%');
             $discount = trim($item->discount, '%');
             if ($is_nds == 'без НДС' or $is_nds == "0%"){$is_nds = false;
@@ -206,7 +206,7 @@ class TestTicketService
                                 'section' => (int) $Setting->idDepartment,
                                 'mark_code' => (string) $code->cis,
                             ];
-                            $all = $all+ $item->price * $item->quantity;
+                            $all = $all + $item->price * $item->quantity;
                         }
 
                     }
