@@ -154,7 +154,7 @@ class TestTicketService
                 'payment_type' => 0,
                 'total' => (float) $cash,
                 'change' => (float) $change,
-                'amount' => (float) $cash,
+                'amount' => (float) $cash-$change,
             ];
             if ($result[0]['change'] == 0){
                 unset($result[0]['change']);
