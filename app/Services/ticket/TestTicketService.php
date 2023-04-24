@@ -212,7 +212,7 @@ class TestTicketService
                     }
                 }
 
-                dd($result, $all);
+
             }
             else {
                 $result[$id] = [
@@ -227,7 +227,7 @@ class TestTicketService
                 ];
             }
         }
-
+        dd($result, $all);
         foreach ($result as $id => $item){
             if ($item['discount']<= 0) {
                 unset($result[$id]['discount']);
