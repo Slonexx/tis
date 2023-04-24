@@ -179,6 +179,7 @@ class TestTicketService
         $result = null;
 
         foreach ($positions as $id => $item){
+            $all = 0;
             $is_nds = trim($item->is_nds, '%');
             $discount = trim($item->discount, '%');
             if ($is_nds == 'без НДС' or $is_nds == "0%"){$is_nds = false;
