@@ -177,7 +177,6 @@ class TestTicketService
     {
         $msClient = new MsClient($Setting->tokenMs);
         $result = null;
-        $all = 0;
         foreach ($positions as $id => $item){
 
             $is_nds = trim($item->is_nds, '%');
@@ -206,7 +205,6 @@ class TestTicketService
                                 'section' => (int) $Setting->idDepartment,
                                 'mark_code' => (string) $code->cis,
                             ];
-                            $all = $all + ($item->price);
                         }
 
                     }
@@ -227,7 +225,6 @@ class TestTicketService
                 ];
             }
         }
-        dd($result, $all);
         foreach ($result as $id => $item){
             if ($item['discount']<= 0) {
                 unset($result[$id]['discount']);
