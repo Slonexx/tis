@@ -152,7 +152,7 @@ class TicketService
                 'payment_type' => 0,
                 'total' => (float) $cash,
                 'change' => (float) $change,
-                'amount' => (float) $cash-$change,
+                'amount' => (float) $cash,
             ];
             if ($result[0]['change'] == 0){
                 unset($result[0]['change']);
