@@ -158,7 +158,6 @@ class sendController extends Controller
 
             'positions' => $position,
         ];
-        dd($body);
 
             $ticket = json_decode(json_encode((app(TestTicketService::class)->createTicket($body))));
     }
