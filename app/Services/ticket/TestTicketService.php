@@ -119,17 +119,6 @@ class TestTicketService
         if ($Setting->idKassa == null) return ['Status' => false, 'Message' => 'Не были пройдены настройки !'];
         if ($payments == null) return ['Status' => false, 'Message' => 'Не были введены суммы !'];
 
-        dd([
-            'operation' => (int) $operation,
-            'kassa' => (int) $Setting->idKassa,
-            'payments' => $payments,
-            'items' => $items,
-            "total_amount" => (float) $total,
-            "customer" => $customer,
-            "as_html" => true,
-        ], $items);
-
-
         return [
             'operation' => (int) $operation,
             'kassa' => (int) $Setting->idKassa,
@@ -244,7 +233,7 @@ class TestTicketService
                 unset($result[$id]['discount']);
             }
         }
-
+dd($CheckSum);
         return $result;
     }
 
