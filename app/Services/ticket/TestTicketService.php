@@ -198,7 +198,7 @@ class TestTicketService
                             $result[] = [
                                 'name' => (string) $item->name,
                                 'price' => (float) $item->price,
-                                'quantity' => (float) $item->quantity,
+                                'quantity' => (float) 1,
                                 'quantity_type' => (int) $item->UOM,
                                 'total_amount' => (float) ( round($item->price * $item->quantity - $discount, 2) ) ,
                                 'is_nds' => $is_nds,
@@ -206,7 +206,7 @@ class TestTicketService
                                 'section' => (int) $Setting->idDepartment,
                                 'mark_code' => (string) $code->cis,
                             ];
-                            $all = $all + $item->price * $item->quantity;
+                            $all = $all + ($item->price * $item->quantity);
                         }
 
                     }
