@@ -129,6 +129,7 @@ class TestTicketService
             "as_html" => true,
         ], $items);
 
+
         return [
             'operation' => (int) $operation,
             'kassa' => (int) $Setting->idKassa,
