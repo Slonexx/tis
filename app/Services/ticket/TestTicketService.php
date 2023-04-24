@@ -209,9 +209,6 @@ class TestTicketService
 
                     }
                 }
-
-
-                dd($result, $demandPos);
             }
             else {
                 $result[$id] = [
