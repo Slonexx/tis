@@ -48,7 +48,7 @@ class TestTicketService
         $Client = new MsClient($Setting->tokenMs);
         $Config = new globalObjectController();
         $oldBody =  $Client->get('https://online.moysklad.ru/api/remap/1.2/entity/'.$entity_type.'/'.$id_entity);
-
+        dd($positions);
         $Body = $this->setBodyToPostClient($Setting, $id_entity, $entity_type, $money_card, $money_cash, $payType, $total, $positions);
 
         //dd($Body);
