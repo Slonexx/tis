@@ -208,7 +208,6 @@ class TestTicketService
                             ];
                         }
                     }
-                    dd($result);
                 }
 
 
@@ -231,6 +230,7 @@ class TestTicketService
                 unset($result[$id]['discount']);
             }
         }
+        dd($result);
 
         return $result;
     }
