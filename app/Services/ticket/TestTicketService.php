@@ -194,7 +194,6 @@ class TestTicketService
 
                 foreach ($demandPos as $item_2){
                     if ( $item->id == $item_2->id and isset($item_2->trackingCodes) ){
-                        dd($item_2);
                         foreach ($item_2->trackingCodes as $code){
                             $result[] = [
                                 'name' => (string) $item->name,
@@ -209,6 +208,7 @@ class TestTicketService
                             ];
                         }
                     }
+                    dd($result);
                 }
 
 
