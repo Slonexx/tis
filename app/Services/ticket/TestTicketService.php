@@ -232,7 +232,6 @@ class TestTicketService
                 unset($result[$id]['discount']);
             }
         }
-        dd($checkSum, $result);
 
         return $result;
     }

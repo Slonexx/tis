@@ -195,9 +195,9 @@ class TicketService
                             $result[] = [
                                 'name' => (string) $item->name,
                                 'price' => (float) $item->price,
-                                'quantity' => 1,
+                                'quantity' => (float) 1,
                                 'quantity_type' => (int) $item->UOM,
-                                'total_amount' => (float) ( round($item->price * $item->quantity - $discount, 2) ) ,
+                                'total_amount' => (float) ( round($item->price * 1 - $discount, 2) ) ,
                                 'is_nds' => $is_nds,
                                 'discount' =>(float) $discount,
                                 'section' => (int) $Setting->idDepartment,
