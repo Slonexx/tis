@@ -177,6 +177,7 @@ class TestTicketService
     {
         $msClient = new MsClient($Setting->tokenMs);
         $result = null;
+        $checkSum = 0;
 
         foreach ($positions as $id => $item){
 
@@ -206,6 +207,7 @@ class TestTicketService
                                 'section' => (int) $Setting->idDepartment,
                                 'mark_code' => (string) $code->cis,
                             ];
+                            $checkSum = $checkSum + ( round($item->price * 1 - $discount, 2) );
                         }
                     }
                 }
@@ -230,7 +232,7 @@ class TestTicketService
                 unset($result[$id]['discount']);
             }
         }
-        dd($result);
+        dd($checkSum, $result);
 
         return $result;
     }
