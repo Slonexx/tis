@@ -48,7 +48,7 @@ class TestTicketService
         $Client = new MsClient($Setting->tokenMs);
         $Config = new globalObjectController();
         $oldBody =  $Client->get('https://online.moysklad.ru/api/remap/1.2/entity/'.$entity_type.'/'.$id_entity);
-        dd($positions);
+
         $Body = $this->setBodyToPostClient($Setting, $id_entity, $entity_type, $money_card, $money_cash, $payType, $total, $positions);
 
         //dd($Body);
@@ -200,7 +200,7 @@ class TestTicketService
                                 'price' => (float) $item->price,
                                 'quantity' => (float) 1,
                                 'quantity_type' => (int) $item->UOM,
-                                'total_amount' => (float) ( round($item->price * $item->quantity - $discount, 2) ) ,
+                                'total_amount' => (float) ( round($item->price * 1 - $discount, 2) ) ,
                                 'is_nds' => $is_nds,
                                 'discount' =>(float) $discount,
                                 'section' => (int) $Setting->idDepartment,
