@@ -177,8 +177,6 @@ class TestTicketService
     {
         $msClient = new MsClient($Setting->tokenMs);
         $result = null;
-        $CheckSum = 0;
-
 
         foreach ($positions as $id => $item){
 
@@ -196,6 +194,7 @@ class TestTicketService
 
                 foreach ($demandPos as $item_2){
                     if ( $item->id == $item_2->id and isset($item_2->trackingCodes) ){
+                        dd($item_2);
                         foreach ($item_2->trackingCodes as $code){
                             $result[] = [
                                 'name' => (string) $item->name,
@@ -209,7 +208,6 @@ class TestTicketService
                                 'mark_code' => (string) $code->cis,
                             ];
                         }
-                        $CheckSum = $CheckSum +  $item->price;
                     }
                 }
 
@@ -233,7 +231,7 @@ class TestTicketService
                 unset($result[$id]['discount']);
             }
         }
-dd($CheckSum);
+
         return $result;
     }
 
