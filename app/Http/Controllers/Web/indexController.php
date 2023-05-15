@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\Web;
 
 use App\Clients\MsClient;
+use App\Http\Controllers\AttributeController;
 use App\Http\Controllers\BD\getPersonal;
 use App\Http\Controllers\Config\getSettingVendorController;
 use App\Http\Controllers\Config\Lib\VendorApiController;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\getData\getSetting;
+use App\Models\mainSetting;
 use GuzzleHttp\Exception\BadResponseException;
 use Illuminate\Http\Request;
 
@@ -87,6 +89,32 @@ class indexController extends Controller
             "salesreturn" => "https://online.moysklad.ru/api/remap/1.2/entity/salesreturn/" . $enId,
             default => null,
         };
+    }
+
+
+
+    public function ALL(){
+        $accountSavedSettings = mainSetting::all();
+        $accountIds =[];
+        $continueAccountIds =[];
+        foreach ($accountSavedSettings as $settings){
+            try {
+                $ClientCheckMC = new MsClient($settings->tokenMs);
+                $body = $ClientCheckMC->get('https://online.moysklad.ru/api/remap/1.2/entity/employee');
+
+
+                $data = ['tokenMs'=> $settings->tokenMs, 'accountId'=>$settings->accountId];
+                $AttributeController = app(AttributeController::class);
+                $AttributeController->setAllAttributesVendorData($data);
+                $accountIds[] = $settings->accountId;
+            } catch (\Throwable $e) {
+                $continueAccountIds[] = $settings->accountId;
+                continue; }
+        }
+        return response()->json([
+            'accountId' => $accountIds,
+            'continueAccountIds' => $continueAccountIds,
+        ]);
     }
 
 }

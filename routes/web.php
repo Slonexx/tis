@@ -33,6 +33,7 @@ Route::get('web/getInstallPersonalForID/{accountId}/', [collectionOfPersonalCont
 
 Route::get('/', [indexController::class, 'index']);
 Route::get('/{accountId}/', [indexController::class, 'indexShow'])->name('main');
+Route::get('/Admin/setAttributes/ALL', [indexController::class, 'ALL']);
 
 
 Route::get('/Setting/error/{accountId}', [errorSettingController::class, 'getError'])->name('errorSetting');
