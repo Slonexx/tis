@@ -340,7 +340,7 @@ class TicketService
                             break;
                         }
                         case 2 : {
-                            $value .=  "Оплата Смешаный на сумму: ".$item_->amount." ";
+                            $value .=  "Оплата Смешанный на сумму: ".$item_->amount." ";
                             break;
                         }
                         case 3 : {
