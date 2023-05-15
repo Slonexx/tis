@@ -315,6 +315,42 @@ class TicketService
                 ];
             }
         }
+        if ($item->name == "Тип Оплаты (ТИС)" and $check_attributes == true) {
+            $value = "";
+            foreach ($postTicket->data->transaction_payments as $item) {
+                switch ($item->payment_type) {
+                    case 0 : {
+                        $value .=  "Оплата Наличными на сумму: ".$item->amount." ";
+                        break;
+                    }
+                    case 1 : {
+                        $value .=  "Оплата Картой на сумму: ".$item->amount." ";
+                        break;
+                    }
+                    case 2 : {
+                        $value .=  "Оплата Смешаный на сумму: ".$item->amount." ";
+                        break;
+                    }
+                    case 3 : {
+                        $value .= "Оплата Мобильный на сумму: ".$item->amount." ";
+                        break;
+                    }
+                    default:{
+                        $value .= "";
+                        break;
+                    }
+                }
+            }
+
+            $Result_attributes[] = [
+                "meta"=> [
+                    "href"=> $item->meta->href,
+                    "type"=> $item->meta->type,
+                    "mediaType"=> $item->meta->mediaType,
+                ],
+                "value" => $value,
+            ];
+        }
         return $Result_attributes;
     }
 

@@ -22,7 +22,7 @@ class AttributeService
             $this->createCashInAttributes($apiKeyMs);
             $this->createCashOutAttributes($apiKeyMs);
         } catch (ClientException $e){
-
+            dd($e->getMessage());
         }
     }
 
@@ -108,6 +108,12 @@ class AttributeService
                 "required" => false,
                 "show" => false,
                 "description" => "уникальный идентификатор по данному дополнительному полю идёт синхронизация с ТИС (ТИС)",
+            ],
+            4 => [
+                "name" => "Тип Оплаты (ТИС)",
+                "type" => "string",
+                "required" => false,
+                "description" => "Данное дополнительно поле отвечает за тип оплаты после фискализации (ТИС)",
             ],
         ];
     }
