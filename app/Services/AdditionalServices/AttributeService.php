@@ -22,7 +22,7 @@ class AttributeService
             $this->createCashInAttributes($apiKeyMs);
             $this->createCashOutAttributes($apiKeyMs);
         } catch (ClientException $e){
-
+            dd($e->getMessage());
         }
     }
 
@@ -88,21 +88,18 @@ class AttributeService
                 "name" => "фискальный номер (ТИС)",
                 "type" => "string",
                 "required" => false,
-                "show" => false,
                 "description" => "данное дополнительнее поле отвечает за фискальный номер чека (ТИС)",
             ],
             1 => [
                 "name" => "Ссылка для QR-кода (ТИС)",
                 "type" => "link",
                 "required" => false,
-                "show" => false,
                 "description" => "данное дополнительнее поле отвечает за ссылку на QR-код чека (ТИС)",
             ],
             2 => [
                 "name" => "Фискализация (ТИС)",
                 "type" => "boolean",
                 "required" => false,
-                "show" => false,
                 "description" => "данное дополнительное поле отвечает за проведения фискализации, если стоит галочка то фискализация была (ТИС)",
             ],
             3 => [
@@ -111,6 +108,12 @@ class AttributeService
                 "required" => false,
                 "show" => false,
                 "description" => "уникальный идентификатор по данному дополнительному полю идёт синхронизация с ТИС (ТИС)",
+            ],
+            4 => [
+                "name" => "Тип Оплаты (ТИС)",
+                "type" => "string",
+                "required" => false,
+                "description" => "Данное дополнительно поле отвечает за тип оплаты после фискализации (ТИС)",
             ],
         ];
     }
@@ -121,7 +124,6 @@ class AttributeService
                 "name" => "Фискализация (ТИС)",
                 "type" => "boolean",
                 "required" => false,
-                "show" => false,
                 "description" => "данное дополнительное поле отвечает за проведения фискализации, если стоит галочка то фискализация была (ТИС)",
             ],
         ];
