@@ -59,18 +59,18 @@ class TicketService
 
         try {
             $postTicket = $ClientTIS->POSTClient($Config->apiURL_ukassa.'v2/operation/ticket/', $Body);
-            //dd($postTicket, $Body);
+            //  dd($postTicket);
 
             $putBody = $this->putBodyMS($entity_type, $postTicket, $Client, $Setting, $oldBody, $positions);
             $put = $Client->put('https://online.moysklad.ru/api/remap/1.2/entity/'.$entity_type.'/'.$id_entity, $putBody);
 
             //dd($putBody);
-            if ($payType == 'return'){
-                $this->createReturnDocument($Setting, $put, $postTicket, $putBody, $entity_type);
-                $put = $Client->put('https://online.moysklad.ru/api/remap/1.2/entity/'.$entity_type.'/'.$id_entity, [
-                    'description' => $this->descriptionToCreate($oldBody, $postTicket, 'Возврат, фискальный номер: '),
-                ]);
-            }
+                if ($payType == 'return'){
+                    $this->createReturnDocument($Setting, $put, $postTicket, $putBody, $entity_type);
+                    $put = $Client->put('https://online.moysklad.ru/api/remap/1.2/entity/'.$entity_type.'/'.$id_entity, [
+                        'description' => $this->descriptionToCreate($oldBody, $postTicket, 'Возврат, фискальный номер: '),
+                    ]);
+                }
 
             if ($Setting->paymentDocument != null ){
                 $this->createPaymentDocument($Setting, $Client, $entity_type, $put, $Body['payments']);
@@ -191,17 +191,20 @@ class TicketService
                             $result[] = [
                                 'name' => (string) $item->name,
                                 'price' => (float) $item->price,
-                                'quantity' => (float) $item->quantity,
+                                'quantity' =>  1,
                                 'quantity_type' => (int) $item->UOM,
-                                'total_amount' => (float) ( round($item->price * $item->quantity - $discount, 2) ) ,
+                                'total_amount' => (float) ( round($item->price * 1 - $discount, 2) ) ,
                                 'is_nds' => $is_nds,
                                 'discount' =>(float) $discount,
                                 'section' => (int) $Setting->idDepartment,
+                                'mark_code' => (string) $code->cis,
+                                'need_mark_code' => true,
                             ];
                         }
 
                     }
                 }
+
             }
             else {
                 $result[$id] = [
@@ -234,7 +237,14 @@ class TicketService
         $result = [];
 
         if (property_exists($agent, 'email')) { $result['email'] = $agent->email; }
-        if (property_exists($agent, 'phone')) { $result['phone'] = $agent->phone; }
+        if (property_exists($agent, 'phone')) {
+            $phone = "7".mb_substr(str_replace('+7', '',
+                    str_replace(" ", '',
+                        str_replace('(', '',
+                            str_replace(')', '',
+                                str_replace('-', '', $agent->phone))))), -10);
+            $result['phone'] = $phone;
+        }
         if (property_exists($agent, 'inn')) { $result['iin'] = $agent->inn; }
 
         return $result;
@@ -327,7 +337,7 @@ class TicketService
                             break;
                         }
                         case 2 : {
-                            $value .=  "Оплата Смешаный на сумму: ".$item_->amount." ";
+                            $value .=  "Оплата Смешанный на сумму: ".$item_->amount." ";
                             break;
                         }
                         case 3 : {
@@ -351,7 +361,6 @@ class TicketService
                 ];
             }
         }
-
         return $Result_attributes;
     }
 
@@ -383,7 +392,7 @@ class TicketService
 
     }
 
-    private function createPaymentDocument(  getMainSettingBD $Setting, MsClient $client, string $entity_type, mixed $OldBody, mixed $payments)
+    private function createPaymentDocument( getMainSettingBD $Setting, MsClient $client, string $entity_type, mixed $OldBody, mixed $payments)
     {
         switch ($Setting->paymentDocument){
             case "1": {
@@ -440,8 +449,8 @@ class TicketService
                                 'metadataHref' => $item->meta->metadataHref,
                                 'type' => $item->meta->type,
                                 'mediaType' => $item->meta->mediaType,
-                                ],
-                        ];
+                            ],
+                            ];
                     }
                 }
 
@@ -470,7 +479,7 @@ class TicketService
                         ], ],
                     'rate' => $rate
                 ];
-                if ($body['rate'] == null) unlink($body['rate']);
+                if ($body['rate'] == null) unset($body['rate']);
                 $client->post($url, $body);
                 break;
             }
@@ -536,7 +545,7 @@ class TicketService
                             ], ],
                         'rate' => $rate
                     ];
-                    if ($body['rate'] == null) unlink($body['rate']);
+                    if ($body['rate'] == null) unset($body['rate']);
                     $client->post($url_to_body, $body);
                 }
                 break;
@@ -619,7 +628,7 @@ class TicketService
                 break;
             }
             default:{
-               break;
+                break;
             }
         }
 
@@ -707,7 +716,7 @@ class TicketService
                         'mediaType' => $newBody->organizationAccount->meta->mediaType,
                     ]
                 ];
-            } else { unlink($body['organizationAccount']); }
+            } else { unset($body['organizationAccount']); }
 
             if (isset($newBody->store)){
                 $body['store'] = [
