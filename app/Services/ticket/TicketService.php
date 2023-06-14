@@ -125,6 +125,7 @@ class TicketService
             'items' => $items,
             "total_amount" => (float) $total,
             "customer" => $customer,
+            'need_mark_code' => true,
             "as_html" => true,
         ];
     }
