@@ -121,6 +121,7 @@ class TicketService
             'items' => $items,
             "total_amount" => (float) $total,
             "customer" => $customer,
+            'need_mark_code' => true,
             "as_html" => true,
         ];
     }
@@ -198,7 +199,6 @@ class TicketService
                                 'discount' =>(float) $discount,
                                 'section' => (int) $Setting->idDepartment,
                                 'mark_code' => (string) $code->cis,
-                                'need_mark_code' => true,
                             ];
                         }
 
