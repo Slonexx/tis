@@ -3,40 +3,48 @@
 namespace App\Http\Controllers\Popup;
 
 use App\Clients\MsClient;
-use App\Http\Controllers\Config\getSettingVendorController;
+use App\Http\Controllers\BD\getMainSettingBD;
 use App\Http\Controllers\Controller;
-use App\Http\Controllers\TicketController;
 use App\Models\htmlResponce;
-use App\Models\mainSetting;
-use GuzzleHttp\Client;
+use App\Services\ticket\TicketService;
+use GuzzleHttp\Exception\BadResponseException;
+use GuzzleHttp\Exception\GuzzleException;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Throwable;
 
 class fiscalizationController extends Controller
 {
-    public function fiscalizationPopup(Request $request): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Contracts\Foundation\Application
+    public function fiscalizationPopup(): Factory|View|Application
     {
         return view( 'popup.fiscalization', [] );
     }
 
-    public function ShowFiscalizationPopup(Request $request): \Illuminate\Http\JsonResponse
+    public function ShowFiscalizationPopup(Request $request): JsonResponse
     {
         $object_Id = $request->object_Id;
         $accountId = $request->accountId;
-        $Setting = new getSettingVendorController($accountId);
+        $Setting = new getMainSettingBD($accountId);
 
-        $json = $this->info_object_Id($object_Id, $Setting);
+        $url = "https://online.moysklad.ru/api/remap/1.2/entity/customerorder/".$object_Id;
+
+
+        $Client = new MsClient($Setting->tokenMs);
+        $Body = $Client->get($url);
+
+        $json = $this->info_object_Id($Body, $Client,  $Setting);
         return response()->json($json);
     }
 
-    public function info_object_Id($object_Id, $Setting){
-        $url = "https://online.moysklad.ru/api/remap/1.2/entity/customerorder/".$object_Id;
-        $Client = new MsClient($Setting->TokenMoySklad);
-        $Body = $Client->get($url);
-        $attributes = null;
+    public function info_object_Id(mixed $Body, MsClient $Client, getMainSettingBD $Setting ): array
+    {
+        $attributes = [ 'ticket_id' => null];
+        $payment_type = $Setting->payment_type;
+
         if (property_exists($Body, 'attributes')){
-            $attributes = [
-                'ticket_id' => null,
-            ];
             foreach ($Body->attributes as $item){
                 if ($item->name == 'фискальный номер (ТИС)'){
                     $attributes['ticket_id'] = $item->value;
@@ -44,6 +52,9 @@ class fiscalizationController extends Controller
                 }
             }
         }
+
+        if ($payment_type == null) $payment_type = "0";
+
         $vatEnabled = $Body->vatEnabled;
         $vat = null;
         $products = [];
@@ -52,7 +63,7 @@ class fiscalizationController extends Controller
         foreach ($positions as $id=>$item){
             $final = $item->price / 100 * $item->quantity;
 
-            if ($vatEnabled == true) {if ($Body->vatIncluded == false) {
+            if ($vatEnabled) {if ($Body->vatIncluded == false) {
                 $final = $item->price / 100 * $item->quantity;
                 $final = $final + ( $final * ($item->vat/100) );
             }}
@@ -96,13 +107,13 @@ class fiscalizationController extends Controller
             ];
         }
 
-        if ($vatEnabled == true) {
+        if ($vatEnabled) {
             $vat = [
                 'vatEnabled' => $Body->vatEnabled,
                 'vatIncluded' => $Body->vatIncluded,
                 'vatSum' => $Body->vatSum / 100 ,
             ];
-        };
+        }
         return [
             'id' => $Body->id,
             'name' => $Body->name,
@@ -110,12 +121,17 @@ class fiscalizationController extends Controller
             'vat' => $vat,
             'attributes' => $attributes,
             'products' => $products,
+
+            'application' => [
+                'payment_type' => $payment_type
+            ],
         ];
     }
 
 
 
-    public function SendFiscalizationPopup(Request $request){
+    public function SendFiscalizationPopup(Request $request): JsonResponse
+    {
 
         $data = $request->all();
 
@@ -131,8 +147,15 @@ class fiscalizationController extends Controller
 
         $total = $data['total'];
 
-        $position = json_decode($data['position']);
+        //$positions = json_decode($data['position']);
+        $positions =  json_decode($data['position']) ;
+        $position = null;
+        foreach ($positions as $item){
 
+            if ($item != null){
+                $position[] = $item;
+            } else continue;
+        }
 
         $body = [
             'accountId' => $accountId,
@@ -148,19 +171,18 @@ class fiscalizationController extends Controller
             'positions' => $position,
         ];
 
-        //dd($body);
-
         try {
+            $TicketService = new TicketService();
+            return $TicketService->createTicket($body);
 
-            return app(TicketController::class)->CreateTicketResponse($body);
-
-        } catch (\Throwable $e){
-            //dd($e->getCode());
+        } catch (BadResponseException $e){
+            return response()->json($e->getMessage());
+        } catch (GuzzleException $e) {
             return response()->json($e->getMessage());
         }
     }
 
-    public function printFiscalizationPopup(Request $request, $accountId): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Contracts\Foundation\Application
+    public function printFiscalizationPopup($accountId): Factory|View|Application
     {
 
         $find = htmlResponce::query()->where('accountId', $accountId)->latest()->first();
@@ -170,3 +192,4 @@ class fiscalizationController extends Controller
     }
 
 }
+

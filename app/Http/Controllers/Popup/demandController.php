@@ -3,17 +3,20 @@
 namespace App\Http\Controllers\Popup;
 
 use App\Clients\MsClient;
-use App\Http\Controllers\Config\getSettingVendorController;
-use App\Http\Controllers\Config\Lib\VendorApiController;
+use App\Http\Controllers\BD\getMainSettingBD;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\TicketController;
 use App\Models\htmlResponce;
-use GuzzleHttp\Client;
+use GuzzleHttp\Exception\BadResponseException;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class demandController extends Controller
 {
-    public function demandPopup(Request $request): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Contracts\Foundation\Application
+    public function demandPopup(): Factory|View|Application
     {
 
         return view( 'popup.demand', [
@@ -21,26 +24,28 @@ class demandController extends Controller
         ] );
     }
 
-    public function ShowDemandPopup(Request $request): \Illuminate\Http\JsonResponse
+    public function ShowDemandPopup(Request $request): JsonResponse
     {
         $object_Id = $request->object_Id;
         $accountId = $request->accountId;
-        $Setting = new getSettingVendorController($accountId);
+        $Setting = new getMainSettingBD($accountId);
 
-        $json = $this->info_object_Id($object_Id, $Setting);
+        $url = "https://online.moysklad.ru/api/remap/1.2/entity/demand/".$object_Id;
 
+
+        $Client = new MsClient($Setting->tokenMs);
+        $Body = $Client->get($url);
+
+        $json = $this->info_object_Id($Body, $Client,  $Setting);
         return response()->json($json);
     }
 
-    private function info_object_Id($object_Id, $Setting){
-        $url = "https://online.moysklad.ru/api/remap/1.2/entity/demand/".$object_Id;
-        $Client = new MsClient($Setting->TokenMoySklad);
-        $Body = $Client->get($url);
-        $attributes = null;
+    public function info_object_Id(mixed $Body, MsClient $Client, getMainSettingBD $Setting ): array
+    {
+        $attributes = [ 'ticket_id' => null, ];
+        $payment_type = $Setting->payment_type;
+
         if (property_exists($Body, 'attributes')){
-            $attributes = [
-                'ticket_id' => null,
-            ];
             foreach ($Body->attributes as $item){
                 if ($item->name == 'фискальный номер (ТИС)'){
                     $attributes['ticket_id'] = $item->value;
@@ -48,6 +53,9 @@ class demandController extends Controller
                 }
             }
         }
+
+        if ($payment_type == null) $payment_type = "0";
+
         $vatEnabled = $Body->vatEnabled;
         $vat = null;
         $products = [];
@@ -56,7 +64,7 @@ class demandController extends Controller
         foreach ($positions as $id=>$item){
             $final = $item->price / 100 * $item->quantity;
 
-            if ($vatEnabled == true) {if ($Body->vatIncluded == false) {
+            if ($vatEnabled) {if ($Body->vatIncluded == false) {
                 $final = $item->price / 100 * $item->quantity;
                 $final = $final + ( $final * ($item->vat/100) );
             }}
@@ -65,13 +73,9 @@ class demandController extends Controller
             if (property_exists($uom_body, 'uom')){
                 $propety_uom = true;
                 $uom = $Client->get($uom_body->uom->meta->href);
-                if (property_exists($uom, 'code')){
                 $uom = ['id' => $uom->code, 'name' => $uom->name];
             } else {
-                    $propety_uom = false;
-                    $uom = ['id' => 796, 'name' => 'шт'];
-                }
-            } else {
+
                 if (property_exists($uom_body, 'characteristics')){
                     $check_uom = $Client->get($uom_body->product->meta->href);
 
@@ -89,6 +93,7 @@ class demandController extends Controller
                 }
             }
 
+
             $products[$id] = [
                 'position' => $item->id,
                 'propety' => $propety_uom,
@@ -103,13 +108,13 @@ class demandController extends Controller
             ];
         }
 
-        if ($vatEnabled == true) {
+        if ($vatEnabled) {
             $vat = [
                 'vatEnabled' => $Body->vatEnabled,
                 'vatIncluded' => $Body->vatIncluded,
                 'vatSum' => $Body->vatSum / 100 ,
             ];
-        };
+        }
         return [
             'id' => $Body->id,
             'name' => $Body->name,
@@ -117,29 +122,38 @@ class demandController extends Controller
             'vat' => $vat,
             'attributes' => $attributes,
             'products' => $products,
+
+            'application' => [
+                'payment_type' => $payment_type
+            ],
         ];
     }
 
 
     public function SendDemandPopup(Request $request){
-        $accountId = $request->accountId;
-        $object_Id = $request->object_Id;
-        $entity_type = $request->entity_type;
 
-        if ($request->money_card === null) $money_card = 0;
-        else $money_card = $request->money_card;
-        if ($request->money_cash === null) $money_cash = 0;
-        else $money_cash = $request->money_cash;
-        $pay_type = $request->pay_type;
+        $data = $request->all();
 
-        $total = $request->total;
+        $accountId = $data['accountId'];
+        $object_Id = $data['object_Id'];
+        $entity_type = $data['entity_type'];
 
-        $position = json_decode($request->position);
-        $positions = [];
-        foreach ($position as $item){
+        if ($data['money_card'] === null) $money_card = 0;
+        else $money_card = $data["money_card"];
+        if ($data['money_cash'] === null) $money_cash = 0;
+        else $money_cash = $data['money_cash'];
+        $pay_type = $data['pay_type'];
+
+        $total = $data['total'];
+
+        //$positions = json_decode($data['position']);
+        $positions =  json_decode($data['position']) ;
+        $position = null;
+        foreach ($positions as $item){
+
             if ($item != null){
-                $positions[] = $item;
-            }
+                $position[] = $item;
+            } else continue;
         }
 
         $body = [
@@ -153,23 +167,20 @@ class demandController extends Controller
 
             'total' => $total,
 
-            'positions' => $positions,
+            'positions' => $position,
         ];
-
-        //dd(($body), json_encode($body));
 
         try {
 
             return app(TicketController::class)->CreateTicketResponse($body);
 
-        } catch (\Throwable $e){
-            //dd($e->getCode());
+        } catch (BadResponseException $e){
             return response()->json($e->getMessage());
         }
     }
 
 
-    public function printDemandPopup(Request $request, $accountId): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Contracts\Foundation\Application
+    public function printDemandPopup($accountId): Factory|View|Application
     {
         $find = htmlResponce::query()->where('accountId', $accountId)->latest()->first();
         $result = $find->getAttributes();
