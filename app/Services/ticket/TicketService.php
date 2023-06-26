@@ -7,29 +7,17 @@ use App\Clients\MsClient;
 use App\Http\Controllers\BD\getMainSettingBD;
 use App\Http\Controllers\globalObjectController;
 use App\Models\htmlResponce;
-use App\Services\AdditionalServices\DocumentService;
-use App\Services\MetaServices\MetaHook\AttributeHook;
+
 use GuzzleHttp\Exception\BadResponseException;
+use GuzzleHttp\Exception\GuzzleException;
+use Illuminate\Http\JsonResponse;
 
 class TicketService
 {
-
-    private AttributeHook $attributeHook;
-    private DocumentService $documentService;
-
     /**
-     * @param AttributeHook $attributeHook
-     * @param DocumentService $documentService
+     * @throws GuzzleException
      */
-    public function __construct(AttributeHook $attributeHook, DocumentService $documentService)
-    {
-        $this->attributeHook = $attributeHook;
-        $this->documentService = $documentService;
-    }
-
-    // Create ticket
-
-    public function createTicket($data): \Illuminate\Http\JsonResponse
+    public function createTicket($data): JsonResponse
     {
         $accountId = $data['accountId'];
         $id_entity = $data['id_entity'];
@@ -61,7 +49,7 @@ class TicketService
             $postTicket = $ClientTIS->POSTClient($Config->apiURL_ukassa.'v2/operation/ticket/', $Body);
             //  dd($postTicket);
 
-            $putBody = $this->putBodyMS($entity_type, $postTicket, $Client, $Setting, $oldBody, $positions);
+            $putBody = $this->putBodyMS($entity_type, $postTicket, $Client, $oldBody, $positions);
             $put = $Client->put('https://online.moysklad.ru/api/remap/1.2/entity/'.$entity_type.'/'.$id_entity, $putBody);
 
             //dd($putBody);
@@ -196,9 +184,9 @@ class TicketService
                             $result[] = [
                                 'name' => (string) $item->name,
                                 'price' => (float) $item->price,
-                                'quantity' => (float) 1,
+                                'quantity' => 1,
                                 'quantity_type' => (int) $item->UOM,
-                                'total_amount' => (float) ( round($item->price * 1 - $discount, 2) ) ,
+                                'total_amount' => ( round($item->price * 1 - $discount, 2) ) ,
                                 'is_nds' => $is_nds,
                                 'discount' =>(float) $discount,
                                 'section' => (int) $Setting->idDepartment,
@@ -216,7 +204,7 @@ class TicketService
                     'price' => (float) $item->price,
                     'quantity' => (float) $item->quantity,
                     'quantity_type' => (int) $item->UOM,
-                    'total_amount' => (float) ( round($item->price * $item->quantity - $discount,2) ) ,
+                    'total_amount' => ( round($item->price * $item->quantity - $discount,2) ) ,
                     'is_nds' => $is_nds,
                     'discount' =>(float) $discount,
                     'section' => (int) $Setting->idDepartment,
@@ -255,10 +243,8 @@ class TicketService
 
     }
 
-    private function putBodyMS($entity_type, mixed $postTicket, MsClient $Client, getMainSettingBD $Setting, mixed $oldBody, mixed $positionsBody): array
+    private function putBodyMS($entity_type, mixed $postTicket, MsClient $Client, mixed $oldBody, mixed $positionsBody): array
     {   $result = null;
-        $Result_attributes = null;
-        $Resul_positions = null;
         $check_attributes_in_value_name = false;
         foreach ($oldBody->attributes as $item){
             if ($item->name == 'Фискальный номер (ТИС)' and $item->name != ''){
@@ -271,7 +257,7 @@ class TicketService
         $Result_attributes = $this->setAttributesToPutBody($postTicket, $check_attributes_in_value_name, $attributes);
 
         $positions = $Client->get($oldBody->positions->meta->href)->rows;
-        $Resul_positions = $this->setPositionsToPutBody($postTicket, $positions, $positionsBody);
+        $Resul_positions = $this->setPositionsToPutBody($positions, $positionsBody);
 
         $result['description'] = $this->descriptionToCreate($oldBody, $postTicket, 'Продажа, Фискальный номер: ');
 
@@ -288,7 +274,7 @@ class TicketService
     {
         $Result_attributes = null;
         foreach ($attributes as $item) {
-            if ($item->name == "фискальный номер (ТИС)" and $check_attributes == true) {
+            if ($item->name == "фискальный номер (ТИС)" and $check_attributes) {
                 $Result_attributes[] = [
                     "meta"=> [
                         "href"=> $item->meta->href,
@@ -328,7 +314,7 @@ class TicketService
                     "value" => (string) $postTicket->data->id,
                 ];
             }
-            if ($item->name == "Тип Оплаты (ТИС)" and $check_attributes == true) {
+            if ($item->name == "Тип Оплаты (ТИС)" and $check_attributes) {
                 $value = "";
                 foreach ($postTicket->data->transaction_payments as $item_) {
                     switch ($item_->payment_type) {
@@ -368,7 +354,7 @@ class TicketService
         return $Result_attributes;
     }
 
-    private function setPositionsToPutBody(mixed $postTicket, mixed $positions, mixed $positionsBody): array
+    private function setPositionsToPutBody(mixed $positions, mixed $positionsBody): array
     {   $result = null;
         $sort = null;
         foreach ($positionsBody as $id=>$one){
@@ -396,7 +382,7 @@ class TicketService
 
     }
 
-    private function createPaymentDocument( getMainSettingBD $Setting, MsClient $client, string $entity_type, mixed $OldBody, mixed $payments)
+    private function createPaymentDocument( getMainSettingBD $Setting, MsClient $client, string $entity_type, mixed $OldBody, mixed $payments): void
     {
         switch ($Setting->paymentDocument){
             case "1": {
@@ -489,7 +475,6 @@ class TicketService
             }
             case "3": {
                 $url = 'https://online.moysklad.ru/api/remap/1.2/entity/';
-                $url_to_body = null;
                 foreach ($payments as $item){
                     $change = 0;
                     if ($item['payment_type'] == 0){
@@ -638,7 +623,7 @@ class TicketService
 
     }
 
-    private function createReturnDocument(getMainSettingBD $Setting, mixed $newBody, mixed $putBody, mixed $oldBody, mixed $entity_type)
+    private function createReturnDocument(getMainSettingBD $Setting, mixed $newBody, mixed $putBody, mixed $oldBody, mixed $entity_type): void
     {
         if ($entity_type != 'salesreturn') {
             $client = new MsClient($Setting->tokenMs);
@@ -709,7 +694,6 @@ class TicketService
                 'description' => 'Созданный документ возврата с ',
                 'organizationAccount' => null,
                 'demand' => null,
-                'store' => null,
             ];
 
             if (isset($newBody->organizationAccount)){
@@ -763,7 +747,7 @@ class TicketService
             }
             try {
                 $client->post($url, $body);
-            } catch (BadResponseException $exception){
+            } catch (BadResponseException){
 
             }
         }
@@ -778,7 +762,7 @@ class TicketService
             $OldMessage = $oldBody->description.PHP_EOL;
         }
 
-        return (string) $OldMessage.'['.( (int) date('H') + 6 ).date(':i:s').' '. date('Y-m-d') .'] '. $message.$postTicket->data->fixed_check ;
+        return $OldMessage.'['.( (int) date('H') + 6 ).date(':i:s').' '. date('Y-m-d') .'] '. $message.$postTicket->data->fixed_check ;
     }
 
 
