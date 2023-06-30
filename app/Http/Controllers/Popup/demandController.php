@@ -7,6 +7,7 @@ use App\Http\Controllers\BD\getMainSettingBD;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\TicketController;
 use App\Models\htmlResponce;
+use App\Services\ticket\TicketService;
 use GuzzleHttp\Exception\BadResponseException;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
@@ -176,7 +177,7 @@ class demandController extends Controller
 
         try {
 
-            return app(TicketController::class)->CreateTicketResponse($body);
+            return app(TicketService::class)->createTicket($body);
 
         } catch (BadResponseException $e){
             return response()->json($e->getMessage());
