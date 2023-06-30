@@ -172,7 +172,7 @@ class demandController extends Controller
 
             'total' => $total,
 
-            'position' => $position,
+            'positions' => $position,
         ];
 
         try {
