@@ -42,7 +42,7 @@ class demandController extends Controller
 
     public function info_object_Id(mixed $Body, MsClient $Client, getMainSettingBD $Setting ): array
     {
-        $attributes = [ 'ticket_id' => null, ];
+        $attributes = [ 'ticket_id' => null];
         $payment_type = $Setting->payment_type;
 
         if (property_exists($Body, 'attributes')){
