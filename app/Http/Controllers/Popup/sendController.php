@@ -132,7 +132,7 @@ class sendController extends Controller
 
     public function DevRequest(Request $request){
         $accountId = $request->accountId;
-        $id_entity = $request->id_entity;
+        $id_entity = $request->object_Id;
         $entity_type = $request->entity_type;
 
         if ($request->money_card === null) $money_card = 0;
@@ -143,7 +143,7 @@ class sendController extends Controller
 
         $total = $request->total;
 
-        $position = json_decode(($request->positions));
+        $position = json_decode(($request->position));
 
         $body = [
             'accountId' => $accountId,
