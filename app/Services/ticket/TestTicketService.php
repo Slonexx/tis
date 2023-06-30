@@ -227,6 +227,7 @@ class TestTicketService
                 ];
             }
         }
+        dd($result);
         foreach ($result as $id => $item){
             if ($item['discount']<= 0) {
                 unset($result[$id]['discount']);
