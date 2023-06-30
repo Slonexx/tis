@@ -40,7 +40,7 @@ class TestTicketService
         $payType = $data['pay_type'];
         $total = $data['total'];
 
-        $positions = $data['positions'];
+        $positions = $data['position'];
 
         $Setting = new getMainSettingBD($accountId);
 
