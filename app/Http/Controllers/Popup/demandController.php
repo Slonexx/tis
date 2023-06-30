@@ -162,7 +162,7 @@ class demandController extends Controller
 
         $body = [
             'accountId' => $accountId,
-            'id_entity' => $object_Id,
+            'object_Id' => $object_Id,
             'entity_type' => $entity_type,
 
             'money_card' => $money_card,
@@ -171,7 +171,7 @@ class demandController extends Controller
 
             'total' => $total,
 
-            'positions' => $position,
+            'position' => $position,
         ];
 
         try {
