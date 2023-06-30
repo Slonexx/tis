@@ -147,7 +147,7 @@ class sendController extends Controller
 
         $body = [
             'accountId' => $accountId,
-            'id_entity' => $id_entity,
+            'object_Id' => $id_entity,
             'entity_type' => $entity_type,
 
             'money_card' => $money_card,
@@ -156,7 +156,7 @@ class sendController extends Controller
 
             'total' => $total,
 
-            'positions' => $position,
+            'position' => $position,
         ];
 
             $ticket = json_decode(json_encode((app(TestTicketService::class)->createTicket($body))));
