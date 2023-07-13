@@ -193,7 +193,6 @@ class TicketService
                                     'section' => (int)$Setting->idDepartment,
                                     'mark_code' => (string)$code->cis,
                                 ];
-                                $checkSum = $checkSum + (round($item->price * 1 - $discount, 2));
                             }
                         } else {
                             $result[$id] = [
