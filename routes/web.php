@@ -7,6 +7,7 @@ use App\Http\Controllers\Popup\demandController;
 use App\Http\Controllers\Popup\fiscalizationController;
 use App\Http\Controllers\Popup\salesreturnController;
 use App\Http\Controllers\Popup\sendController;
+use App\Http\Controllers\Web\AutomationController;
 use App\Http\Controllers\Web\cash_operationController;
 use App\Http\Controllers\Web\changeController;
 use App\Http\Controllers\Web\close_z_shiftController;
