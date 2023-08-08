@@ -19,14 +19,9 @@
                                 <a id="link_3" class="mt-1" href="/Setting/Kassa/{{$accountId}}?isAdmin={{ request()->isAdmin }}"> Касса </a>
                                 <a id="link_4" class="mt-1" href="/Setting/Document/{{$accountId}}?isAdmin={{ request()->isAdmin }}"> Документ </a>
                                 <a id="link_5" class="mt-1" href="/Setting/Worker/{{$accountId}}?isAdmin={{ request()->isAdmin }}"> Доступ </a>
+                                <a id="link_6" class="mt-1" href="/Setting/Automation/{{$accountId}}?isAdmin={{ request()->isAdmin }}"> Автоматизация </a>
                             </div>
-                            <a id="link_6" class="mt-1" href="/kassa/change/{{$accountId}}?isAdmin={{ request()->isAdmin }}"> Смена </a>
-                            {{--<button id="btn_2" class="mt-1 dropdown-btn">Смена <i class="fa fa-caret-down"></i> </button>
-                            <div class="dropdown-container">
-                                <a id="link_6" class="mt-1" href="/operation/cash_operation/{{$accountId}}?isAdmin={{ request()->isAdmin }}"> Внесение/Изъятие </a>
-                                <a id="link_7" class="mt-1" href="/kassa/get_shift_report/{{$accountId}}?isAdmin={{ request()->isAdmin }}"> X-отчёт </a>
-                                <a id="link_8" class="mt-1" href="/operation/close_z_shift/{{$accountId}}?isAdmin={{ request()->isAdmin }}"> Z-отчёт </a>
-                            </div>--}}
+                            <a id="link_7" class="mt-1" href="/kassa/change/{{$accountId}}?isAdmin={{ request()->isAdmin }}"> Смена </a>
                         @endif
                     @endif
                     <button class="mt-1 dropdown-btn"> Помощь <i class="fa fa-caret-down"></i> </button>
@@ -49,11 +44,8 @@
         let item = '@yield('item')'
 
         window.document.getElementById(item).classList.add('active_sprint')
-        if (item.replace(/[^+\d]/g, '') > 1 && item.replace(/[^+\d]/g, '') <= 5){
+        if (item.replace(/[^+\d]/g, '') > 1 && item.replace(/[^+\d]/g, '') <= 6){
            this_click(window.document.getElementById('btn_1'))
-        }
-        if (item.replace(/[^+\d]/g, '') > 5 && item.replace(/[^+\d]/g, '') <= 8){
-            this_click(window.document.getElementById('btn_2'))
         }
 
         function this_click(btn){
