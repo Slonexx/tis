@@ -52,6 +52,10 @@ Route::get('/Setting/Worker/{accountId}', [AccessController::class, 'getWorker']
 Route::post('/Setting/Worker/{accountId}', [AccessController::class, 'postWorker']);
 
 
+Route::get('/Setting/Automation/{accountId}', [AutomationController::class, 'getAutomation'])->name('getAutomation');
+Route::post('/Setting/Automation/{accountId}', [AutomationController::class, 'postAutomation']);
+
+
 
 Route::get('/kassa/change/{accountId}', [changeController::class, 'getChange']);
 
