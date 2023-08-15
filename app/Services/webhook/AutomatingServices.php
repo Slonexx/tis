@@ -554,13 +554,25 @@ class AutomatingServices
     }
 
 
-    private function getMeta($attribName)
+    private function getMeta($attribName): array
     {
-        return match ($this->settingAutomation->entity) {
-            0, "0" => $this->attributeHook->getOrderAttribute($attribName, $this->setting->tokenMs),
-            1, "1" => $this->attributeHook->getDemandAttribute($attribName, $this->setting->tokenMs),
-            2, "2" => $this->attributeHook->getSalesReturnAttribute($attribName, $this->setting->tokenMs),
-            default => null,
-        };
+        switch ($this->settingAutomation->entity){
+            case '0': { $uri = "https://online.moysklad.ru/api/remap/1.2/entity/customerorder/metadata/attributes"; break;}
+            case '1': { $uri = "https://online.moysklad.ru/api/remap/1.2/entity/demand/metadata/attributes"; break;}
+            case '2': { $uri = "https://online.moysklad.ru/api/remap/1.2/entity/salesreturn/metadata/attributes"; break;}
+            default: { $uri = ""; break;}
+        }
+
+        $json = $this->msClient->get($uri);
+        foreach($json->rows as $row){
+            if($row->name == $attribName){
+                return [
+                    'href' => $row->meta->href,
+                    'type' => $row->meta->type,
+                    'mediaType' => $row->meta->mediaType,
+                ];
+            }
+        }
+        return [];
     }
 }
