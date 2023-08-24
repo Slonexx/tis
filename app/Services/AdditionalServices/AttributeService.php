@@ -56,7 +56,7 @@ class AttributeService
     {
         return [
             0 => [
-                "name" => "фискальный номер (фискальный номер (ТИС)",
+                "name" => "фискальный номер (ТИС)",
                 "type" => "string",
                 "required" => false,
                 "show" => false,
