@@ -56,7 +56,7 @@ class AttributeService
     {
         return [
             0 => [
-                "name" => "фискальный номер (фискальный номер (ТИС)",
+                "name" => "фискальный номер (ТИС)",
                 "type" => "string",
                 "required" => false,
                 "show" => false,
@@ -80,7 +80,7 @@ class AttributeService
                 "type" => "string",
                 "required" => false,
                 "show" => false,
-                "description" => "уникальный идентификатор по данному дополнительному полю идёт синхронизация с WebKassa (Онлайн ккм)",
+                "description" => "уникальный идентификатор по данному дополнительному полю идёт синхронизация с ТИС (Онлайн ккм)",
             ],
             4 => [
                 "name" => "Тип Оплаты (ТИС)",
