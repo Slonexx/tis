@@ -179,15 +179,15 @@ class TicketService
                 $demandPos = $msClient->get($demand->positions->meta->href)->rows;
 
                 foreach ($demandPos as $item_2) {
-                    if ($item->id == $item_2->id) {
+                   /* if ($item->id == $item_2->id) {
                         if (isset($item_2->trackingCodes) or property_exists($item_2, 'trackingCodes')) {
                             foreach ($item_2->trackingCodes as $code) {
                                 $result[] = [
                                     'name' => (string)$item->name,
                                     'price' => (float)$item->price,
-                                    'quantity' => (float)1,
+                                    'quantity' => 1,
                                     'quantity_type' => (int)$item->UOM,
-                                    'total_amount' => (float)(round($item->price * 1 - $discount, 2)),
+                                    'total_amount' => (round($item->price * 1 - $discount, 2)),
                                     'is_nds' => $is_nds,
                                     'discount' => (float)$discount,
                                     'section' => (int)$Setting->idDepartment,
@@ -200,12 +200,42 @@ class TicketService
                                 'price' => (float)$item->price,
                                 'quantity' => (float)$item->quantity,
                                 'quantity_type' => (int)$item->UOM,
-                                'total_amount' => (float)(round($item->price * $item->quantity - $discount, 2)),
+                                'total_amount' => (round($item->price * $item->quantity - $discount, 2)),
                                 'is_nds' => $is_nds,
                                 'discount' => (float)$discount,
                                 'section' => (int)$Setting->idDepartment,
                             ];
                         }
+                    }*/
+
+
+                    if ( $item->id == $item_2->id and isset($item_2->trackingCodes) ){
+                        foreach ($item_2->trackingCodes as $code){
+                            $result[] = [
+                                'name' => (string)$item->name,
+                                'price' => (float)$item->price,
+                                'quantity' => 1,
+                                'quantity_type' => (int)$item->UOM,
+                                'total_amount' => (round($item->price * 1 - $discount, 2)),
+                                'is_nds' => $is_nds,
+                                'discount' => (float)$discount,
+                                'section' => (int)$Setting->idDepartment,
+                                'mark_code' => (string)$code->cis,
+                            ];
+                        }
+                    }
+                    elseif ($item->id == $item_2->id){
+                        $result[] = [
+                            'name' => (string)$item->name,
+                            'price' => (float)$item->price,
+                            'quantity' => 1,
+                            'quantity_type' => (int)$item->UOM,
+                            'total_amount' => (round($item->price * 1 - $discount, 2)),
+                            'is_nds' => $is_nds,
+                            'discount' => (float)$discount,
+                            'section' => (int)$Setting->idDepartment,
+                            'mark_code' => (string)$code->cis,
+                        ];
                     }
 
                 }
