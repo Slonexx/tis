@@ -9,6 +9,7 @@ use App\Http\Controllers\TicketController;
 use App\Models\htmlResponce;
 use App\Services\ticket\TicketService;
 use GuzzleHttp\Exception\BadResponseException;
+use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
@@ -176,10 +177,8 @@ class demandController extends Controller
         ];
 
         try {
-
-            return app(TicketService::class)->createTicket($body);
-
-        } catch (BadResponseException $e){
+            return  (new TicketService())->createTicket($body);
+        } catch (GuzzleException $e) {
             return response()->json($e->getMessage());
         }
     }

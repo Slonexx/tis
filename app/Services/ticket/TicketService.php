@@ -39,8 +39,6 @@ class TicketService
 
         $Body = $this->setBodyToPostClient($Setting, $id_entity, $entity_type, $money_card, $money_cash, $payType, $total, $positions);
 
-        //dd($Body);
-
         if (isset($Body['Status'])) {
             return response()->json($Body['Message']);
         }
@@ -86,8 +84,6 @@ class TicketService
                 'errors_' => $e->getMessage()
             ]);
         }
-        //$postTicket = null;
-
 
     }
 
