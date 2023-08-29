@@ -29,7 +29,7 @@ class TestTicketService
             return response()->json($Body['Message']);
         }
 
-        dd($Body);
+        dd($Body, $positions);
 
     }
 
