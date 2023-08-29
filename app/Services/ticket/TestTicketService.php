@@ -106,100 +106,24 @@ class TestTicketService
         $msClient = new MsClient($Setting->tokenMs);
         $result = null;
 
+        if ($typeObject == 'demand') {
+            $demandPos = $msClient->get(($msClient->get('https://online.moysklad.ru/api/remap/1.2/entity/' . $typeObject . '/' . $idObject))->positions->meta->href)->rows;
+        }
+
+
         foreach ($positions as $id => $item) {
             $is_nds = trim($item->is_nds, '%');
             $discount = trim($item->discount, '%');
-            if ($is_nds == 'без НДС' or $is_nds == "0%") {
-                $is_nds = false;
-            } else $is_nds = true;
+            if ($is_nds == 'без НДС' or $is_nds == "0%") { $is_nds = false; } else $is_nds = true;
+            if ($discount > 0) { $discount = round(($item->price * $item->quantity * ($discount / 100)), 2); }
 
-            if ($discount > 0) {
-                $discount = round(($item->price * $item->quantity * ($discount / 100)), 2);
-            }
-            if ($typeObject == 'demand') {
-                $demand = $msClient->get('https://online.moysklad.ru/api/remap/1.2/entity/' . $typeObject . '/' . $idObject);
-                $demandPos = $msClient->get($demand->positions->meta->href)->rows;
+            if ($typeObject == 'demand'){
 
-                foreach ($demandPos as $item_2) {
-                    /* if ($item->id == $item_2->id) {
-                         if (isset($item_2->trackingCodes) or property_exists($item_2, 'trackingCodes')) {
-                             foreach ($item_2->trackingCodes as $code) {
-                                 $result[] = [
-                                     'name' => (string)$item->name,
-                                     'price' => (float)$item->price,
-                                     'quantity' => 1,
-                                     'quantity_type' => (int)$item->UOM,
-                                     'total_amount' => (round($item->price * 1 - $discount, 2)),
-                                     'is_nds' => $is_nds,
-                                     'discount' => (float)$discount,
-                                     'section' => (int)$Setting->idDepartment,
-                                     'mark_code' => (string)$code->cis,
-                                 ];
-                             }
-                         } else {
-                             $result[$id] = [
-                                 'name' => (string)$item->name,
-                                 'price' => (float)$item->price,
-                                 'quantity' => (float)$item->quantity,
-                                 'quantity_type' => (int)$item->UOM,
-                                 'total_amount' => (round($item->price * $item->quantity - $discount, 2)),
-                                 'is_nds' => $is_nds,
-                                 'discount' => (float)$discount,
-                                 'section' => (int)$Setting->idDepartment,
-                             ];
-                         }
-                     }*/
+                if (isset($demandPos[$id]->trackingCodes)){
+                    foreach ($demandPos[$id]->trackingCodes as $code){ $result[] = $this->itemPosition($item->name, $item->price, 1, $discount, $item->UOM, $is_nds, $Setting->idDepartment, $code->cis) ; }
+                } else { $result[] = $this->itemPosition($item->name, $item->price, $item->quantity, $discount, $item->UOM, $is_nds, $Setting->idDepartment, '') ; }
 
-
-                    if ( $item->id == $item_2->id and isset($item_2->trackingCodes) ){
-                        foreach ($item_2->trackingCodes as $code){
-                            $result[] = [
-                                'name' => (string)$item->name,
-                                'price' => (float)$item->price,
-                                'quantity' => 1,
-                                'quantity_type' => (int)$item->UOM,
-                                'total_amount' => (round($item->price * 1 - $discount, 2)),
-                                'is_nds' => $is_nds,
-                                'discount' => (float)$discount,
-                                'section' => (int)$Setting->idDepartment,
-                                'mark_code' => (string)$code->cis,
-                            ];
-                        }
-                    }
-                    elseif ($item->id == $item_2->id){
-                        $result[] = [
-                            'name' => (string)$item->name,
-                            'price' => (float)$item->price,
-                            'quantity' => 1,
-                            'quantity_type' => (int)$item->UOM,
-                            'total_amount' => (round($item->price * 1 - $discount, 2)),
-                            'is_nds' => $is_nds,
-                            'discount' => (float)$discount,
-                            'section' => (int)$Setting->idDepartment,
-                        ];
-                    }
-
-                }
-
-
-            } else {
-                $result[$id] = [
-                    'name' => (string)$item->name,
-                    'price' => (float)$item->price,
-                    'quantity' => (float)$item->quantity,
-                    'quantity_type' => (int)$item->UOM,
-                    'total_amount' => (round($item->price * $item->quantity - $discount, 2)),
-                    'is_nds' => $is_nds,
-                    'discount' => (float)$discount,
-                    'section' => (int)$Setting->idDepartment,
-                ];
-            }
-        }
-
-        foreach ($result as $id => $item) {
-            if ($item['discount'] <= 0) {
-                unset($result[$id]['discount']);
-            }
+            } else { $result[] = $result[] = $this->itemPosition($item->name, $item->price, $item->quantity, $discount, $item->UOM, $is_nds, $Setting->idDepartment, '') ; }
         }
 
         return $result;
@@ -229,6 +153,29 @@ class TestTicketService
 
         return $result;
 
+    }
+
+    private function itemPosition(string $name, float $price, float $quantity, float $discount, int $UOM, $is_nds, int $section, string $code): array
+    {
+        $item =  [
+            'name' => $name,
+            'price' => $price,
+            'quantity' => $quantity,
+            'total_amount' => (round($price * $quantity - $discount, 2)),
+            'section' => $section,
+            'quantity_type' => $UOM,
+            'is_nds' => $is_nds,
+            'discount' => $discount,
+            'mark_code' => $code,
+        ];
+
+        if ($discount <= 0) {
+            unset($item['discount']);
+        }
+        if ($code == "") {
+            unset($item['mark_code']);
+        }
+        return $item;
     }
 
 }
