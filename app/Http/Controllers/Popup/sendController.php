@@ -13,6 +13,7 @@ use App\Services\ticket\dev_TicketService;
 use App\Services\ticket\TestTicketService;
 use GuzzleHttp\Exception\BadResponseException;
 use Illuminate\Http\Request;
+use JetBrains\PhpStorm\NoReturn;
 
 class sendController extends Controller
 {
@@ -130,7 +131,8 @@ class sendController extends Controller
 
     }
 
-    public function DevRequest(Request $request){
+    #[NoReturn] public function DevRequest(Request $request): void
+    {
         $accountId = $request->accountId;
         $id_entity = $request->object_Id;
         $entity_type = $request->entity_type;
@@ -156,12 +158,12 @@ class sendController extends Controller
 
             'total' => $total,
 
-            'position' => $position,
+            'positions' => $position,
         ];
 
-        (new TestTicketService())->createTicket($body);
+        dd((new TestTicketService())->createTicket($body));
 
-            $ticket = json_decode(json_encode((app(TestTicketService::class)->createTicket($body))));
+
     }
 
 
