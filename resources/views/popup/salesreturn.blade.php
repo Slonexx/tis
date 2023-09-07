@@ -133,7 +133,7 @@
                 modalShowHide = 'hide'
             }
 
-            if (parseFloat(total)-0.1 <= parseFloat(money_card) + parseFloat(money_cash)){
+            if ((total)-0.1 <= (money_card) + (money_cash)){
                 let url = 'https://main.smarttis.kz/Popup/salesreturn/send'
 
                 if (modalShowHide === 'show'){
