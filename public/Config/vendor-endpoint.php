@@ -29,14 +29,14 @@ switch ($method) {
             $app->persist();
 
         }
-        $url = 'https://dev.smarttis.kz/setAttributes/' . $accountId . '/' . $accessToken;
+        $url = 'https://smarttis.kz/setAttributes/' . $accountId . '/' . $accessToken;
         $install = file_get_contents($url);
         break;
     case 'GET':
         break;
     case 'DELETE':
         //Тут так же
-        $url = 'https://dev.smarttis.kz/delete/'.$accountId;
+        $url = 'https://smarttis.kz/delete/'.$accountId;
         $install = file_get_contents($url);
 
         $replyStatus = false;
