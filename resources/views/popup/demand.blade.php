@@ -4,10 +4,7 @@
 @section('content')
 
     <script>
-
-        //const url = 'http://tus/Popup/customerorder/show';
-
-        const url = 'https://smarttis.kz/Popup/demand/show';
+        const url = 'https://dev.smarttis.kz/Popup/demand/show';
 
         let object_Id = ''
         let accountId = ''
@@ -131,7 +128,7 @@
             }
 
             if ((total)-0.1 <= (money_card) + (money_cash)){
-                let url = 'https://smarttis.kz/Popup/demand/send'
+                let url = 'https://dev.smarttis.kz/Popup/demand/send'
 
                 if (modalShowHide === 'show'){
                     $('#downL').modal('toggle')

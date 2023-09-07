@@ -169,19 +169,19 @@ class AutomationController extends Controller
                 }
 
                 $Client->post('https://online.moysklad.ru/api/remap/1.2/entity/webhook/', [
-                    'url' => 'https://smarttis.kz/api/webhook/customerorder',
+                    'url' => 'https://dev.smarttis.kz/api/webhook/customerorder',
                     'action' => "UPDATE",
                     'entityType' => 'customerorder',
                     'diffType' => "FIELDS",
                 ]);
                 $Client->post('https://online.moysklad.ru/api/remap/1.2/entity/webhook/', [
-                    'url' => 'https://smarttis.kz/api/webhook/demand',
+                    'url' => 'https://dev.smarttis.kz/api/webhook/demand',
                     'action' => "UPDATE",
                     'entityType' => 'demand',
                     'diffType' => "FIELDS",
                 ]);
                 $Client->post('https://online.moysklad.ru/api/remap/1.2/entity/webhook/', [
-                    'url' => 'https://smarttis.kz/api/webhook/salesreturn',
+                    'url' => 'https://dev.smarttis.kz/api/webhook/salesreturn',
                     'action' => "UPDATE",
                     'entityType' => 'salesreturn',
                     'diffType' => "FIELDS",

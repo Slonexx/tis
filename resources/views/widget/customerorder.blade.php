@@ -24,12 +24,12 @@
                     objectId: Global_object_Id,
                 };
 
-                let settings = ajax_settings('https://smarttis.kz/widget/InfoAttributes/', 'GET', data)
+                let settings = ajax_settings('https://dev.smarttis.kz/widget/InfoAttributes/', 'GET', data)
                 console.log('widget setting attributes: ↓')
                 console.log(settings)
 
                 $.ajax(settings).done(function (response) {
-                    console.log("https://smarttis.kz/widget/InfoAttributes/" + ' response ↓ ')
+                    console.log("https://dev.smarttis.kz/widget/InfoAttributes/" + ' response ↓ ')
                     console.log(response)
 
                     let sendingMessage = {

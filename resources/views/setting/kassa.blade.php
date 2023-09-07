@@ -47,8 +47,7 @@
     </div>
 
     <script>
-        //let url = 'https://tus/';
-        let url = 'https://smarttis.kz/';
+        let url = 'https://dev.smarttis.kz/';
         let accountId = '{{ $accountId }}'
         let kassa = @json($kassa);
 

@@ -54,8 +54,7 @@
             let params = {
                 idKassa: idKassa,
             };
-            let url = 'https://smarttis.kz/kassa/get_shift_report/info/'+accountId;
-            //let url = 'https://tus/kassa/get_shift_report/info/'+accountId;
+            let url = 'https://dev.smarttis.kz/kassa/get_shift_report/info/'+accountId;
             let final = url + formatParams(params);
 
             const xmlHttpRequest = new XMLHttpRequest();
@@ -88,8 +87,8 @@
                 operation_type: window.document.getElementById('operations').value,
                 amount: window.document.getElementById('inputSum').value,
             };
-            let url = 'https://smarttis.kz/operation/cash_operation/'+accountId;
-            //let url = 'https://tus/operation/cash_operation/'+accountId;
+            let url = 'https://dev.smarttis.kz/operation/cash_operation/'+accountId;
+
             let final = url + formatParams(params);
             console.log(final)
             const xmlHttpRequest = new XMLHttpRequest();

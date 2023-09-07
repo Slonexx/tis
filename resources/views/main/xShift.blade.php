@@ -85,7 +85,7 @@
             }
         }
         function PrintCheck(){
-            let url = 'https://smarttis.kz/kassa/get_shift_report/print';
+            let url = 'https://dev.smarttis.kz/kassa/get_shift_report/print';
             let final = url + '/' + accountId;
             window.open(final)
         }
@@ -108,7 +108,7 @@
             let params = {
                 idKassa: idKassa,
             };
-            let url = 'https://smarttis.kz/kassa/get_shift_report/info/'+accountId;
+            let url = 'https://dev.smarttis.kz/kassa/get_shift_report/info/'+accountId;
             let final = url + formatParams(params);
 
             const xmlHttpRequest = new XMLHttpRequest();
