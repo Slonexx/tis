@@ -5,7 +5,6 @@
     <script>
 
         const url = 'https://dev.smarttis.kz/Popup/customerorder/show'
-        //const url = 'https://tus/Popup/customerorder/show'
 
         let object_Id = ''
         let accountId = ''
@@ -35,7 +34,6 @@
             let receivedMessage = event.data
 
             newPopup()
-
             if (receivedMessage.name === 'OpenPopup') {
                 object_Id = receivedMessage.popupParameters.object_Id;
                 accountId = receivedMessage.popupParameters.accountId;
@@ -383,8 +381,4 @@
 
     @include('popup.script_popup_app')
     @include('popup.style_popup_app')
-
-
-
-
 @endsection
