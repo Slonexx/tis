@@ -136,18 +136,18 @@
             window.document.getElementById(button_hide).style.display = "none"
             let modalShowHide = 'show'
 
-            let total = window.document.getElementById('sum').innerText
-            let money_card = window.document.getElementById('card').value
-            let money_cash = window.document.getElementById('cash').value
+            let total = parseFloat(window.document.getElementById('sum').innerText);
+            let money_card = parseFloat(window.document.getElementById('card').value) || 0;
+            let money_cash = parseFloat(window.document.getElementById('cash').value) || 0;
             let SelectorInfo = document.getElementById('valueSelector')
             let option = SelectorInfo.options[SelectorInfo.selectedIndex]
 
             let error_what = option_value_error_fu(option.value, money_cash, money_card)
-            if (error_what === true){
+            if (error_what === true) {
                 modalShowHide = 'hide'
             }
 
-            if ((total)-0.1 <= (money_card) + (money_cash)){
+            if ( (money_card + money_cash) >= (total - 0.1) ) {
                 let url = 'https://smarttis.kz/Popup/customerorder/send'
 
                 if (modalShowHide === 'show'){
