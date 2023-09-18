@@ -283,7 +283,8 @@ class TicketService
             if ($item->name == "Тип Оплаты (ТИС)" and $check_attributes) {
                 $value = "";
                 foreach ($postTicket->data->transaction_payments as $item_) {
-                    $amount = $item_->amount;
+                    $amount = 'на сумму: ' . $item_->amount;
+
                     if ($this->Setting->accountId == "f0eb536d-d41f-11e6-7a69-971100005224") {
                         $amount = '';
                     } ;
@@ -291,22 +292,22 @@ class TicketService
                     switch ($item_->payment_type) {
                         case 0 :
                         {
-                            $value .= "Оплата Наличными на сумму: " . $amount . " ";
+                            $value .= "Оплата Наличными " . $amount . " ";
                             break;
                         }
                         case 1 :
                         {
-                            $value .= "Оплата Картой на сумму: " . $amount . " ";
+                            $value .= "Оплата Картой " . $amount . " ";
                             break;
                         }
                         case 2 :
                         {
-                            $value .= "Оплата Смешанный на сумму: " . $amount . " ";
+                            $value .= "Оплата Смешанный " . $amount . " ";
                             break;
                         }
                         case 3 :
                         {
-                            $value .= "Оплата Мобильный на сумму: " . $amount . " ";
+                            $value .= "Оплата Мобильный " . $amount . " ";
                             break;
                         }
                         default:
