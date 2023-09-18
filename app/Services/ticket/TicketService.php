@@ -14,6 +14,9 @@ use Illuminate\Http\JsonResponse;
 
 class TicketService
 {
+
+    private getMainSettingBD $Setting;
+
     public function createTicket($data): JsonResponse
     {
         $accountId = $data['accountId'];
@@ -28,6 +31,7 @@ class TicketService
         $positions = $data['positions'];
 
         $Setting = new getMainSettingBD($accountId);
+        $this->Setting = new getMainSettingBD($accountId);
 
         $ClientTIS = new KassClient($Setting->authtoken);
         $Client = new MsClient($Setting->tokenMs);
@@ -286,25 +290,31 @@ class TicketService
             if ($item->name == "Тип Оплаты (ТИС)" and $check_attributes) {
                 $value = "";
                 foreach ($postTicket->data->transaction_payments as $item_) {
+                    $amount = 'на сумму: ' . $item_->amount;
+
+                    if ($this->Setting->accountId == "f0eb536d-d41f-11e6-7a69-971100005224") {
+                        $amount = '';
+                    } ;
+
                     switch ($item_->payment_type) {
                         case 0 :
                         {
-                            $value .= "Оплата Наличными на сумму: " . $item_->amount . " ";
+                            $value .= "Оплата Наличными " . $amount . " ";
                             break;
                         }
                         case 1 :
                         {
-                            $value .= "Оплата Картой на сумму: " . $item_->amount . " ";
+                            $value .= "Оплата Картой " . $amount . " ";
                             break;
                         }
                         case 2 :
                         {
-                            $value .= "Оплата Смешанный на сумму: " . $item_->amount . " ";
+                            $value .= "Оплата Смешанный " . $amount . " ";
                             break;
                         }
                         case 3 :
                         {
-                            $value .= "Оплата Мобильный на сумму: " . $item->amount . " ";
+                            $value .= "Оплата Мобильный " . $amount . " ";
                             break;
                         }
                         default:
