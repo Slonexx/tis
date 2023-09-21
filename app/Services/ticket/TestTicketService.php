@@ -76,6 +76,7 @@ class TestTicketService
         $result = null;
         if ($cash > 0) {
             $change = $total - $cash - $card;
+            dd($change, $cash, $card, $total - $cash, $cash - $card);
             if ($change < 0) $change = $change * (-1);
 
             $result[] = [
