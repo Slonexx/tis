@@ -135,7 +135,7 @@ class TicketService
 
         $result = null;
         if ($cash > 0) {
-            $change = $total - $cash - $card;
+            $change = number_format($total - $cash - $card, 2, '.', '');
             if ($change < 0) $change = $change * (-1);
 
             $result[] = [
