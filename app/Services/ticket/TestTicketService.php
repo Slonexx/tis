@@ -14,10 +14,10 @@ class TestTicketService
         $id_entity = $data['id_entity'];
         $entity_type = $data['entity_type'];
 
-        $money_card = $data['money_card'];
-        $money_cash = $data['money_cash'];
+        $money_card = floatval($data['money_card']);
+        $money_cash = floatval($data['money_cash']);
         $payType = $data['pay_type'];
-        $total = $data['total'];
+        $total = floatval($data['total']) ;
 
         $positions = $data['positions'];
 
@@ -75,7 +75,7 @@ class TestTicketService
 
         $result = null;
         if ($cash > 0) {
-            $change = $total - $cash - $card;
+            $change = $total -  $cash - $card;
             dd($change, $cash, $card, $total - $cash, $cash - $card);
             if ($change < 0) $change = $change * (-1);
 
