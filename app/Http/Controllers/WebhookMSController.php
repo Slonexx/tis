@@ -88,16 +88,10 @@ class WebhookMSController extends Controller
 
         foreach ($multiDimensionalArray as $item) {
             $start = ['entity' => false,'state' => false, 'saleschannel' => false, 'project' => false];
-            if ($item['entity'] == "0") {
-                $start['entity'] = true;
-            }
-            if ($state->id == $item['status'] and in_array("state", $events[0]['updatedFields'])) {
-                $start['state'] = true;
-            }
+            if ($item['entity'] == "0") { $start['entity'] = true; }
+            if ($state->id == $item['status'] and in_array("state", $events[0]['updatedFields'])) { $start['state'] = true; }
 
-            if ($item['status'] == "0") {
-                $start['state'] = true;
-            }
+            if ($item['status'] == "0") { $start['state'] = true; }
 
             if ($item['project'] != "0" and property_exists($objectBody, 'project')) {
 
@@ -130,6 +124,8 @@ class WebhookMSController extends Controller
                 ]);
             }
         }
+
+        dd($start);
 
         return response()->json([
             'code' => 203,
