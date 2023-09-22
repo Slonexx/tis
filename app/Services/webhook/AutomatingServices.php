@@ -7,6 +7,7 @@ use App\Clients\MsClient;
 use App\Http\Controllers\BD\getMainSettingBD;
 use App\Http\Controllers\globalObjectController;
 use App\Services\MetaServices\MetaHook\AttributeHook;
+use GuzzleHttp\Exception\BadResponseException;
 use GuzzleHttp\Exception\ClientException;
 use Illuminate\Support\Str;
 
@@ -46,7 +47,7 @@ class AutomatingServices
         if ($body != []) {
             try {
                 $response = $this->kassClient->POSTClient($this->Config->apiURL_ukassa.'v2/operation/ticket/', $body);
-            } catch (ClientException $exception) {
+            } catch (BadResponseException $exception) {
                 return [
                     "ERROR",
                     "Ошибка при отправки",
@@ -60,7 +61,7 @@ class AutomatingServices
 
             try {
                 $this->writeToAttrib($body, $response);
-            } catch (ClientException $exception) {
+            } catch (BadResponseException $exception) {
                 return [
                     "ERROR",
                     "Ошибка при сохранении",
@@ -79,7 +80,7 @@ class AutomatingServices
                 if ($this->setting->paymentDocument != null ){
                     $this->createPaymentDocument($body['payments']);
                 }
-            } catch (ClientException $exception) {
+            } catch (BadResponseException $exception) {
                 return [
                     "ERROR",
                     "Ошибка при сохранении",
