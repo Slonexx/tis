@@ -421,10 +421,10 @@ class AutomatingServices
             else {
                 $positions[] = [
                     'name' => (string) $product->name,
-                    'price' => (float) $row->price,
+                    'price' => (float) $row->price / 100,
                     'quantity' => (float)  $row->quantity,
                     'quantity_type' => (int) $this->getUnitCode($product),
-                    'total_amount' => (float) ( round($row->price * 1 - $discount, 2) ) ,
+                    'total_amount' => (float) ( round($row->price * 1 - $discount, 2) ) / 100 ,
                     'is_nds' => $is_nds,
                     'discount' =>(float) $discount,
                     'section' => (int) $this->setting->idDepartment,
