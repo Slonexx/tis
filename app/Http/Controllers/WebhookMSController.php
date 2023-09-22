@@ -64,9 +64,16 @@ class WebhookMSController extends Controller
 
         try {
             $objectBody = $msClient->get($events[0]['meta']['href']);
-            $state = $msClient->get($objectBody->state->meta->href);
+            if (property_exists($objectBody, 'state')){
+                $state = $msClient->get($objectBody->state->meta->href);
+            } else {
+                return response()->json([
+                    'code' => 203,
+                    'message' => $this->returnMessage($auditContext['moment'], "Отсутствует статус у ".$events[0]['meta']['type'].', скрипт прекращён!'),
+                ]);
+            }
+
         } catch (BadResponseException $e) {
-            Log::error($e); // Борируем ошибку, чтобы отслеживать возможные проблемы
             return response()->json([
                 'code' => 203,
                 'message' => $this->returnMessage($auditContext['moment'], $e->getMessage()),
