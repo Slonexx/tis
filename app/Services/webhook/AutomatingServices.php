@@ -43,6 +43,8 @@ class AutomatingServices
     {
         $body = $this->createBody();
 
+        dd($body);
+
         if ($body != []) {
             try {
                 $response = $this->kassClient->POSTClient($this->Config->apiURL_ukassa.'v2/operation/ticket/', $body);
@@ -400,7 +402,6 @@ class AutomatingServices
 
             if (property_exists($row, 'vat') && property_exists($this->msOldBodyEntity, 'vatIncluded') and $row->vatEnabled) { $is_nds = true;
             } else $is_nds = false;
-
             if (property_exists($row, 'trackingCodes') or isset($item_2->trackingCodes) ){
                 foreach ($jsonPositions->trackingCodes as $code){
                     $positions[] = [
@@ -418,7 +419,7 @@ class AutomatingServices
             }
             else {
                 $positions[] = [
-                    'name' => (string) $row->name,
+                    'name' => (string) $product->name,
                     'price' => (float) $row->price,
                     'quantity' => (float)  $row->quantity,
                     'quantity_type' => (int) $this->getUnitCode($product),
