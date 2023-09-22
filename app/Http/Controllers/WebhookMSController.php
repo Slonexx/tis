@@ -125,8 +125,6 @@ class WebhookMSController extends Controller
             }
         }
 
-        dd($start);
-
         return response()->json([
             'code' => 203,
             'message' => $this->returnMessage($auditContext['moment'], "Конец скрипта, прошел по foreach, не нашел нужный скрипт"),
