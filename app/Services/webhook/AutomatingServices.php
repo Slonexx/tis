@@ -43,8 +43,6 @@ class AutomatingServices
     {
         $body = $this->createBody();
 
-        dd($body);
-
         if ($body != []) {
             try {
                 $response = $this->kassClient->POSTClient($this->Config->apiURL_ukassa.'v2/operation/ticket/', $body);
