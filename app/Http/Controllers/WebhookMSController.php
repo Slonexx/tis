@@ -1,10 +1,9 @@
 <?php
 
-namespace App\Http\Controllers\Web;
+namespace App\Http\Controllers;
 
 use App\Clients\MsClient;
 use App\Http\Controllers\Config\getSettingVendorController;
-use App\Http\Controllers\Controller;
 use App\Models\AutomationModel;
 use App\Services\webhook\AutomatingServices;
 use GuzzleHttp\Exception\BadResponseException;
@@ -76,7 +75,7 @@ class WebhookMSController extends Controller
 
         if (property_exists($objectBody, 'attributes')) {
             foreach ($objectBody->attributes as $item){
-                if ($item->name == 'Фискализация (ReKassa)' and $item->value){
+                if ($item->name == 'Фискализация (ТИС)' and $item->value){
                     return response()->json([
                         'code' => 203,
                         'message' => $this->returnMessage($auditContext['moment'], "Фискальный чек уже создан"),
