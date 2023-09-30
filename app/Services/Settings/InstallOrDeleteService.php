@@ -34,7 +34,7 @@ class InstallOrDeleteService
             }
         }
 
-        $url = 'https://online.moysklad.ru/api/remap/1.2/entity/store';
+        $url = 'https://api.moysklad.ru/api/remap/1.2/entity/store';
         $Client = new MsClient($tokenMs);
 
 

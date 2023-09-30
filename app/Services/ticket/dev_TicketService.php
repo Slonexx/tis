@@ -50,7 +50,7 @@ class dev_TicketService
         $ClientTIS = new KassClient($Setting->authtoken);
         $Client = new MsClient($Setting->tokenMs);
         $Config = new globalObjectController();
-        $oldBody =  $Client->get('https://online.moysklad.ru/api/remap/1.2/entity/'.$entity_type.'/'.$id_entity);
+        $oldBody =  $Client->get('https://api.moysklad.ru/api/remap/1.2/entity/'.$entity_type.'/'.$id_entity);
 
         $Body = $this->setBodyToPostClient($Setting, $id_entity, $entity_type, $money_card, $money_cash, $payType, $total, $positions);
 
@@ -66,7 +66,7 @@ class dev_TicketService
 
             $putBody = $this->putBodyMS($entity_type, $postTicket, $Client, $Setting, $oldBody, $positions);
             if ($putBody != []) {
-                $put = $Client->put('https://online.moysklad.ru/api/remap/1.2/entity/'.$entity_type.'/'.$id_entity, $putBody);
+                $put = $Client->put('https://api.moysklad.ru/api/remap/1.2/entity/'.$entity_type.'/'.$id_entity, $putBody);
 
 
                 //dd($putBody);
@@ -173,7 +173,7 @@ class dev_TicketService
         $result = null;
         if ($typeObject == 'demand'){
             $Client = new MsClient($Setting->tokenMs);
-            $demand = $Client->get('https://online.moysklad.ru/api/remap/1.2/entity/' . $typeObject . '/' . $idObject);
+            $demand = $Client->get('https://api.moysklad.ru/api/remap/1.2/entity/' . $typeObject . '/' . $idObject);
             $demandPos = $Client->get($demand->positions->meta->href)->rows;
 
             foreach ($positions as $id => $item){
@@ -259,7 +259,7 @@ class dev_TicketService
     private function getCustomer($Setting, $id_entity, $entity_type): array
     {
         $Client = new MsClient($Setting->tokenMs);
-        $body = $Client->get('https://online.moysklad.ru/api/remap/1.2/entity/'.$entity_type.'/'.$id_entity);
+        $body = $Client->get('https://api.moysklad.ru/api/remap/1.2/entity/'.$entity_type.'/'.$id_entity);
         $agent = $Client->get($body->agent->meta->href);
         $result = [];
 
@@ -292,7 +292,7 @@ class dev_TicketService
                 } else $check_attributes_in_value_name = true;
             }
 
-            $attributes = $Client->get('https://online.moysklad.ru/api/remap/1.2/entity/'.$entity_type.'/metadata/attributes/')->rows;
+            $attributes = $Client->get('https://api.moysklad.ru/api/remap/1.2/entity/'.$entity_type.'/metadata/attributes/')->rows;
             $Result_attributes = $this->setAttributesToPutBody($postTicket, $check_attributes_in_value_name, $attributes);
 
             $positions = $Client->get($oldBody->positions->meta->href)->rows;
@@ -391,7 +391,7 @@ class dev_TicketService
     private function createPaymentDocument(getMainSettingBD $Setting, mixed $OldBody)
     {   $client = new MsClient($Setting->tokenMs);
         if ($Setting->paymentDocument == 1){
-        $url = 'https://online.moysklad.ru/api/remap/1.2/entity/cashin';
+        $url = 'https://api.moysklad.ru/api/remap/1.2/entity/cashin';
         $body = [
             'organization' => [  'meta' => [
                 'href' => $OldBody->organization->meta->href,
@@ -419,7 +419,7 @@ class dev_TicketService
         $postBodyCreateCashin = $client->post($url, $body);
         }
         if ($Setting->paymentDocument == 2){
-            $url = 'https://online.moysklad.ru/api/remap/1.2/entity/paymentin';
+            $url = 'https://api.moysklad.ru/api/remap/1.2/entity/paymentin';
 
             $body = [
                 'organization' => [  'meta' => [
@@ -455,7 +455,7 @@ class dev_TicketService
         if ($entity_type != 'salesreturn') {
             $client = new MsClient($Setting->tokenMs);
 
-            $attributes_item = $client->get('https://online.moysklad.ru/api/remap/1.2/entity/salesreturn/metadata/attributes/')->rows;
+            $attributes_item = $client->get('https://api.moysklad.ru/api/remap/1.2/entity/salesreturn/metadata/attributes/')->rows;
             $attributes = null;
             $positions = null;
             foreach ($attributes_item as $item){
@@ -497,7 +497,7 @@ class dev_TicketService
                 $positions[] = $item;
             }
 
-            $url = 'https://online.moysklad.ru/api/remap/1.2/entity/salesreturn';
+            $url = 'https://api.moysklad.ru/api/remap/1.2/entity/salesreturn';
 
             $body = [
                 'organization' => [
@@ -543,7 +543,7 @@ class dev_TicketService
                         'mediaType' => $newBody->store->meta->mediaType,
                     ]
                 ];
-            } else { $store = $client->get('https://online.moysklad.ru/api/remap/1.2/entity/store')->rows[0];
+            } else { $store = $client->get('https://api.moysklad.ru/api/remap/1.2/entity/store')->rows[0];
                 $body['store'] = [
                     'meta' => [
                         'href' => $store->meta->href,

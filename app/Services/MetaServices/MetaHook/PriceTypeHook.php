@@ -8,7 +8,7 @@ class PriceTypeHook
 {
     public function getPriceType($namePrice,$apiKey)
     {
-        $uri = "https://online.moysklad.ru/api/remap/1.2/context/companysettings/pricetype";
+        $uri = "https://api.moysklad.ru/api/remap/1.2/context/companysettings/pricetype";
         $client = new MsClient($apiKey);
         $json = $client->get($uri);
         $foundedMeta = null;
@@ -34,7 +34,7 @@ class PriceTypeHook
     }
 
     private function createPriceType($namePrice,$apiKey){
-        $url = "https://online.moysklad.ru/api/remap/1.2/context/companysettings/pricetype";
+        $url = "https://api.moysklad.ru/api/remap/1.2/context/companysettings/pricetype";
         $client = new MsClient($apiKey);
         $json = $client->get($url);
         $item = $json[0];

@@ -8,7 +8,7 @@ class CurrencyHook
 {
     public function getKzCurrency($apiKey)
     {
-        $uri = "https://online.moysklad.ru/api/remap/1.2/entity/currency?seacrh=тенге";
+        $uri = "https://api.moysklad.ru/api/remap/1.2/entity/currency?seacrh=тенге";
         $client = new MsClient($apiKey);
         $json = $client->get($uri);
         $foundedMeta = null;
@@ -31,7 +31,7 @@ class CurrencyHook
 
     public function createCurrency($apiKey)
     {
-        $uri = "https://online.moysklad.ru/api/remap/1.2/entity/currency";
+        $uri = "https://api.moysklad.ru/api/remap/1.2/entity/currency";
         $client = new MsClient($apiKey);
         $currency = [
             "system" => true,

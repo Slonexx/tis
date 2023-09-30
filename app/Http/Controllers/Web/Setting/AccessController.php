@@ -36,7 +36,7 @@ class AccessController extends Controller
         } else $Workers = $Workers->access;
 
 
-        $url_employee = 'https://online.moysklad.ru/api/remap/1.2/entity/employee';
+        $url_employee = 'https://api.moysklad.ru/api/remap/1.2/entity/employee';
         try {
             $Client = new MsClient($tokenMs);
             $Body_employee = $Client->get($url_employee)->rows;

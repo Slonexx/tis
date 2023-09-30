@@ -17,14 +17,12 @@ class cfg extends Controller
 
     public function __construct()
     {
-        $cfg = new AppConfigController( require(public_path().'/Config'.'/config.php') );
-
-        $this->appId = $cfg->appId;
-        $this->appUid = $cfg->appUid;
-        $this->secretKey = $cfg->secretKey;
-        $this->appBaseUrl = $cfg->appBaseUrl;
-        $this->moyskladVendorApiEndpointUrl = $cfg->moyskladVendorApiEndpointUrl;
-        $this->moyskladJsonApiEndpointUrl = $cfg->moyskladJsonApiEndpointUrl;
+        $this->appId = '88d2dc2f-130e-412d-a7a4-c662195c1a12';
+        $this->appUid = 'tus.smartinnovations';
+        $this->secretKey = "c2bPgCSvr7lnbs1GYsMbhbfl5jbMJLdk7lu75cvGW9y34BEDd4F6QVnGy30zoSRU5huqkGZTiOM8uWqYuOM234SvNdoPZxlMPYs0Hll9MboxFbQ6hLP8x61b6vT6m5n3";
+        $this->appBaseUrl = 'https://smartuchettis.bitrix24.site';
+        $this->moyskladVendorApiEndpointUrl = 'https://apps-api.moysklad.ru/api/vendor/1.0';
+        $this->moyskladJsonApiEndpointUrl = 'https://api.moysklad.ru/api/remap/1.2';
     }
 
 

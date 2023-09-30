@@ -102,9 +102,9 @@ class indexController extends Controller
     private function getUrlEntity($enType,$enId): ?string
     {
         return match ($enType) {
-            "customerorder" => "https://online.moysklad.ru/api/remap/1.2/entity/customerorder/" . $enId,
-            "demand" => "https://online.moysklad.ru/api/remap/1.2/entity/demand/" . $enId,
-            "salesreturn" => "https://online.moysklad.ru/api/remap/1.2/entity/salesreturn/" . $enId,
+            "customerorder" => "https://api.moysklad.ru/api/remap/1.2/entity/customerorder/" . $enId,
+            "demand" => "https://api.moysklad.ru/api/remap/1.2/entity/demand/" . $enId,
+            "salesreturn" => "https://api.moysklad.ru/api/remap/1.2/entity/salesreturn/" . $enId,
             default => null,
         };
     }

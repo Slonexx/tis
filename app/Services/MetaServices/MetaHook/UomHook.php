@@ -8,7 +8,7 @@ class UomHook
 {
     public function getUom($nameUom,$apiKey)
     {
-        $uri = "https://online.moysklad.ru/api/remap/1.2/entity/uom";
+        $uri = "https://api.moysklad.ru/api/remap/1.2/entity/uom";
         $client = new MsClient($apiKey);
         $json = $client->get($uri);
         $foundedMeta = null;

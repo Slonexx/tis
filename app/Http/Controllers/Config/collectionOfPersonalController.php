@@ -17,7 +17,7 @@ class collectionOfPersonalController extends Controller
         $getPersonal = new getPersonal($accountId);
 
         $ClientMS = new MsClient($Setting->TokenMoySklad);
-        $object= $ClientMS->get('https://online.moysklad.ru/api/remap/1.2/entity/employee')->rows;
+        $object= $ClientMS->get('https://api.moysklad.ru/api/remap/1.2/entity/employee')->rows;
         $email = null;
         $fullName = null;
         foreach ($object as $item){

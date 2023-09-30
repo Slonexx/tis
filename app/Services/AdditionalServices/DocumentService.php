@@ -51,9 +51,9 @@ class DocumentService
     {
         $uri = null;
         if ($isPayment == 2) {
-            $uri = "https://online.moysklad.ru/api/remap/1.2/entity/paymentin";
+            $uri = "https://api.moysklad.ru/api/remap/1.2/entity/paymentin";
         } elseif($isPayment == 1) {
-            $uri = "https://online.moysklad.ru/api/remap/1.2/entity/cashin";
+            $uri = "https://api.moysklad.ru/api/remap/1.2/entity/cashin";
         }
 
 
@@ -110,9 +110,9 @@ class DocumentService
     {
         $uri = null;
         if ($isPayment == 2) {
-            $uri = "https://online.moysklad.ru/api/remap/1.2/entity/paymentout";
+            $uri = "https://api.moysklad.ru/api/remap/1.2/entity/paymentout";
         } elseif($isPayment == 1) {
-            $uri = "https://online.moysklad.ru/api/remap/1.2/entity/cashout";
+            $uri = "https://api.moysklad.ru/api/remap/1.2/entity/cashout";
         }
 
         $client = new MsClient($apiKey);
