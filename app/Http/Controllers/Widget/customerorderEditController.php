@@ -29,7 +29,7 @@ class customerorderEditController extends Controller
             $Setting = new getSettingVendorController($accountId);
 
             $Client = new MsClient($Setting->TokenMoySklad);
-            $body = $Client->get("https://online.moysklad.ru/api/remap/1.2/entity/employee");
+            $body = $Client->get("https://api.moysklad.ru/api/remap/1.2/entity/employee");
 
             if ($Workers->access == 0 or $Workers->access = null){
                 return view( 'widget.noAccess', ['accountId' => $accountId, ] );

@@ -31,7 +31,7 @@ class AttributeService
 
     private function createAttributes($apiKeyMs, $entityType, $attributes): void
     {
-        $url = "https://online.moysklad.ru/api/remap/1.2/entity/" . $entityType . "/metadata/attributes";
+        $url = "https://api.moysklad.ru/api/remap/1.2/entity/" . $entityType . "/metadata/attributes";
         $client = new MsClient($apiKeyMs);
         $json = $client->get($url);
 
@@ -106,8 +106,8 @@ class AttributeService
     private function createAttributesCustomentity(mixed $apiKeyMs): void
     {
         $client = new MsClient($apiKeyMs);
-        $json = $client->post("https://online.moysklad.ru/api/remap/1.2/entity/customentity/", ['name' => 'Тип оплаты (Онлайн ККМ)']);
-        $client->post("https://online.moysklad.ru/api/remap/1.2/entity/customentity/" . $json->id, [
+        $json = $client->post("https://api.moysklad.ru/api/remap/1.2/entity/customentity/", ['name' => 'Тип оплаты (Онлайн ККМ)']);
+        $client->post("https://api.moysklad.ru/api/remap/1.2/entity/customentity/" . $json->id, [
             ['name' => "Наличные"],
             ['name' => "Картой"],
             ['name' => "Мобильная"],
@@ -115,10 +115,10 @@ class AttributeService
 
 
 
-        $client->post("https://online.moysklad.ru/api/remap/1.2/entity/customerorder/metadata/attributes",
+        $client->post("https://api.moysklad.ru/api/remap/1.2/entity/customerorder/metadata/attributes",
             [
                 "customEntityMeta" => [
-                    "href" => 'https://online.moysklad.ru/api/remap/1.2/context/companysettings/metadata/customEntities/'. $json->id,
+                    "href" => 'https://api.moysklad.ru/api/remap/1.2/context/companysettings/metadata/customEntities/'. $json->id,
                     "type" => "customentitymetadata",
                     "mediaType" => "application/json",
                 ],

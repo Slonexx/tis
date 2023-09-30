@@ -158,7 +158,7 @@ class AutomatingServices
 
         switch ($this->setting->paymentDocument){
             case "1": {
-                $url = 'https://online.moysklad.ru/api/remap/1.2/entity/';
+                $url = 'https://api.moysklad.ru/api/remap/1.2/entity/';
                 if ($entity_type != 'salesreturn') {
                     $url = $url . 'cashin';
                 } else {
@@ -193,7 +193,7 @@ class AutomatingServices
                 break;
             }
             case "2": {
-                $url = 'https://online.moysklad.ru/api/remap/1.2/entity/';
+                $url = 'https://api.moysklad.ru/api/remap/1.2/entity/';
                 if ($entity_type != 'salesreturn') {
                     $url = $url . 'paymentin';
                 } else {
@@ -201,7 +201,7 @@ class AutomatingServices
                     break;
                 }
 
-                $rate_body = $this->msClient->get("https://online.moysklad.ru/api/remap/1.2/entity/currency/")->rows;
+                $rate_body = $this->msClient->get("https://api.moysklad.ru/api/remap/1.2/entity/currency/")->rows;
                 $rate = null;
                 foreach ($rate_body as $item){
                     if ($item->name == "тенге" or $item->fullName == "Казахстанский тенге"){
@@ -246,7 +246,7 @@ class AutomatingServices
                 break;
             }
             case "3": {
-                $url = 'https://online.moysklad.ru/api/remap/1.2/entity/';
+                $url = 'https://api.moysklad.ru/api/remap/1.2/entity/';
                 $url_to_body = null;
                 foreach ($payments as $item){
                     $change = 0;
@@ -259,7 +259,7 @@ class AutomatingServices
                         }
                     }
 
-                    $rate_body =  $this->msClient->get("https://online.moysklad.ru/api/remap/1.2/entity/currency/")->rows;
+                    $rate_body =  $this->msClient->get("https://api.moysklad.ru/api/remap/1.2/entity/currency/")->rows;
                     $rate = null;
                     foreach ($rate_body as $item_rate){
                         if ($item_rate->name == "тенге" or $item_rate->fullName == "Казахстанский тенге"){
@@ -305,7 +305,7 @@ class AutomatingServices
                 break;
             }
             case "4":{
-                $url = 'https://online.moysklad.ru/api/remap/1.2/entity/';
+                $url = 'https://api.moysklad.ru/api/remap/1.2/entity/';
                 $url_to_body = null;
                 foreach ($payments as $item){
                     $change = 0;
@@ -336,7 +336,7 @@ class AutomatingServices
                         }
                     }
 
-                    $rate_body = $this->msClient->get("https://online.moysklad.ru/api/remap/1.2/entity/currency/")->rows;
+                    $rate_body = $this->msClient->get("https://api.moysklad.ru/api/remap/1.2/entity/currency/")->rows;
                     $rate = null;
                     foreach ($rate_body as $item_rate){
                         if ($item_rate->name == "тенге" or $item_rate->fullName == "Казахстанский тенге"){
@@ -558,9 +558,9 @@ class AutomatingServices
     private function getMeta($attribName): array
     {
         switch ($this->settingAutomation->entity){
-            case '0': { $uri = "https://online.moysklad.ru/api/remap/1.2/entity/customerorder/metadata/attributes"; break;}
-            case '1': { $uri = "https://online.moysklad.ru/api/remap/1.2/entity/demand/metadata/attributes"; break;}
-            case '2': { $uri = "https://online.moysklad.ru/api/remap/1.2/entity/salesreturn/metadata/attributes"; break;}
+            case '0': { $uri = "https://api.moysklad.ru/api/remap/1.2/entity/customerorder/metadata/attributes"; break;}
+            case '1': { $uri = "https://api.moysklad.ru/api/remap/1.2/entity/demand/metadata/attributes"; break;}
+            case '2': { $uri = "https://api.moysklad.ru/api/remap/1.2/entity/salesreturn/metadata/attributes"; break;}
             default: { $uri = ""; break;}
         }
 

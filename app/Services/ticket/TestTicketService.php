@@ -107,7 +107,7 @@ class TestTicketService
         $result = null;
 
         if ($typeObject == 'demand') {
-            $demandPos = $msClient->get(($msClient->get('https://online.moysklad.ru/api/remap/1.2/entity/' . $typeObject . '/' . $idObject))->positions->meta->href)->rows;
+            $demandPos = $msClient->get(($msClient->get('https://api.moysklad.ru/api/remap/1.2/entity/' . $typeObject . '/' . $idObject))->positions->meta->href)->rows;
         }
 
 
@@ -132,7 +132,7 @@ class TestTicketService
     private function getCustomer($Setting, $id_entity, $entity_type): array
     {
         $Client = new MsClient($Setting->tokenMs);
-        $body = $Client->get('https://online.moysklad.ru/api/remap/1.2/entity/' . $entity_type . '/' . $id_entity);
+        $body = $Client->get('https://api.moysklad.ru/api/remap/1.2/entity/' . $entity_type . '/' . $id_entity);
         $agent = $Client->get($body->agent->meta->href);
         $result = [];
 

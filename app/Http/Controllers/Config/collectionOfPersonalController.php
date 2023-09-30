@@ -18,7 +18,7 @@ class collectionOfPersonalController extends Controller
         $getPersonal = new getPersonal($accountId);
 
         $ClientMS = new MsClient($Setting->TokenMoySklad);
-        $object= $ClientMS->get('https://online.moysklad.ru/api/remap/1.2/entity/employee')->rows;
+        $object= $ClientMS->get('https://api.moysklad.ru/api/remap/1.2/entity/employee')->rows;
         $email = null;
         $fullName = null;
         foreach ($object as $item){
@@ -56,7 +56,7 @@ class collectionOfPersonalController extends Controller
         $Setting = new getSettingVendorController($accountId);
         try {
             $Client = new MsClient($Setting->TokenMoySklad);
-            $CheckBody = $Client->get("https://online.moysklad.ru/api/remap/1.2/entity/employee");
+            $CheckBody = $Client->get("https://api.moysklad.ru/api/remap/1.2/entity/employee");
             return response()->json([
                 'StatusCode' => 200,
                 'message' => "Все работает",
