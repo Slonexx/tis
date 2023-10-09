@@ -41,13 +41,6 @@ class WebhookMSController extends Controller
             ]);
         }
 
-        if (empty($events[0]['updatedFields'])) {
-            return response()->json([
-                'code' => 203,
-                'message' => $this->returnMessage($auditContext['moment'], "Отсутствует updatedFields, (изменений не было), скрипт прекращён!"),
-            ]);
-        }
-
 
         // Заменим обращение к базе данных с использованием Eloquent ORM, чтобы сократить количество запросов
         $multiDimensionalArray = AutomationModel::where('accountId', $accountId)
@@ -64,6 +57,16 @@ class WebhookMSController extends Controller
 
         try {
             $objectBody = $msClient->get($events[0]['meta']['href']);
+            if (property_exists($objectBody, 'attributes')) {
+                foreach ($objectBody->attributes as $item){
+                    if ($item->name == 'Фискализация (ТИС)' and $item->value){
+                        return response()->json([
+                            'code' => 203,
+                            'message' => $this->returnMessage($auditContext['moment'], "Фискальный чек уже создан"),
+                        ]);
+                    }
+                }
+            }
             if (property_exists($objectBody, 'state')){
                 $state = $msClient->get($objectBody->state->meta->href);
             } else {
@@ -80,16 +83,7 @@ class WebhookMSController extends Controller
             ]);
         }
 
-        if (property_exists($objectBody, 'attributes')) {
-            foreach ($objectBody->attributes as $item){
-                if ($item->name == 'Фискализация (ТИС)' and $item->value){
-                    return response()->json([
-                        'code' => 203,
-                        'message' => $this->returnMessage($auditContext['moment'], "Фискальный чек уже создан"),
-                    ]);
-                }
-            }
-        }
+
 
         //dd($msClient->get($objectBody->salesChannel->meta->href));
         $data = [];
@@ -98,7 +92,10 @@ class WebhookMSController extends Controller
             if ($item['entity'] == "0") { $start['entity'] = true; }
             if ($state->id == $item['status'] and in_array("state", $events[0]['updatedFields'])) { $start['state'] = true; }
 
+
+
             if ($item['status'] == "0") { $start['state'] = true; }
+
 
             if ($item['project'] != "0" and property_exists($objectBody, 'project')) {
 
