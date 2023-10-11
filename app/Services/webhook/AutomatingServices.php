@@ -429,8 +429,13 @@ class AutomatingServices
                     'section' => (int) $this->setting->idDepartment,
                 ];
             }
+        }
 
 
+        foreach ($positions as $item) {
+            if ($item['discount'] <= 0) {
+                unset($item['discount']);
+            }
         }
 
         return $positions;
