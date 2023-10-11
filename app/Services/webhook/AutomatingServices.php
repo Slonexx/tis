@@ -431,6 +431,12 @@ class AutomatingServices
 
         }
 
+        foreach ($positions as $item) {
+            if ($item['discount'] <= 0) {
+                unset($item['discount']);
+            }
+        }
+
         return $positions;
     }
     private function payments(): ?array
