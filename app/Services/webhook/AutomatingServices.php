@@ -396,45 +396,40 @@ class AutomatingServices
 
         foreach ($jsonPositions->rows as $row) {
             $discount = $row->discount;
-            if ($discount > 0){ $discount = round((($row->price/100) * $row->quantity * ($discount/100)), 2); }
+            if ($discount > 0){
+                $discount = round((($row->price/100) * $row->quantity * ($discount/100)), 2);
+            }
             $product = $this->msClient->get($row->assortment->meta->href);
 
-            if (property_exists($row, 'vat') && property_exists($this->msOldBodyEntity, 'vatIncluded') and $row->vatEnabled) { $is_nds = true;
+            if (property_exists($row, 'vat') && property_exists($this->msOldBodyEntity, 'vatIncluded') and $row->vatEnabled) {
+                $is_nds = true;
             } else $is_nds = false;
 
             if (property_exists($row, 'trackingCodes') or isset($item_2->trackingCodes) ){
                 foreach ($jsonPositions->trackingCodes as $code){
-                    $positions[] = [
-                        'name' => (string) $row->name,
-                        'price' => (float) $row->price,
-                        'quantity' =>  1,
-                        'quantity_type' => (int) $this->getUnitCode($product),
-                        'total_amount' => (float) ( round($row->price * 1 - $discount, 2) ) ,
-                        'is_nds' => $is_nds,
-                        'discount' =>(float) $discount,
-                        'section' => (int) $this->setting->idDepartment,
-                        'mark_code' => (string) $code->cis,
-                    ];
+                    $positions[] = $this->createItemPosition(
+                        (string) $row->name,
+                        (float) $row->price,
+                        1,
+                        (float) $discount,
+                        (int) $this->setting->idDepartment,
+                        (int) $this->getUnitCode($product),
+                        $is_nds,
+                        (string) $code->cis
+                    );
                 }
             }
             else {
-                $positions[] = [
-                    'name' => (string) $product->name,
-                    'price' => (float) $row->price / 100,
-                    'quantity' => (float)  $row->quantity,
-                    'quantity_type' => (int) $this->getUnitCode($product),
-                    'total_amount' => (float) ( round($row->price * 1 - $discount, 2) ) / 100 ,
-                    'is_nds' => $is_nds,
-                    'discount' =>(float) $discount,
-                    'section' => (int) $this->setting->idDepartment,
-                ];
-            }
-        }
-
-
-        foreach ($positions as $item) {
-            if ($item['discount'] <= 0) {
-                unset($item['discount']);
+                $positions[] = $this->createItemPosition(
+                    (string) $product->name,
+                    (float) $row->price / 100,
+                    (float) $row->quantity,
+                    (float) $discount,
+                    (int) $this->setting->idDepartment,
+                    (int) $this->getUnitCode($product),
+                    $is_nds,
+                    ""
+                );
             }
         }
 
@@ -580,5 +575,30 @@ class AutomatingServices
             }
         }
         return [];
+    }
+
+
+    private function createItemPosition($name, $price, $quantity, $discount, $section, $UOM, $is_nds, $code): array
+    {
+        $item = [
+            'name' => $name,
+            'price' => $price,
+            'quantity' => $quantity,
+            'total_amount' => (round($price * $quantity - $discount, 2)),
+            'section' => $section,
+            'quantity_type' => $UOM,
+            'is_nds' => $is_nds,
+            'discount' => $discount,
+            'mark_code' => $code,
+        ];
+
+        if ($discount <= 0) {
+            unset($item['discount']);
+        }
+        if ($code == "") {
+            unset($item['mark_code']);
+        }
+
+        return $item;
     }
 }
