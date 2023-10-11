@@ -29,7 +29,7 @@ class AutomatingServices
         $this->setting = new getMainSettingBD($BDFFirst['accountId']);
         $this->msClient = new MsClient($this->setting->tokenMs);
 
-        $this->kassClient = new KassClient($BDFFirst['accountId']);
+        $this->kassClient = new KassClient( $this->setting->authtoken );
 
         $this->msOldBodyEntity = $ObjectBODY;
         $this->settingAutomation = json_decode(json_encode($BDFFirst));
