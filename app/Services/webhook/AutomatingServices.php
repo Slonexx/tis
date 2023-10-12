@@ -530,6 +530,7 @@ class AutomatingServices
         $meta3 = $this->getMeta("Фискализация (ТИС)");
         $meta4 = $this->getMeta("ID (ТИС)");
 
+
         $body = [
             "attributes" => [
                 0 => [
@@ -549,7 +550,10 @@ class AutomatingServices
                     "value" => (string) $postTicket->data->id,
                 ],
             ],
+            "description" => $this->descriptionToCreate($createBody, $postTicket, 'Продажа, Фискальный номер: '),
         ];
+
+
 
         return $this->msClient->put($this->msOldBodyEntity->meta->href, $body);
     }
@@ -601,4 +605,15 @@ class AutomatingServices
 
         return $item;
     }
+
+    private function descriptionToCreate(mixed $oldBody, mixed $postTicket, $message): string
+    {
+        $OldMessage = '';
+        if (property_exists($oldBody, 'description')) {
+            $OldMessage = $oldBody->description . PHP_EOL;
+        }
+
+        return $OldMessage . '[' . ((int)date('H') + 6) . date(':i:s') . ' ' . date('Y-m-d') . '] ' . $message . $postTicket->data->fixed_check;
+    }
+
 }
