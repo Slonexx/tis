@@ -60,7 +60,7 @@ class AutomatingServices
             }
 
             try {
-                $this->writeToAttrib($body, $response);
+                $this->writeToAttrib($response);
             } catch (BadResponseException $exception) {
                 return [
                     "ERROR",
@@ -522,7 +522,7 @@ class AutomatingServices
     }
 
 
-    public function writeToAttrib(mixed $createBody, mixed $postTicket)
+    public function writeToAttrib(mixed $postTicket)
     {
 
         $meta1 = $this->getMeta("фискальный номер (ТИС)");
@@ -550,7 +550,7 @@ class AutomatingServices
                     "value" => (string) $postTicket->data->id,
                 ],
             ],
-            "description" => $this->descriptionToCreate($createBody, $postTicket, 'Продажа, Фискальный номер: '),
+            "description" => $this->descriptionToCreate($postTicket, 'Продажа, Фискальный номер: '),
         ];
 
 
@@ -606,11 +606,11 @@ class AutomatingServices
         return $item;
     }
 
-    private function descriptionToCreate(mixed $oldBody, mixed $postTicket, $message): string
+    private function descriptionToCreate(mixed $postTicket, $message): string
     {
         $OldMessage = '';
-        if (property_exists($oldBody, 'description')) {
-            $OldMessage = $oldBody->description . PHP_EOL;
+        if (property_exists($this->msOldBodyEntity, 'description')) {
+            $OldMessage = ($this->msOldBodyEntity)->description . PHP_EOL;
         }
 
         return $OldMessage . '[' . ((int)date('H') + 6) . date(':i:s') . ' ' . date('Y-m-d') . '] ' . $message . $postTicket->data->fixed_check;
