@@ -12,6 +12,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\globalObjectController;
 use App\Services\workWithBD\DataBaseService;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\BadResponseException;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Http\Request;
 
@@ -60,12 +61,12 @@ class mainController extends Controller
             } else {
                 DataBaseService::updateMainSetting($accountId, $setting->TokenMoySklad, $token);
             }
-            $cfg = new cfg();
+          /*  $cfg = new cfg();
             $app = AppInstanceContoller::loadApp($cfg->appId, $accountId);
             $app->status = AppInstanceContoller::ACTIVATED;
             $vendorAPI = new VendorApiController();
             $vendorAPI->updateAppStatus($cfg->appId, $accountId, $app->getStatusName());
-            $app->persist();
+            $app->persist();*/
             return to_route('getKassa', ['accountId' => $accountId, 'isAdmin' => $isAdmin]);
         } catch (\Throwable $e){
             return view('setting.authToken', [
@@ -99,9 +100,10 @@ class mainController extends Controller
                 'full_name' => json_decode($post->getBody())->full_name,
                 'auth_token' => json_decode($post->getBody())->auth_token,
             ];
-        } catch (\Throwable $e){
+        } catch (BadResponseException $e){
             $result = [
                 'status' => $e->getCode(),
+                'message' => $e->getMessage(),
                 'full_name' =>null,
                 'auth_token' => null,
             ];
