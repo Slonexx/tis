@@ -14,6 +14,7 @@ use App\Services\workWithBD\DataBaseService;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\BadResponseException;
 use GuzzleHttp\Exception\GuzzleException;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class mainController extends Controller
@@ -82,7 +83,7 @@ class mainController extends Controller
     }
 
 
-    public function createAuthToken(Request $request, $accountId): \Illuminate\Http\JsonResponse
+    public function createAuthToken(Request $request, $accountId): JsonResponse
     {
         $config = new globalObjectController();
         $url = $config->apiURL_ukassa.'auth/login/';
@@ -95,21 +96,19 @@ class mainController extends Controller
                     'password' => $request->password,
                 ],
             ]);
-            $result = [
-                'status' => $post->getStatusCode(),
+            return response()->json([
+                'status' => true,
                 'full_name' => json_decode($post->getBody())->full_name,
                 'auth_token' => json_decode($post->getBody())->auth_token,
-            ];
+            ]);
         } catch (BadResponseException $e){
-            $result = [
-                'status' => $e->getCode(),
-                'message' => $e->getMessage(),
-                'full_name' =>null,
-                'auth_token' => null,
-            ];
+            return response()->json([
+                'status' => false,
+                'content' => $e->getResponse()->getBody()->getContents(),
+            ]);
         }
 
-        return response()->json($result);
+
 
     }
 }
