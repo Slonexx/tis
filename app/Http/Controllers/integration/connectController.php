@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\integration;
 
+use App\Clients\KassClient;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\globalObjectController;
 use App\Services\AdditionalServices\AttributeService;
@@ -53,7 +54,7 @@ class connectController extends Controller
     {
         $config = new globalObjectController();
 
-        $client = new Client();
+        $ClientTIS = new KassClient($request->authtoken ?? '');
         if ($accountId == '1dd5bd55-d141-11ec-0a80-055600047495') {
             $url = $config->test_apiURL_ukassa;
         } else {
@@ -62,8 +63,8 @@ class connectController extends Controller
 
 
         try {
-            $get_user = $client->GETClient($url.'auth/get_user/');
-            $department = $client->GETClient($url.'department');
+            $get_user = $ClientTIS->GETClient($url.'auth/get_user/');
+            $department = $ClientTIS->GETClient($url.'department');
             return response()->json([
                 'status' => true,
                 'get_user' => $get_user,
