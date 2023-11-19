@@ -24,7 +24,7 @@ class connectController extends Controller
 
         $client = new Client();
         if ($accountId == '1dd5bd55-d141-11ec-0a80-055600047495') {
-            $url = $config->apiURL_ukassa.'auth/login/';
+            $url = $config->test_apiURL_ukassa.'auth/login/';
         } else {
             $url = $config->apiURL_ukassa.'auth/login/';
         }
