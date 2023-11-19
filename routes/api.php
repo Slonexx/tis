@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\installOrDeleteController;
+use App\Http\Controllers\integration\connectController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\Web\Setting\mainController;
 use App\Http\Controllers\WebhookMSController;
@@ -15,3 +16,8 @@ Route::get('/get/createAuthToken/{accountId}', [mainController::class, 'createAu
 Route::post('/webhook/customerorder/',[WebhookMSController::class, 'customerorder']);
 Route::post('/webhook/demand/',[WebhookMSController::class, 'customerorder']);
 Route::post('/webhook/salesreturn/',[WebhookMSController::class, 'customerorder']);
+
+
+Route::group(["prefix" => "integration"], function () {
+    Route::get('client/connect/{accountId}', [connectController::class, 'connectClient']);
+});
