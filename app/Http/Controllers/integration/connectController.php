@@ -49,5 +49,35 @@ class connectController extends Controller
 
 
     }
+    public function getUserAndDepartment(Request $request, $accountId): JsonResponse
+    {
+        $config = new globalObjectController();
+
+        $client = new Client();
+        if ($accountId == '1dd5bd55-d141-11ec-0a80-055600047495') {
+            $url = $config->test_apiURL_ukassa;
+        } else {
+            $url = $config->apiURL_ukassa;
+        }
+
+
+        try {
+            $get_user = $client->GETClient($url.'auth/get_user/');
+            $department = $client->GETClient($url.'department');
+            return response()->json([
+                'status' => true,
+                'get_user' => $get_user,
+                'department' => $department,
+            ]);
+        } catch (BadResponseException $e){
+            return response()->json([
+                'status' => false,
+                'content' => $e->getResponse()->getBody()->getContents(),
+            ]);
+        }
+
+
+
+    }
 
 }
