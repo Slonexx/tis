@@ -84,7 +84,7 @@ class connectController extends Controller
 
 
     }
-    public function getUrlTicket($kkm_id, $accountId): Factory|View|Application
+    public function getUrlTicket($accountId, $kkm_id): Factory|View|Application
     {
         $find = htmlResponce::query()->where('accountId', $accountId)->where('kkm_id', $kkm_id)->latest()->first();
             if ($find != null) {

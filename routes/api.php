@@ -22,6 +22,6 @@ Route::group(["prefix" => "integration"], function () {
     Route::get('client/connect/{accountId}', [connectController::class, 'connectClient']);
     Route::get('client/department/{accountId}', [connectController::class, 'getUserAndDepartment']);
 
-    Route::get('client/get/ticket/', [connectController::class, 'getUrlTicket']);
+    Route::get('client/get/ticket/{accountId}/{kkm_id}', [connectController::class, 'getUrlTicket']);
     Route::post('client/send/ticket/', [connectController::class, 'sendTicket']);
 });
