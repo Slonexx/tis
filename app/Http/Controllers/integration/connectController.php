@@ -5,9 +5,13 @@ namespace App\Http\Controllers\integration;
 use App\Clients\KassClient;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\globalObjectController;
-use App\Services\AdditionalServices\AttributeService;
+use App\Models\htmlResponce;
+use App\Services\ticket\integrationTicketService;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\BadResponseException;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -79,6 +83,19 @@ class connectController extends Controller
 
 
 
+    }
+    public function getUrlTicket($kkm_id, $accountId): Factory|View|Application
+    {
+        $find = htmlResponce::query()->where('accountId', $accountId)->where('kkm_id', $kkm_id)->latest()->first();
+            if ($find != null) {
+                return view( 'popup.print', [ 'html' => $find->toArray()['html'] ] );
+            } else {
+                return view( 'popup.print', [ 'html' => $find->toArray()['html'], 'message'=>'Чек не найден' ] );
+            }
+    }
+    public function sendTicket(Request $request): JsonResponse
+    {
+        return (new integrationTicketService())->createTicket(json_decode(json_encode($request->all())));
     }
 
 }

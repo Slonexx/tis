@@ -2,107 +2,128 @@
 
 namespace App\Services\ticket;
 
+
 use App\Clients\KassClient;
 use App\Clients\MsClient;
-use App\Http\Controllers\BD\getMainSettingBD;
+use App\Clients\testKassClient;
 use App\Http\Controllers\globalObjectController;
-use App\Models\htmlResponce;
-
+use App\Models\html_integration;
 use GuzzleHttp\Exception\BadResponseException;
-use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Http\JsonResponse;
 
-class TicketService
+
+class integrationTicketService
 {
-
-    private getMainSettingBD $Setting;
-
+    private mixed $data;
+    private MsClient $msClient;
     public function createTicket($data): JsonResponse
     {
-        $accountId = $data['accountId'];
-        $id_entity = $data['id_entity'];
-        $entity_type = $data['entity_type'];
+        $this->data = $data;
+        $this->msClient = new MsClient($data->connection->ms_token);
 
-        $money_card = $data['money_card'];
-        $money_cash = $data['money_cash'];
-        $payType = $data['pay_type'];
-        $total = $data['total'];
+        if ( $data->accountId == '1dd5bd55-d141-11ec-0a80-055600047495') $ClientTIS = new TestKassClient($this->data->setting_main->kassa_token);
+        else $ClientTIS = new KassClient($this->data->setting_main->kassa_token);
 
-        $positions = $data['positions'];
+        $id_entity = $data->object_Id;
+        $entity_type = $data->entity_type;
 
-        $Setting = new getMainSettingBD($accountId);
-        $this->Setting = new getMainSettingBD($accountId);
+        $money_card = $data->data->money_card;
+        $money_cash = $data->data->money_cash;
+        //$money_mobile = $data->data->money_mobile;
 
-        $ClientTIS = new KassClient($Setting->authtoken);
-        $Client = new MsClient($Setting->tokenMs);
+        $total = $data->data->total;
+        $payType = $data->data->pay_type;
+
+        $positions = $data->data->position;
+
+
         $Config = new globalObjectController();
-        $oldBody = $Client->get('https://api.moysklad.ru/api/remap/1.2/entity/' . $entity_type . '/' . $id_entity);
+        $oldBody = $this->msClient->get('https://api.moysklad.ru/api/remap/1.2/entity/' . $entity_type . '/' . $id_entity);
+        $Body = $this->setBodyToPostClient($id_entity, $entity_type, $money_card, $money_cash, $payType, $total, $positions);
 
-        $Body = $this->setBodyToPostClient($Setting, $id_entity, $entity_type, $money_card, $money_cash, $payType, $total, $positions);
 
-        if (isset($Body['Status'])) {
-            return response()->json($Body['Message']);
-        }
+
+        if (isset($Body['Status'])) return response()->json([
+            'status' => false,
+            'message' => $Body['Message'],
+        ]);
+
 
         try {
-            $postTicket = $ClientTIS->POSTClient($Config->apiURL_ukassa . 'v2/operation/ticket/', $Body);
-
-            $putBody = $this->putBodyMS($entity_type, $postTicket, $Client, $oldBody, $positions);
-            $put = $Client->put('https://api.moysklad.ru/api/remap/1.2/entity/' . $entity_type . '/' . $id_entity, $putBody);
-
-            if ($Setting->accountId != "f0eb536d-d41f-11e6-7a69-971100005224") {
-                if ($payType == 'return') {
-                    $this->createReturnDocument($Setting, $put, $postTicket, $putBody, $entity_type);
-                    $put = $Client->put('https://api.moysklad.ru/api/remap/1.2/entity/' . $entity_type . '/' . $id_entity, [
-                        'description' => $this->descriptionToCreate($oldBody, $postTicket, 'Возврат, фискальный номер: '),
-                    ]);
-                }
-            }
-
-
-            if ($Setting->paymentDocument != null) {
-                $this->createPaymentDocument($Setting, $Client, $entity_type, $put, $Body['payments']);
-            }
-
-            htmlResponce::create([
-                'accountId' => $accountId,
-                'html' => $postTicket->data->html,
-            ]);
-
-            return response()->json([
-                'status' => 'Ticket created',
-                'code' => 200,
-                'postTicket' => $postTicket,
-            ]);
-
+            if ( $data->accountId == '1dd5bd55-d141-11ec-0a80-055600047495') $postTicket = $ClientTIS->POSTClient($Config->test_apiURL_ukassa . 'v2/operation/ticket/', $Body);
+            else $postTicket = $ClientTIS->POSTClient($Config->apiURL_ukassa . 'v2/operation/ticket/', $Body);
         } catch (BadResponseException  $e) {
             return response()->json([
-                'status' => 'error',
+                'status' => false,
                 'code' => $e->getCode(),
-                'errors' => json_decode($e->getResponse()->getBody()->getContents(), true),
+                'message' => json_decode($e->getResponse()->getBody()->getContents(), true),
                 'errors_' => $e->getMessage()
             ]);
         }
 
+        try {
+            $putBody = $this->putBodyMS($entity_type, $Body, $postTicket, $oldBody, $positions);
+            $put =  $this->msClient->put('https://api.moysklad.ru/api/remap/1.2/entity/'.$entity_type.'/'.$id_entity, $putBody);
+        } catch (BadResponseException $e) {
+            return response()->json([
+                'info'    => 'При сохранении данных в МС',
+                'status'    => false,
+                'code'      => $e->getCode(),
+                'message'    => json_decode($e->getResponse()->getBody()->getContents(), true),
+                'postTicket'    => $postTicket,
+            ]);
+        }
+
+        if ($this->data->accountId != "f0eb536d-d41f-11e6-7a69-971100005224")
+            if ($payType == 'return') {
+                $this->createReturnDocument($put, $postTicket, $putBody, $entity_type);
+                $put = $this->msClient->put('https://api.moysklad.ru/api/remap/1.2/entity/' . $entity_type . '/' . $id_entity, [
+                    'description' => $this->descriptionToCreate($oldBody, $postTicket, 'Возврат, фискальный номер: '),
+                ]);
+            }
+
+
+
+        if ($this->data->setting_document->paymentDocument != null) $this->createPaymentDocument($entity_type, $put, $Body['payments']);
+
+
+        $model = new html_integration();
+
+        $model->account_id = $this->data->accountId;
+        $model->kkm_id = $postTicket->Data->CheckNumber;
+        $model->html =  $postTicket->data->html;
+
+        $model->save();
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Чек создан',
+            'code' => 200,
+            'postTicket' => $postTicket,
+        ]);
+
+
     }
 
 
-    private function setBodyToPostClient(getMainSettingBD $Setting, mixed $id_entity, mixed $entity_type, mixed $money_card, mixed $money_cash, mixed $payType, mixed $total, mixed $positions): array
+
+
+    private function setBodyToPostClient(mixed $id_entity, mixed $entity_type, mixed $money_card, mixed $money_cash, mixed $payType, mixed $total, mixed $positions): array
     {
 
         $operation = $this->getOperation($payType);
         $payments = $this->getPayments($money_card, $money_cash, $total);
-        $items = $this->getItems($Setting, $positions, $id_entity, $entity_type);
-        $customer = $this->getCustomer($Setting, $id_entity, $entity_type);
+        $items = $this->getItems($positions, $id_entity, $entity_type);
+        $customer = $this->getCustomer($id_entity, $entity_type);
 
         if ($operation == '') return ['Status' => false, 'Message' => 'не выбран тип продажи'];
-        if ($Setting->idKassa == null) return ['Status' => false, 'Message' => 'Не были пройдены настройки !'];
+        if ($this->data->setting_document->idKassa == null) return ['Status' => false, 'Message' => 'Не были пройдены настройки !'];
         if ($payments == null) return ['Status' => false, 'Message' => 'Не были введены суммы !'];
 
 
         return [
             'operation' => (int)$operation,
-            'kassa' => (int)$Setting->idKassa,
+            'kassa' => (int) $this->data->setting_document->idKassa,
             'payments' => $payments,
             'items' => $items,
             "total_amount" => (float)$total,
@@ -154,13 +175,12 @@ class TicketService
         return $result;
     }
 
-    private function getItems(getMainSettingBD $Setting, $positions, $idObject, $typeObject): array
+    private function getItems($positions, $idObject, $typeObject): array
     {
-        $msClient = new MsClient($Setting->tokenMs);
         $result = null;
 
         if ($typeObject == 'demand') {
-            $demandPos = $msClient->get(($msClient->get('https://api.moysklad.ru/api/remap/1.2/entity/' . $typeObject . '/' . $idObject))->positions->meta->href)->rows;
+            $demandPos = $this->msClient->get(( $this->msClient->get('https://api.moysklad.ru/api/remap/1.2/entity/' . $typeObject . '/' . $idObject))->positions->meta->href)->rows;
         }
 
 
@@ -173,20 +193,19 @@ class TicketService
             if ($typeObject == 'demand'){
 
                 if (isset($demandPos[$id]->trackingCodes)){
-                    foreach ($demandPos[$id]->trackingCodes as $code){ $result[] = $this->itemPosition($item->name, $item->price, 1, $discount, $item->UOM, $is_nds, $Setting->idDepartment, $code->cis) ; }
-                } else { $result[] = $this->itemPosition($item->name, $item->price, $item->quantity, $discount, $item->UOM, $is_nds, $Setting->idDepartment, '') ; }
+                    foreach ($demandPos[$id]->trackingCodes as $code){ $result[] = $this->itemPosition($item->name, $item->price, 1, $discount, $item->UOM, $is_nds,  $this->data->setting_document->idDepartment, $code->cis) ; }
+                } else { $result[] = $this->itemPosition($item->name, $item->price, $item->quantity, $discount, $item->UOM, $is_nds, $this->data->setting_document->idDepartment, '') ; }
 
-            } else { $result[] = $this->itemPosition($item->name, $item->price, $item->quantity, $discount, $item->UOM, $is_nds, $Setting->idDepartment, '') ; }
+            } else { $result[] = $this->itemPosition($item->name, $item->price, $item->quantity, $discount, $item->UOM, $is_nds, $this->data->setting_document->idDepartment, '') ; }
         }
 
         return $result;
     }
 
-    private function getCustomer($Setting, $id_entity, $entity_type): array
+    private function getCustomer($id_entity, $entity_type): array
     {
-        $Client = new MsClient($Setting->tokenMs);
-        $body = $Client->get('https://api.moysklad.ru/api/remap/1.2/entity/' . $entity_type . '/' . $id_entity);
-        $agent = $Client->get($body->agent->meta->href);
+        $body = $this->msClient->get('https://api.moysklad.ru/api/remap/1.2/entity/' . $entity_type . '/' . $id_entity);
+        $agent = $this->msClient->get($body->agent->meta->href);
         $result = [];
 
         if (property_exists($agent, 'email')) {
@@ -208,161 +227,69 @@ class TicketService
 
     }
 
-    private function putBodyMS($entity_type, mixed $postTicket, MsClient $Client, mixed $oldBody, mixed $positionsBody): array
-    {
-        $result = null;
-        $check_attributes_in_value_name = false;
-        foreach ($oldBody->attributes as $item) {
-            if ($item->name == 'Фискальный номер (ТИС)' and $item->name != '') {
-                $check_attributes_in_value_name = false;
-                break;
-            } else $check_attributes_in_value_name = true;
+    private function putBodyMS($entity_type, mixed $Body, mixed $postTicket, mixed $oldBody, mixed $positionsBody): array
+    {   $result = null;
+        $Result_attributes = $this->setAttributesToPutBody($Body, $postTicket, $entity_type);
+
+        if ($this->data->accountId == '686ca08f-eb47-11e8-9109-f8fc00009aa4'){ } else {
+            $result['description'] = $this->descriptionToCreate($oldBody, $postTicket, 'Продажа, Фискальный номер: ');
         }
+        //$Resul_positions = $this->setPositionsToPutBody($positions, $positionsBody);
 
-        $attributes = $Client->get('https://api.moysklad.ru/api/remap/1.2/entity/' . $entity_type . '/metadata/attributes/')->rows;
-        $Result_attributes = $this->setAttributesToPutBody($postTicket, $check_attributes_in_value_name, $attributes);
+        if ($Result_attributes != null){ $result['attributes'] = $Result_attributes; }
+        //if ($Resul_positions != null){ $result['positions'] = $Resul_positions; }
 
-        $positions = $Client->get($oldBody->positions->meta->href)->rows;
-        $Resul_positions = $this->setPositionsToPutBody($positions, $positionsBody);
-
-        $result['description'] = $this->descriptionToCreate($oldBody, $postTicket, 'Продажа, Фискальный номер: ');
-
-        if ($Result_attributes != null) {
-            $result['attributes'] = $Result_attributes;
-        }
-        if ($Resul_positions != null) {
-            $result['positions'] = $Resul_positions;
-        }
         return $result;
     }
 
-    private function setAttributesToPutBody(mixed $postTicket, bool $check_attributes, $attributes): array
+    private function setAttributesToPutBody(mixed $Body, mixed $postTicket, string $entityType): array
     {
-        $Result_attributes = null;
-        foreach ($attributes as $item) {
-            if ($item->name == "фискальный номер (ТИС)" and $check_attributes) {
-                $Result_attributes[] = [
-                    "meta" => [
-                        "href" => $item->meta->href,
-                        "type" => $item->meta->type,
-                        "mediaType" => $item->meta->mediaType,
-                    ],
-                    "value" => $postTicket->data->fixed_check,
-                ];
-            }
-            if ($item->name == "Ссылка для QR-кода (ТИС)") {
-                $Result_attributes[] = [
-                    "meta" => [
-                        "href" => $item->meta->href,
-                        "type" => $item->meta->type,
-                        "mediaType" => $item->meta->mediaType,
-                    ],
-                    "value" => $postTicket->data->link,
-                ];
-            }
-            if ($item->name == "Фискализация (ТИС)") {
-                $Result_attributes[] = [
-                    "meta" => [
-                        "href" => $item->meta->href,
-                        "type" => $item->meta->type,
-                        "mediaType" => $item->meta->mediaType,
-                    ],
-                    "value" => true,
-                ];
-            }
-            if ($item->name == "ID (ТИМ)") {
-                $Result_attributes[] = [
-                    "meta" => [
-                        "href" => $item->meta->href,
-                        "type" => $item->meta->type,
-                        "mediaType" => $item->meta->mediaType,
-                    ],
-                    "value" => (string)$postTicket->data->id,
-                ];
-            }
-            if ($item->name == "Тип Оплаты (ТИС)" and $check_attributes) {
-                $value = "";
-                foreach ($postTicket->data->transaction_payments as $item_) {
-                    $amount = 'на сумму: ' . $item_->amount;
+        $body = null;
+        $meta = $this->getMeta($entityType);
 
-                    if ($this->Setting->accountId == "f0eb536d-d41f-11e6-7a69-971100005224") {
-                        $amount = '';
-                    } ;
+        if ($meta['fiscal_number'] != null) $body["attributes"][] = ["meta" => $meta['fiscal_number'], "value" => "" . $postTicket->Data->CheckNumber,];
+        if ($meta['link_to_check'] != null) $body["attributes"][] = ["meta" => $meta['link_to_check'], "value" => $postTicket->Data->TicketUrl,];
+        if ($meta['fiscalization'] != null) $body["attributes"][] = ["meta" => $meta['fiscalization'], "value" => true];
+        if ($meta['kkm_ID'] != null) $body["attributes"][] = ["meta" => $meta['kkm_ID'], "value" => (string) $Body['ExternalCheckNumber']];
 
-                    switch ($item_->payment_type) {
-                        case 0 :
-                        {
-                            $value .= "Оплата Наличными " . $amount . " ";
-                            break;
-                        }
-                        case 1 :
-                        {
-                            $value .= "Оплата Картой " . $amount . " ";
-                            break;
-                        }
-                        case 2 :
-                        {
-                            $value .= "Оплата Смешанный " . $amount . " ";
-                            break;
-                        }
-                        case 3 :
-                        {
-                            $value .= "Оплата Мобильный " . $amount . " ";
-                            break;
-                        }
-                        default:
-                        {
-                            $value .= "";
-                            break;
-                        }
-                    }
-                }
 
-                $Result_attributes[] = [
-                    "meta" => [
-                        "href" => $item->meta->href,
-                        "type" => $item->meta->type,
-                        "mediaType" => $item->meta->mediaType,
-                    ],
-                    "value" => $value,
-                ];
-            }
-        }
-        return $Result_attributes;
+        return  $body["attributes"] ;
     }
 
-    private function setPositionsToPutBody(mixed $positions, mixed $positionsBody): array
+    private function getMeta($entityType): array
     {
-        $result = null;
-        $sort = null;
-        foreach ($positionsBody as $id => $one) {
-            foreach ($positions as $item_p) {
-                if ($item_p->id == $one->id) {
-                    $sort[$id] = $item_p;
-                }
+
+        $url = match ($entityType) {
+            "demand" => "https://api.moysklad.ru/api/remap/1.2/entity/demand/metadata/attributes",
+            "salesreturn" => "https://api.moysklad.ru/api/remap/1.2/entity/salesreturn/metadata/attributes",
+            default => "https://api.moysklad.ru/api/remap/1.2/entity/customerorder/metadata/attributes",
+        };
+
+        $json = $this->msClient->get($url);
+        $meta = null;
+        foreach ($json->rows as $row) {
+            if ($row->name == "фискальный номер") {
+                $meta['fiscal_number'] = $row->meta;
+            } elseif ($row->name == "Ссылка на чек") {
+                $meta['link_to_check'] = $row->meta;
+            } elseif ($row->name == "Фискализация") {
+                $meta['fiscalization'] = $row->meta;
+            } elseif ($row->name == "kkm_ID") {
+                $meta['kkm_ID'] = $row->meta;
             }
         }
-        foreach ($positionsBody as $id => $item) {
-            $result[$id] = [
-                "id" => $item->id,
-                "quantity" => (int)$item->quantity,
-                "price" => (float)$item->price * 100,
-                "discount" => (int)$item->discount,
-                "vat" => (int)$item->is_nds,
-                "assortment" => ['meta' => [
-                    "href" => $sort[$id]->assortment->meta->href,
-                    "type" => $sort[$id]->assortment->meta->type,
-                    "mediaType" => $sort[$id]->assortment->meta->mediaType,
-                ]],
-            ];
-        }
-        return $result;
 
+        return [
+            'fiscal_number' => $meta['fiscal_number'] ?? '',
+            'link_to_check' => $meta['link_to_check'] ?? '',
+            'fiscalization' => $meta['fiscalization'] ?? '',
+            'kkm_ID' => $meta['kkm_ID'] ?? '',
+        ];
     }
 
-    private function createPaymentDocument(getMainSettingBD $Setting, MsClient $client, string $entity_type, mixed $OldBody, mixed $payments): void
+    private function createPaymentDocument(string $entity_type, mixed $OldBody, mixed $payments): void
     {
-        switch ($Setting->paymentDocument) {
+        switch ($this->data->setting_document->paymentDocument) {
             case "1":
             {
                 $url = 'https://api.moysklad.ru/api/remap/1.2/entity/';
@@ -396,7 +323,7 @@ class TicketService
                             'linkedSum' => $OldBody->sum
                         ],]
                 ];
-                $client->post($url, $body);
+                $this->msClient->post($url, $body);
                 break;
             }
             case "2":
@@ -409,7 +336,7 @@ class TicketService
                     break;
                 }
 
-                $rate_body = $client->get("https://api.moysklad.ru/api/remap/1.2/entity/currency/")->rows;
+                $rate_body = $this->msClient->get("https://api.moysklad.ru/api/remap/1.2/entity/currency/")->rows;
                 $rate = null;
                 foreach ($rate_body as $item) {
                     if ($item->name == "тенге" or $item->fullName == "Казахстанский тенге") {
@@ -450,7 +377,7 @@ class TicketService
                     'rate' => $rate
                 ];
                 if ($body['rate'] == null) unset($body['rate']);
-                $client->post($url, $body);
+                $this->msClient->post($url, $body);
                 break;
             }
             case "3":
@@ -475,7 +402,7 @@ class TicketService
                         }
                     }
 
-                    $rate_body = $client->get("https://api.moysklad.ru/api/remap/1.2/entity/currency/")->rows;
+                    $rate_body = $this->msClient->get("https://api.moysklad.ru/api/remap/1.2/entity/currency/")->rows;
                     $rate = null;
                     foreach ($rate_body as $item_rate) {
                         if ($item_rate->name == "тенге" or $item_rate->fullName == "Казахстанский тенге") {
@@ -516,7 +443,7 @@ class TicketService
                         'rate' => $rate
                     ];
                     if ($body['rate'] == null) unset($body['rate']);
-                    $client->post($url_to_body, $body);
+                    $this->msClient->post($url_to_body, $body);
                 }
                 break;
             }
@@ -528,32 +455,32 @@ class TicketService
                     $change = 0;
                     if ($item['payment_type'] == 0) {
                         if ($entity_type != 'salesreturn') {
-                            if ($Setting->OperationCash == 1) {
+                            if ($this->data->setting_document->OperationCash == 1) {
                                 $url_to_body = $url . 'cashin';
                             }
-                            if ($Setting->OperationCash == 2) {
+                            if ($this->data->setting_document->OperationCash == 2) {
                                 $url_to_body = $url . 'paymentin';
                             }
-                            if ($Setting->OperationCash == 0) {
+                            if ($this->data->setting_document->OperationCash == 0) {
                                 continue;
                             }
                         }
                         if (isset($item['change'])) $change = $item['change'];
                     } else {
                         if ($entity_type != 'salesreturn') {
-                            if ($Setting->OperationCard == 1) {
+                            if ($this->data->setting_document->OperationCard == 1) {
                                 $url_to_body = $url . 'cashin';
                             }
-                            if ($Setting->OperationCard == 2) {
+                            if ($this->data->setting_document->OperationCard == 2) {
                                 $url_to_body = $url . 'paymentin';
                             }
-                            if ($Setting->OperationCard == 0) {
+                            if ($this->data->setting_document->OperationCard == 0) {
                                 continue;
                             }
                         }
                     }
 
-                    $rate_body = $client->get("https://api.moysklad.ru/api/remap/1.2/entity/currency/")->rows;
+                    $rate_body = $this->msClient->get("https://api.moysklad.ru/api/remap/1.2/entity/currency/")->rows;
                     $rate = null;
                     foreach ($rate_body as $item_rate) {
                         if ($item_rate->name == "тенге" or $item_rate->fullName == "Казахстанский тенге") {
@@ -589,12 +516,12 @@ class TicketService
                                     'mediaType' => $OldBody->meta->mediaType,
                                     'uuidHref' => $OldBody->meta->uuidHref,
                                 ],
-                                'linkedSum' => ($item['total'] - $change) * 100,
+                                'linkedSum' => ($item['total'] - $change) * 100
                             ],],
                         'rate' => $rate
                     ];
                     if ($body['rate'] == null) unset($body['rate']);
-                    $client->post($url_to_body, $body);
+                    $this->msClient->post($url_to_body, $body);
                 }
                 break;
             }
@@ -606,16 +533,15 @@ class TicketService
 
     }
 
-    private function createReturnDocument(getMainSettingBD $Setting, mixed $newBody, mixed $putBody, mixed $oldBody, mixed $entity_type): void
+    private function createReturnDocument(mixed $newBody, mixed $putBody, mixed $oldBody, mixed $entity_type): void
     {
         if ($entity_type != 'salesreturn') {
-            $client = new MsClient($Setting->tokenMs);
 
-            $attributes_item = $client->get('https://api.moysklad.ru/api/remap/1.2/entity/salesreturn/metadata/attributes/')->rows;
+            $attributes_item = $this->msClient->get('https://api.moysklad.ru/api/remap/1.2/entity/salesreturn/metadata/attributes/')->rows;
             $attributes = null;
             $positions = null;
             foreach ($attributes_item as $item) {
-                if ($item->name == 'фискальный номер (ТИС)') {
+                if ($item->name == 'фискальный номер') {
                     $attributes[] = [
                         'meta' => [
                             'href' => $item->meta->href,
@@ -625,7 +551,7 @@ class TicketService
                         'value' => $putBody->data->fixed_check,
                     ];
                 }
-                if ($item->name == 'Ссылка для QR-кода (ТИС)') {
+                if ($item->name == 'Ссылка на чек'){
                     $attributes[] = [
                         'meta' => [
                             'href' => $item->meta->href,
@@ -635,7 +561,7 @@ class TicketService
                         'value' => $putBody->data->link,
                     ];
                 }
-                if ($item->name == 'Фискализация (ТИС)') {
+                if ($item->name == 'Фискализация') {
                     $attributes[] = [
                         'meta' => [
                             'href' => $item->meta->href,
@@ -701,7 +627,7 @@ class TicketService
                     ]
                 ];
             } else {
-                $store = $client->get('https://api.moysklad.ru/api/remap/1.2/entity/store')->rows[0];
+                $store = $this->msClient->get('https://api.moysklad.ru/api/remap/1.2/entity/store')->rows[0];
                 $body['store'] = [
                     'meta' => [
                         'href' => $store->meta->href,
@@ -730,7 +656,7 @@ class TicketService
                 ];
             }
             try {
-                $client->post($url, $body);
+                $this->$this->msClient->post($url, $body);
             } catch (BadResponseException) {
 
             }
@@ -743,11 +669,13 @@ class TicketService
     {
         $OldMessage = '';
         if (property_exists($oldBody, 'description')) {
-            $OldMessage = $oldBody->description . PHP_EOL;
+            $OldMessage = $oldBody->description.PHP_EOL;
         }
 
-        return $OldMessage . '[' . ((int)date('H') + 6) . date(':i:s') . ' ' . date('Y-m-d') . '] ' . $message . $postTicket->data->fixed_check;
+        return $OldMessage.'['.( (int) date('H') + 6 ).date(':i:s').' '. date('Y-m-d') .'] '. $message.$postTicket->Data->CheckNumber ;
     }
+
+
 
     private function itemPosition(string $name, float $price, float $quantity, float $discount, int $UOM, $is_nds, int $section, string $code): array
     {
