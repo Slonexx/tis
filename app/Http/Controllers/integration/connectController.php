@@ -91,7 +91,7 @@ class connectController extends Controller
             if ($find != null) {
                 return view( 'popup.print', [ 'html' => $find->toArray()['html'] ] );
             } else {
-                return view( 'popup.print', [ 'html' => $find->toArray()['html'], 'message'=>'Чек не найден' ] );
+                return view( 'popup.print', [ 'html' => '', 'message'=>'Чек не найден' ] );
             }
     }
     public function sendTicket(Request $request): JsonResponse
