@@ -5,7 +5,7 @@ namespace App\Services\ticket;
 
 use App\Clients\KassClient;
 use App\Clients\MsClient;
-use App\Clients\testKassClient;
+use App\Clients\TestKassClient;
 use App\Http\Controllers\globalObjectController;
 use App\Models\html_integration;
 use GuzzleHttp\Exception\BadResponseException;
