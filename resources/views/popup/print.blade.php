@@ -8,7 +8,7 @@
 <script>
 
     @if(isset($message))
-    let message = @json($Message);
+    let message = @json($message);
     alert(JSON.stringify(message));
     @endif
 
