@@ -5,6 +5,7 @@ namespace App\Http\Controllers\integration;
 use App\Clients\KassClient;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\globalObjectController;
+use App\Models\html_integration;
 use App\Models\htmlResponce;
 use App\Services\ticket\integrationTicketService;
 use GuzzleHttp\Client;
@@ -86,7 +87,7 @@ class connectController extends Controller
     }
     public function getUrlTicket($accountId, $kkm_id): Factory|View|Application
     {
-        $find = htmlResponce::where('accountId', $accountId)->where('kkm_id', $kkm_id)->latest()->first();
+        $find = html_integration::where('accountId', $accountId)->where('kkm_id', $kkm_id)->latest()->first();
             if ($find != null) {
                 return view( 'popup.print', [ 'html' => $find->toArray()['html'] ] );
             } else {
