@@ -10,7 +10,7 @@
     @if(isset($message))
     let message = @json($message);
     alert(JSON.stringify(message));
-    @endif
-
+    @else
     window.print()
+    @endif
 </script>
