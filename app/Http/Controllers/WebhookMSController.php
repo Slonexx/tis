@@ -40,6 +40,12 @@ class WebhookMSController extends Controller
                 'message' => $this->returnMessage("2023-00-00 00:00:00", "Отсутствует auditContext, (изменений не было), скрипт прекращён!"),
             ]);
         }
+        if ( strpos($request->auditContext->uid, "kaspi-kz.fixcom") !== false ) {
+            return response()->json([
+                'code' => 203,
+                'message' => $this->returnMessage("2023-00-00 00:00:00", "Мы не работаем с FIXCOM (они плохие)"),
+            ]);
+        }
 
 
         // Заменим обращение к базе данных с использованием Eloquent ORM, чтобы сократить количество запросов
