@@ -206,8 +206,8 @@
                             } else {
                                 window.document.getElementById('message').style.display = "block";
                                 window.document.getElementById(button_hide).style.display = "block";
-                                if (json.hasOwnProperty('errors'))window.document.getElementById('messageAlert').innerText = JSON.stringify(json.errors)
-                                else window.document.getElementById('messageAlert').innerText = "Ошибка: " + JSON.stringify(json)
+                                if (json.hasOwnProperty('errors')) window.document.getElementById('messageAlert').innerText = JSON.stringify(json.errors);
+                                else window.document.getElementById('messageAlert').innerText =  JSON.stringify("Ошибка: " + json);
 
 
                                 modalShowHide = 'hide';
