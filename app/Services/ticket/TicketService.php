@@ -190,7 +190,9 @@ class TicketService
         $result = [];
 
         if (property_exists($agent, 'email')) {
-            $result['email'] = $agent->email;
+            if (strpos($agent->email, '@') !== false) {
+                $result['email'] = $agent->email;
+            }
         }
         if (property_exists($agent, 'phone')) {
             $phone = "7" . mb_substr(str_replace('+7', '',
