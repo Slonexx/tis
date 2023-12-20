@@ -80,14 +80,7 @@ class TicketService
                 'status' => 'error',
                 'code' => $e->getCode(),
                 'errors' => json_decode($e->getResponse()->getBody()->getContents(), true),
-                'errors_' => $e->getMessage()
-            ]);
-        } catch (GuzzleException $e) {
-            return response()->json([
-                'status' => 'error',
-                'code' => $e->getCode(),
-                'errors' => json_decode($e->getMessage(), true),
-                'errors_' => $e->getMessage()
+                'errors_' => json_decode($e->getResponse()->getBody()->getContents(), true)
             ]);
         }
 
