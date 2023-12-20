@@ -46,8 +46,7 @@ class TestTicketService
         if ($Setting->idKassa == null) return ['Status' => false, 'Message' => 'Не были пройдены настройки !'];
         if ($payments == null) return ['Status' => false, 'Message' => 'Не были введены суммы !'];
 
-
-        return [
+        $result = [
             'operation' => (int)$operation,
             'kassa' => (int)$Setting->idKassa,
             'payments' => $payments,
@@ -57,6 +56,12 @@ class TestTicketService
             'need_mark_code' => true,
             "as_html" => true,
         ];
+
+        if ($result['customer'] == []) {
+            unset($result['customer']);
+        }
+
+        return $result;
     }
 
 
