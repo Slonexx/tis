@@ -79,10 +79,9 @@ class TicketService
             return response()->json([
                 'status' => 'error',
                 'code' => $e->getCode(),
-                'errors' => json_decode($e->getResponse()->getBody()->getContents(), true),
                 'errors_' => $e->getMessage(),
-                'getResponse' => $e->getResponse()->getBody()->getContents(),
-                'get' => $e->getResponse(),
+                'errors' => json_decode($e->getResponse()->getBody()->getContents(), true),
+                'getContents' => $e->getResponse()->getBody()->getContents(),
                 'Body' => $Body,
                 'JSON' => json_encode($Body),
             ]);
