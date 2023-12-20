@@ -80,7 +80,8 @@ class TicketService
                 'status' => 'error',
                 'code' => $e->getCode(),
                 'errors' => json_decode($e->getResponse()->getBody()->getContents(), true),
-                'errors_' => json_decode($e->getResponse()->getBody()->getContents(), true)
+                'errors_' => $e->getMessage(),
+                'getResponse' => $e->getResponse()->getBody()->getContents()
             ]);
         }
 
