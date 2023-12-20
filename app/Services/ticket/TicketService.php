@@ -107,7 +107,7 @@ class TicketService
         if ($payments == null) return ['Status' => false, 'Message' => 'Не были введены суммы !'];
 
 
-        return [
+        $result = [
             'operation' => (int)$operation,
             'kassa' => (int)$Setting->idKassa,
             'payments' => $payments,
@@ -117,6 +117,12 @@ class TicketService
             'need_mark_code' => true,
             "as_html" => true,
         ];
+
+        if ($result['customer'] == []) {
+            unset($result['customer']);
+        }
+
+        return $result;
     }
 
 
