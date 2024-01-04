@@ -30,101 +30,55 @@ class WebhookMSController extends Controller
         $events = $request->events;
         $accountId = $events[0]['accountId'];
 
-        // Избавимся от прямого создания экземпляра класса getSettingVendorController, воспользуемся внедрением зависимостей
-        $setting = app(getSettingVendorController::class, ['accountId' => $accountId]);
-        $msClient = new MsClient($setting->TokenMoySklad);
-
-        if (empty($request->auditContext)) {
-            return response()->json([
-                'code' => 203,
-                'message' => $this->returnMessage("2023-00-00 00:00:00", "Отсутствует auditContext, (изменений не было), скрипт прекращён!"),
-            ]);
-        }
-       /* if ( strpos($request->auditContext['uid'], "kaspi-kz.fixcom") !== false ) {
-            return response()->json([
-                'code' => 203,
-                'message' => $this->returnMessage("2023-00-00 00:00:00", "Мы не работаем с fix (они плохие)"),
-            ]);
-        }*/
+        if (empty($auditContext)) return $this->jsonResponseWithMoment(100, "2023-00-00 00:00:00", "Отсутствует auditContext, (изменений не было), скрипт прекращён!");
+        if (empty($events[0]['updatedFields'])) return $this->jsonResponseWithMoment(101, $auditContext['moment'], "Отсутствует updatedFields, (изменений не было), скрипт прекращён!");
 
 
-        // Заменим обращение к базе данных с использованием Eloquent ORM, чтобы сократить количество запросов
+        $settings = app(getSettingVendorController::class, ['accountId' => $accountId]);
+        $msClient = new MsClient($settings->TokenMoySklad);
+
         $multiDimensionalArray = AutomationModel::where('accountId', $accountId)
             ->select('accountId', 'entity', 'status', 'payment', 'saleschannel', 'project')
             ->get()
             ->toArray();
 
-        if (empty($multiDimensionalArray)) {
-            return response()->json([
-                'code' => 203,
-                'message' => $this->returnMessage($auditContext['moment'], "Отсутствует настройки автоматизации, скрипт прекращён!"),
-            ]);
-        }
+        if (empty($multiDimensionalArray)) return $this->jsonResponseWithMoment(102, $auditContext['moment'], "Отсутствует настройки автоматизации, скрипт прекращён!");
+
 
         try {
             $objectBody = $msClient->get($events[0]['meta']['href']);
-            if (property_exists($objectBody, 'attributes')) {
-                foreach ($objectBody->attributes as $item){
-                    if ($item->name == 'Фискализация (ТИС)' and $item->value){
-                        return response()->json([
-                            'code' => 203,
-                            'message' => $this->returnMessage($auditContext['moment'], "Фискальный чек уже создан"),
-                        ]);
-                    }
-                }
-            }
-            if (property_exists($objectBody, 'state')){
-                $state = $msClient->get($objectBody->state->meta->href);
-            } else {
-                return response()->json([
-                    'code' => 203,
-                    'message' => $this->returnMessage($auditContext['moment'], "Отсутствует статус у ".$events[0]['meta']['type'].', скрипт прекращён!'),
-                ]);
-            }
-
+            $state = $msClient->get($objectBody->state->meta->href);
         } catch (BadResponseException $e) {
-            return response()->json([
-                'code' => 203,
-                'message' => $this->returnMessage($auditContext['moment'], $e->getMessage()),
-            ]);
+            return $this->jsonResponseWithMoment(102, $auditContext['moment'], $e->getMessage());
         }
 
+        if (property_exists($objectBody, 'attributes')) {
+            foreach ($objectBody->attributes as $item) {
+                if ($item->name == 'Фискализация (ТИС Prosklad)' and $item->value) return $this->jsonResponseWithMoment(104, $auditContext['moment'], "Фискальный чек уже создан");
+
+            }
+        }
+
+        $arraySetProEntity = [];
+        if ($events[0]['meta']['type'] == 'customerorder') $arraySetProEntity = ["0",];
+        elseif ($events[0]['meta']['type'] == 'demand') $arraySetProEntity = ["1",];
+        elseif ($events[0]['meta']['type'] == 'salesreturn') $arraySetProEntity = ["2",];
 
 
-        //dd($msClient->get($objectBody->salesChannel->meta->href));
-        $data = [];
         foreach ($multiDimensionalArray as $item) {
-            $start = ['entity' => false,'state' => false, 'saleschannel' => false, 'project' => false];
-            if ($item['entity'] == "0") { $start['entity'] = true; }
-            if ($state->id == $item['status'] and in_array("state", $events[0]['updatedFields'])) { $start['state'] = true; }
+            $start = ['entity' => in_array($item['entity'], $arraySetProEntity), 'state' => false, 'saleschannel' => false, 'project' => false];
+
+            if ($state->id == $item['status']) $start['state'] = in_array("state", $events[0]['updatedFields']);
+
+            if ($item['status'] == "0") $start['state'] = true;
 
 
+            $hasProject = $item['project'] != "0" && property_exists($objectBody, 'project');
+            $start['project'] = $hasProject ? $this->checkProject($item, $objectBody, $msClient) : $item['project'] == '0';
 
-            if ($item['status'] == "0") { $start['state'] = true; }
+            $hasSalesChannel = $item['saleschannel'] != "0" && property_exists($objectBody, 'salesChannel');
+            $start['saleschannel'] = $hasSalesChannel ? $this->checkSalesChannel($item, $objectBody, $msClient) : $item['saleschannel'] == '0';
 
-
-            if ($item['project'] != "0" and property_exists($objectBody, 'project')) {
-
-                foreach (array_filter(explode('/', $item['project'])) as $_item) {
-                    if ($msClient->get($objectBody->project->meta->href)->id == $_item) {
-                        $start['project'] = true;
-                    }
-                }
-
-            } else {
-                $start['project'] = true;
-            }
-            if ($item['saleschannel'] != "0" and property_exists($objectBody, 'salesChannel')) {
-
-                foreach (array_filter(explode('/', $item['saleschannel'])) as $_item){
-                    if ($msClient->get($objectBody->salesChannel->meta->href)->id == $_item) {
-                        $start['saleschannel'] = true;
-                    }
-                }
-
-            } else {
-                $start['saleschannel'] = true;
-            }
 
             if ($this->allValuesTrue($start)) {
                 return response()->json([
@@ -132,32 +86,45 @@ class WebhookMSController extends Controller
                     'status' => 'Инициализация в сервисе',
                     'message' => $this->automatingServices->initialization($objectBody, $item),
                 ]);
-            } else {
-                $data[] = [
-                    'start' => $start,
-                    'item' => $item,
-                    'state' => $state,
-
-                ];
             }
         }
 
-        return response()->json([
-            'code' => 203,
-            'message' => $this->returnMessage($auditContext['moment'], "Конец скрипта, прошел по foreach, не нашел нужный скрипт"),
-            'data' => $data,
-        ]);
+        return $this->jsonResponseWithMoment(105, $auditContext['moment'], "Конец скрипта, прошел по foreach, не нашел нужный скрипт");
     }
 
-    private function returnMessage($moment, string $message): array|string
+    private function checkProject($item, $objectBody, $msClient)
     {
-        return [
-            "ERROR ==========================================",
-            "[" . $moment . "] - Начала выполнение скрипта",
-            "[" . date('Y-m-d H:i:s') . "] - Конец выполнение скрипта",
-            "===============================================",
-            $message,
-        ];
+        foreach (array_filter(explode('/', $item['project'])) as $_item) {
+            if ($msClient->get($objectBody->project->meta->href)->id == $_item) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private function checkSalesChannel($item, $objectBody, $msClient)
+    {
+        foreach (array_filter(explode('/', $item['saleschannel'])) as $_item) {
+            if ($msClient->get($objectBody->salesChannel->meta->href)->id == $_item) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+    private function jsonResponseWithMoment(int $code, string $moment, string $message): JsonResponse
+    {
+        return response()->json([
+            'code' => $code,
+            'message' => [
+                "ERROR ==========================================",
+                "[" . $moment . "] - Начала выполнение скрипта",
+                "[" . date('Y-m-d H:i:s') . "] - Конец выполнение скрипта",
+                "===============================================",
+                $message,
+            ],
+        ]);
     }
 
     private function allValuesTrue(array $start): bool

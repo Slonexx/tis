@@ -22,10 +22,11 @@ class AutomatingServices
     private mixed $msOldBodyEntity;
     private AttributeHook $attributeHook;
     private  globalObjectController $Config;
+    private string $accountId ;
 
     public function initialization(mixed $ObjectBODY, mixed $BDFFirst): array
     {
-        $accountId = $BDFFirst['accountId'];
+        $this->accountId = $BDFFirst['accountId'];
         $this->attributeHook = new AttributeHook();
         $this->setting = new getMainSettingBD($BDFFirst['accountId']);
         $this->msClient = new MsClient($this->setting->tokenMs);
@@ -83,7 +84,7 @@ class AutomatingServices
             } catch (BadResponseException $exception) {
                 return [
                     "ERROR",
-                    "Ошибка при сохранении",
+                    "Ошибка при создании платёжных документах",
                     "==========================================",
                     json_decode($exception->getResponse()->getBody()->getContents()),
                     "BODY",
@@ -529,6 +530,41 @@ class AutomatingServices
         $meta2 = $this->getMeta("Ссылка для QR-кода (ТИС)");
         $meta3 = $this->getMeta("Фискализация (ТИС)");
         $meta4 = $this->getMeta("ID (ТИС)");
+        $meta5 = $this->getMeta("Тип Оплаты (ТИС)");
+
+        $value5 = '';
+
+        foreach ($postTicket->data->transaction_payments as $item_) {
+            $amount = 'на сумму: ' . $item_->amount;
+            if ($this->accountId == "f0eb536d-d41f-11e6-7a69-971100005224") $amount = '';
+            switch ($item_->payment_type) {
+                case 0 :
+                {
+                    $value5 .= "Оплата Наличными " . $amount . " ";
+                    break;
+                }
+                case 1 :
+                {
+                    $value5 .= "Оплата Картой " . $amount . " ";
+                    break;
+                }
+                case 2 :
+                {
+                    $value5 .= "Оплата Смешанный " . $amount . " ";
+                    break;
+                }
+                case 3 :
+                {
+                    $value5 .= "Оплата Мобильный " . $amount . " ";
+                    break;
+                }
+                default:
+                {
+                    $value5 .= "";
+                    break;
+                }
+            }
+        }
 
 
         $body = [
@@ -547,6 +583,10 @@ class AutomatingServices
                 ],
                 3 => [
                     "meta" => $meta4,
+                    "value" => (string) $postTicket->data->id,
+                ],
+                4 => [
+                    "meta" => $meta5,
                     "value" => (string) $postTicket->data->id,
                 ],
             ],
