@@ -33,8 +33,9 @@ class KassaController extends Controller
             'isAdmin' => $isAdmin,
 
             'kassa' => $kassa,
-            'kassaValue' => $SettingBD->idKassa,
-            'department' => $department
+            'department' => $department,
+            'saveKassa' => $SettingBD->idKassa,
+            'saveDepartment' => $SettingBD->idDepartment,
         ]);
     }
 
