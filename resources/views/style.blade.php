@@ -80,4 +80,16 @@
         float: right;
         padding-right: 8px;
     }
+
+    .main-container {
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+    }
+    .content-container {
+        overflow-y: auto;
+        overflow-x: hidden;
+        flex-grow: 1;
+    }
+
 </style>
