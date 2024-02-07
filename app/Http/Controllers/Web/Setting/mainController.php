@@ -62,12 +62,12 @@ class mainController extends Controller
             } else {
                 DataBaseService::updateMainSetting($accountId, $setting->TokenMoySklad, $token);
             }
-          /*  $cfg = new cfg();
+            $cfg = new cfg();
             $app = AppInstanceContoller::loadApp($cfg->appId, $accountId);
             $app->status = AppInstanceContoller::ACTIVATED;
             $vendorAPI = new VendorApiController();
             $vendorAPI->updateAppStatus($cfg->appId, $accountId, $app->getStatusName());
-            $app->persist();*/
+            $app->persist();
             return to_route('getKassa', ['accountId' => $accountId, 'isAdmin' => $isAdmin]);
         } catch (\Throwable $e){
             return view('setting.authToken', [
