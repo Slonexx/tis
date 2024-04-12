@@ -10,33 +10,37 @@ class AttributeService
     public function setAllAttributesMs($data): void
     {
         $apiKeyMs = $data['tokenMs'];
+        $client = new MsClient($apiKeyMs);
         //$accountId = $data['accountId'];
 
         try {
             $docAttributes = $this->getDocAttributes();
             $payDocAttributes = $this->getPayDocAttributes();
 
-            $this->createAttributes($apiKeyMs, 'customerorder', $docAttributes);
-            $this->createAttributes($apiKeyMs, 'demand', $docAttributes);
-            $this->createAttributes($apiKeyMs, 'salesreturn', $docAttributes);
-            $this->createAttributesCustomentity($apiKeyMs);
+            //dd($docAttributes, $payDocAttributes);
 
-            $this->createAttributes($apiKeyMs, 'paymentin', $payDocAttributes);
-            $this->createAttributes($apiKeyMs, 'paymentout', $payDocAttributes);
-            $this->createAttributes($apiKeyMs, 'cashin', $payDocAttributes);
-            $this->createAttributes($apiKeyMs, 'cashout', $payDocAttributes);
-        } catch (ClientException) {
+            $this->createAttributes($client, 'customerorder', $docAttributes);
+            $this->createAttributes($client, 'demand', $docAttributes);
+            $this->createAttributes($client, 'salesreturn', $docAttributes);
+            $this->createAttributesCustomentity($client);
+
+            $this->createAttributes($client, 'paymentin', $payDocAttributes);
+            $this->createAttributes($client, 'paymentout', $payDocAttributes);
+            $this->createAttributes($client, 'cashin', $payDocAttributes);
+            $this->createAttributes($client, 'cashout', $payDocAttributes);
+        } catch (ClientException $e) {
+            dd($e, $e->getCode(), $e->getResponse(), $e->getResponse()->getBody()->getContents(), $e->getMessage());
         }
     }
 
-    private function createAttributes($apiKeyMs, $entityType, $attributes): void
+    private function createAttributes(MsClient $client, $entityType, $attributes): void
     {
         $url = "https://api.moysklad.ru/api/remap/1.2/entity/" . $entityType . "/metadata/attributes";
-        $client = new MsClient($apiKeyMs);
         $json = $client->get($url);
 
+
         foreach ($attributes as $attribute) {
-            if (!$this->isAttributeExists($json, $attribute['name'])) {
+            if ($this->isAttributeExists($json, $attribute['name'])) {
                 $client->post($url, $attribute);
             }
         }
@@ -44,12 +48,15 @@ class AttributeService
 
     private function isAttributeExists($json, $attributeName): bool
     {
+        if ($json->meta->size > 0)
         foreach ($json->rows as $row) {
-            if ($attributeName == $row->name) {
-                return true;
+            if ($attributeName == $row->name){
+
+                //dd($attributeName, $row);
+                return false; break;
             }
         }
-        return false;
+        return true;
     }
 
     public function getDocAttributes(): array
@@ -82,12 +89,6 @@ class AttributeService
                 "show" => false,
                 "description" => "уникальный идентификатор по данному дополнительному полю идёт синхронизация с ТИС (Онлайн ккм)",
             ],
-            4 => [
-                "name" => "Тип Оплаты (ТИС)",
-                "type" => "string",
-                "required" => false,
-                "description" => "Данное дополнительно поле отвечает за тип оплаты после фискализации (ТИС)",
-            ],
         ];
     }
 
@@ -103,9 +104,8 @@ class AttributeService
         ];
     }
 
-    private function createAttributesCustomentity(mixed $apiKeyMs): void
+    private function createAttributesCustomentity(MsClient $client): void
     {
-        $client = new MsClient($apiKeyMs);
         $json = $client->post("https://api.moysklad.ru/api/remap/1.2/entity/customentity/", ['name' => 'Тип оплаты (Онлайн ККМ)']);
         $client->post("https://api.moysklad.ru/api/remap/1.2/entity/customentity/" . $json->id, [
             ['name' => "Наличные"],
@@ -116,6 +116,30 @@ class AttributeService
 
 
         $client->post("https://api.moysklad.ru/api/remap/1.2/entity/customerorder/metadata/attributes",
+            [
+                "customEntityMeta" => [
+                    "href" => 'https://api.moysklad.ru/api/remap/1.2/context/companysettings/metadata/customEntities/'. $json->id,
+                    "type" => "customentitymetadata",
+                    "mediaType" => "application/json",
+                ],
+                "name" => "Тип оплаты (Онлайн ККМ)",
+                "type" => "customentity",
+                "required" => false,
+            ]
+        );
+        $client->post("https://api.moysklad.ru/api/remap/1.2/entity/demand/metadata/attributes",
+            [
+                "customEntityMeta" => [
+                    "href" => 'https://api.moysklad.ru/api/remap/1.2/context/companysettings/metadata/customEntities/'. $json->id,
+                    "type" => "customentitymetadata",
+                    "mediaType" => "application/json",
+                ],
+                "name" => "Тип оплаты (Онлайн ККМ)",
+                "type" => "customentity",
+                "required" => false,
+            ]
+        );
+        $client->post("https://api.moysklad.ru/api/remap/1.2/entity/salesreturn/metadata/attributes",
             [
                 "customEntityMeta" => [
                     "href" => 'https://api.moysklad.ru/api/remap/1.2/context/companysettings/metadata/customEntities/'. $json->id,

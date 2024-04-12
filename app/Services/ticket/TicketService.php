@@ -248,97 +248,20 @@ class TicketService
 
     private function setAttributesToPutBody(mixed $postTicket, bool $check_attributes, $attributes): array
     {
-        $Result_attributes = null;
-        foreach ($attributes as $item) {
-            if ($item->name == "фискальный номер (ТИС)" and $check_attributes) {
-                $Result_attributes[] = [
-                    "meta" => [
-                        "href" => $item->meta->href,
-                        "type" => $item->meta->type,
-                        "mediaType" => $item->meta->mediaType,
-                    ],
-                    "value" => $postTicket->data->fixed_check,
-                ];
-            }
-            if ($item->name == "Ссылка для QR-кода (ТИС)") {
-                $Result_attributes[] = [
-                    "meta" => [
-                        "href" => $item->meta->href,
-                        "type" => $item->meta->type,
-                        "mediaType" => $item->meta->mediaType,
-                    ],
-                    "value" => $postTicket->data->link,
-                ];
-            }
-            if ($item->name == "Фискализация (ТИС)") {
-                $Result_attributes[] = [
-                    "meta" => [
-                        "href" => $item->meta->href,
-                        "type" => $item->meta->type,
-                        "mediaType" => $item->meta->mediaType,
-                    ],
-                    "value" => true,
-                ];
-            }
-            if ($item->name == "ID (ТИМ)") {
-                $Result_attributes[] = [
-                    "meta" => [
-                        "href" => $item->meta->href,
-                        "type" => $item->meta->type,
-                        "mediaType" => $item->meta->mediaType,
-                    ],
-                    "value" => (string)$postTicket->data->id,
-                ];
-            }
-            if ($item->name == "Тип Оплаты (ТИС)" and $check_attributes) {
-                $value = "";
-                foreach ($postTicket->data->transaction_payments as $item_) {
-                    $amount = 'на сумму: ' . $item_->amount;
+        $att = null;
+        foreach ($attributes as $row) {
+            $name = $row->name; // Получаем имя объекта из второго массива
 
-                    if ($this->Setting->accountId == "f0eb536d-d41f-11e6-7a69-971100005224") {
-                        $amount = '';
-                    } ;
-
-                    switch ($item_->payment_type) {
-                        case 0 :
-                        {
-                            $value .= "Оплата Наличными " . $amount . " ";
-                            break;
-                        }
-                        case 1 :
-                        {
-                            $value .= "Оплата Картой " . $amount . " ";
-                            break;
-                        }
-                        case 2 :
-                        {
-                            $value .= "Оплата Смешанный " . $amount . " ";
-                            break;
-                        }
-                        case 3 :
-                        {
-                            $value .= "Оплата Мобильный " . $amount . " ";
-                            break;
-                        }
-                        default:
-                        {
-                            $value .= "";
-                            break;
-                        }
-                    }
-                }
-
-                $Result_attributes[] = [
-                    "meta" => [
-                        "href" => $item->meta->href,
-                        "type" => $item->meta->type,
-                        "mediaType" => $item->meta->mediaType,
-                    ],
-                    "value" => $value,
-                ];
+            if ($name == "фискальный номер (ТИС)") $att[] = ['meta'=>$row->meta, 'value' => "" . $postTicket->data->fixed_check];
+            if ($name == "Ссылка для QR-кода (ТИС)") $att[] = ['meta'=>$row->meta, 'value' => $postTicket->data->link];
+            if ($name == "Фискализация (ТИС)") $att[] = ['meta'=>$row->meta, 'value' => true];
+            if ($name == "ID (ТИС)") $att[] = ['meta'=>$row->meta, 'value' => "".$postTicket->data->id];
+            if ($name == "Тип Оплаты (ТИС)") $att[] = ['meta'=>$row->meta, 'value' => $this->sumAmountMeta($postTicket)];
+            if ($name == "Тип оплаты (Онлайн ККМ)") {
+                $att[] = ['meta'=>$row->meta, 'value' => $this->typePaymentMC($postTicket, $row)];
             }
         }
-        return $Result_attributes;
+        return $att;
     }
 
     private function setPositionsToPutBody(mixed $positions, mixed $positionsBody): array
@@ -782,4 +705,68 @@ class TicketService
         return $item;
     }
 
+
+
+
+
+    private function sumAmountMeta($postTicket): string
+    {
+        $value5 = '';
+        foreach ($postTicket->data->transaction_payments as $item_) {
+            $amount = 'на сумму: ' . $item_->amount;
+            if ($this->accountId == "f0eb536d-d41f-11e6-7a69-971100005224") $amount = '';
+            switch ($item_->payment_type) {
+                case 0 :
+                {
+                    $value5 .= "Оплата Наличными " . $amount . " ";
+                    break;
+                }
+                case 1 :
+                {
+                    $value5 .= "Оплата Картой " . $amount . " ";
+                    break;
+                }
+                case 2 :
+                {
+                    $value5 .= "Оплата Смешанный " . $amount . " ";
+                    break;
+                }
+                case 3 :
+                {
+                    $value5 .= "Оплата Мобильный " . $amount . " ";
+                    break;
+                }
+                default:
+                {
+                    $value5 .= "";
+                    break;
+                }
+            }
+        }
+        return $value5;
+    }
+
+    private function typePaymentMC($postTicket, mixed $row): array
+    {
+        $name = 'Наличные';
+        $value = $this->msClient->get('https://api.moysklad.ru/api/remap/1.2/entity/customentity/'.basename($row->customEntityMeta->href));
+        $id = $postTicket->data->transaction_payments[0]->payment_type ?? 0;
+        switch ($id){
+            case 1: {
+                $name = 'Картой';
+                break;
+            }
+            case 4: {
+                $name = 'Мобильная';
+                break;
+            }
+        }
+
+        foreach ($value->rows as $item){
+            if ($item->name == $name) return ['meta'=>$item->meta, 'name'=>$item->name];
+        }
+
+        return ['meta'=>$value[0]->meta, 'name'=>$value[0]->name];
+
+    }
 }

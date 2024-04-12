@@ -18,6 +18,7 @@ class globalObjectController extends Controller
     public function __construct()
     {
         $this->URL_ukassa = 'https://ukassa.kz/';
+        //$this->apiURL_ukassa = 'https://test.ukassa.kz/api/';
         $this->apiURL_ukassa = 'https://ukassa.kz/api/';
 
         $this->test_URL_ukassa = 'https://test.ukassa.kz/';

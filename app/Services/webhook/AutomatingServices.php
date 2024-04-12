@@ -37,6 +37,7 @@ class AutomatingServices
         $this->settingAutomation = json_decode(json_encode($BDFFirst));
         $this->Config = new globalObjectController();
 
+        //dd($ObjectBODY);
 
         return $this->createAutomating();
     }
@@ -525,71 +526,25 @@ class AutomatingServices
 
     public function writeToAttrib(mixed $postTicket)
     {
+        $att = [];
 
-        $meta1 = $this->getMeta("фискальный номер (ТИС)");
-        $meta2 = $this->getMeta("Ссылка для QR-кода (ТИС)");
-        $meta3 = $this->getMeta("Фискализация (ТИС)");
-        $meta4 = $this->getMeta("ID (ТИС)");
-        $meta5 = $this->getMeta("Тип Оплаты (ТИС)");
+        $json = $this->msClient->get( $this->getMeta_all() );
+        //dd($json->rows);
+        foreach($json->rows as $row){
+            $name = $row->name; // Получаем имя объекта из второго массива
 
-        $value5 = '';
-
-        foreach ($postTicket->data->transaction_payments as $item_) {
-            $amount = 'на сумму: ' . $item_->amount;
-            if ($this->accountId == "f0eb536d-d41f-11e6-7a69-971100005224") $amount = '';
-            switch ($item_->payment_type) {
-                case 0 :
-                {
-                    $value5 .= "Оплата Наличными " . $amount . " ";
-                    break;
-                }
-                case 1 :
-                {
-                    $value5 .= "Оплата Картой " . $amount . " ";
-                    break;
-                }
-                case 2 :
-                {
-                    $value5 .= "Оплата Смешанный " . $amount . " ";
-                    break;
-                }
-                case 3 :
-                {
-                    $value5 .= "Оплата Мобильный " . $amount . " ";
-                    break;
-                }
-                default:
-                {
-                    $value5 .= "";
-                    break;
-                }
+            if ($name == "фискальный номер (ТИС)") $att[] = ['meta'=>$row->meta, 'value' => "" . $postTicket->data->fixed_check];
+            if ($name == "Ссылка для QR-кода (ТИС)") $att[] = ['meta'=>$row->meta, 'value' => $postTicket->data->link];
+            if ($name == "Фискализация (ТИС)") $att[] = ['meta'=>$row->meta, 'value' => true];
+            if ($name == "ID (ТИС)") $att[] = ['meta'=>$row->meta, 'value' => "".$postTicket->data->id];
+            if ($name == "Тип Оплаты (ТИС)") $att[] = ['meta'=>$row->meta, 'value' => $this->sumAmountMeta($postTicket)];
+            if ($name == "Тип оплаты (Онлайн ККМ)") {
+                $att[] = ['meta'=>$row->meta, 'value' => $this->typePaymentMC($postTicket, $row)];
             }
         }
 
-
         $body = [
-            "attributes" => [
-                0 => [
-                    "meta" => $meta1,
-                    "value" => "" . $postTicket->data->fixed_check,
-                ],
-                1 => [
-                    "meta" => $meta2,
-                    "value" => $postTicket->data->link,
-                ],
-                2 => [
-                    "meta" => $meta3,
-                    "value" => true,
-                ],
-                3 => [
-                    "meta" => $meta4,
-                    "value" => (string) $postTicket->data->id,
-                ],
-                4 => [
-                    "meta" => $meta5,
-                    "value" => (string) $postTicket->data->id,
-                ],
-            ],
+            "attributes" => $att,
             "description" => $this->descriptionToCreate($postTicket, 'Продажа, Фискальный номер: '),
         ];
 
@@ -599,7 +554,7 @@ class AutomatingServices
     }
 
 
-    private function getMeta($attribName): array
+    private function getMeta_all(): string
     {
         switch ($this->settingAutomation->entity){
             case '0': { $uri = "https://api.moysklad.ru/api/remap/1.2/entity/customerorder/metadata/attributes"; break;}
@@ -608,17 +563,7 @@ class AutomatingServices
             default: { $uri = ""; break;}
         }
 
-        $json = $this->msClient->get($uri);
-        foreach($json->rows as $row){
-            if($row->name == $attribName){
-                return [
-                    'href' => $row->meta->href,
-                    'type' => $row->meta->type,
-                    'mediaType' => $row->meta->mediaType,
-                ];
-            }
-        }
-        return [];
+        return $uri;
     }
 
 
@@ -654,6 +599,67 @@ class AutomatingServices
         }
 
         return $OldMessage . '[' . ((int)date('H') + 6) . date(':i:s') . ' ' . date('Y-m-d') . '] ' . $message . $postTicket->data->fixed_check;
+    }
+
+    private function sumAmountMeta($postTicket): string
+    {
+        $value5 = '';
+        foreach ($postTicket->data->transaction_payments as $item_) {
+            $amount = 'на сумму: ' . $item_->amount;
+            if ($this->accountId == "f0eb536d-d41f-11e6-7a69-971100005224") $amount = '';
+            switch ($item_->payment_type) {
+                case 0 :
+                {
+                    $value5 .= "Оплата Наличными " . $amount . " ";
+                    break;
+                }
+                case 1 :
+                {
+                    $value5 .= "Оплата Картой " . $amount . " ";
+                    break;
+                }
+                case 2 :
+                {
+                    $value5 .= "Оплата Смешанный " . $amount . " ";
+                    break;
+                }
+                case 3 :
+                {
+                    $value5 .= "Оплата Мобильный " . $amount . " ";
+                    break;
+                }
+                default:
+                {
+                    $value5 .= "";
+                    break;
+                }
+            }
+        }
+        return $value5;
+    }
+
+    private function typePaymentMC($postTicket, mixed $row): array
+    {
+        $name = 'Наличные';
+        $value = $this->msClient->get('https://api.moysklad.ru/api/remap/1.2/entity/customentity/'.basename($row->customEntityMeta->href));
+        $id = $postTicket->data->transaction_payments[0]->payment_type ?? 0;
+        switch ($id){
+            case 1: {
+                $name = 'Картой';
+                break;
+            }
+            case 4: {
+                $name = 'Мобильная';
+                break;
+            }
+        }
+
+        foreach ($value->rows as $item){
+            if ($item->name == $name) return ['meta'=>$item->meta, 'name'=>$item->name];
+        }
+
+        return ['meta'=>$value[0]->meta, 'name'=>$value[0]->name];
+
     }
 
 }
