@@ -16,9 +16,17 @@ class TicketService
 {
 
     private getMainSettingBD $Setting;
+    private MsClient $msClient;
+    private string $accountId;
 
+
+    /**
+     * @throws GuzzleException
+     */
     public function createTicket($data): JsonResponse
     {
+        $this->accountId =  $data['accountId'];
+
         $accountId = $data['accountId'];
         $id_entity = $data['id_entity'];
         $entity_type = $data['entity_type'];
@@ -35,6 +43,8 @@ class TicketService
 
         $ClientTIS = new KassClient($Setting->authtoken);
         $Client = new MsClient($Setting->tokenMs);
+        $this->msClient = new MsClient($Setting->tokenMs);
+
         $Config = new globalObjectController();
         $oldBody = $Client->get('https://api.moysklad.ru/api/remap/1.2/entity/' . $entity_type . '/' . $id_entity);
 
@@ -248,6 +258,7 @@ class TicketService
 
     private function setAttributesToPutBody(mixed $postTicket, bool $check_attributes, $attributes): array
     {
+        $time = $check_attributes;
         $att = null;
         foreach ($attributes as $row) {
             $name = $row->name; // Получаем имя объекта из второго массива
@@ -751,16 +762,8 @@ class TicketService
         $name = 'Наличные';
         $value = $this->msClient->get('https://api.moysklad.ru/api/remap/1.2/entity/customentity/'.basename($row->customEntityMeta->href));
         $id = $postTicket->data->transaction_payments[0]->payment_type ?? 0;
-        switch ($id){
-            case 1: {
-                $name = 'Картой';
-                break;
-            }
-            case 4: {
-                $name = 'Мобильная';
-                break;
-            }
-        }
+        if ($id === 1) $name = 'Картой';
+        if ($id === 4) $name = 'Мобильная';
 
         foreach ($value->rows as $item){
             if ($item->name == $name) return ['meta'=>$item->meta, 'name'=>$item->name];
