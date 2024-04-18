@@ -119,7 +119,7 @@ class integrationTicketService
             $model = new html_integration();
 
             $model->account_id = $this->data->accountId;
-            $model->kkm_id = $postTicket->Data->CheckNumber;
+            $model->kkm_id = $postTicket->data->check_number;
             $model->html =  $postTicket->data->html;
 
             $model->save();
@@ -289,7 +289,7 @@ class integrationTicketService
         if ($meta['fiscal_number'] != null) $body["attributes"][] = ["meta" => $meta['fiscal_number'], "value" => "" . $postTicket->data->fixed_check, ];
         if ($meta['link_to_check'] != null) $body["attributes"][] = ["meta" => $meta['link_to_check'], "value" => $postTicket->data->link,];
         if ($meta['fiscalization'] != null) $body["attributes"][] = ["meta" => $meta['fiscalization'], "value" => true];
-        if ($meta['kkm_ID'] != null) $body["attributes"][] = ["meta" => $meta['kkm_ID'], "value" => (string) $Body['ExternalCheckNumber']];
+        if ($meta['kkm_ID'] != null) $body["attributes"][] = ["meta" => $meta['kkm_ID'], "value" => "". $postTicket->data->check_number];
 
 
         return  $body["attributes"] ;
