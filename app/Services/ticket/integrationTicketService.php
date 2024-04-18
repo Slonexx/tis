@@ -711,7 +711,7 @@ class integrationTicketService
             $OldMessage = $oldBody->description.PHP_EOL;
         }
 
-        return $OldMessage.'['.( (int) date('H') + 6 ).date(':i:s').' '. date('Y-m-d') .'] '. $message.$postTicket->data->CheckNumber ;
+        return $OldMessage.'['.( (int) date('H') + 6 ).date(':i:s').' '. date('Y-m-d') .'] '. $message.$postTicket->data->check_number ;
     }
 
 
