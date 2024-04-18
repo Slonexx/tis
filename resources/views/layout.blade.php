@@ -21,9 +21,9 @@
                     <a id="link_5" class="mt-1" href="/Setting/Worker/{{$accountId}}?isAdmin={{ request()->isAdmin }}"> Доступ </a>
                     <a id="link_6" class="mt-1" href="/Setting/Automation/{{$accountId}}?isAdmin={{ request()->isAdmin }}"> Автоматизация </a>
                 </div>
-                <a id="link_7" class="mt-1" href="/kassa/change/{{$accountId}}?isAdmin={{ request()->isAdmin }}"> Смена </a>
             @endif
         @endif
+        <a id="link_7" class="mt-1" href="/kassa/change/{{$accountId}}?isAdmin={{ request()->isAdmin }}"> Смена </a>
         <button class="mt-1 dropdown-btn"> Помощь <i class="fa fa-caret-down"></i> </button>
         <div class="dropdown-container">
             <a target="_blank" href="https://smartuchettis.bitrix24.site/contact/">
