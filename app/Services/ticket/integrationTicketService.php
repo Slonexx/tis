@@ -286,8 +286,8 @@ class integrationTicketService
         $body = null;
         $meta = $this->getMeta($entityType);
 
-        if ($meta['fiscal_number'] != null) $body["attributes"][] = ["meta" => $meta['fiscal_number'], "value" => "" . $postTicket->Data->CheckNumber,];
-        if ($meta['link_to_check'] != null) $body["attributes"][] = ["meta" => $meta['link_to_check'], "value" => $postTicket->Data->TicketUrl,];
+        if ($meta['fiscal_number'] != null) $body["attributes"][] = ["meta" => $meta['fiscal_number'], "value" => "" . $postTicket->data->fixed_check, ];
+        if ($meta['link_to_check'] != null) $body["attributes"][] = ["meta" => $meta['link_to_check'], "value" => $postTicket->data->link,];
         if ($meta['fiscalization'] != null) $body["attributes"][] = ["meta" => $meta['fiscalization'], "value" => true];
         if ($meta['kkm_ID'] != null) $body["attributes"][] = ["meta" => $meta['kkm_ID'], "value" => (string) $Body['ExternalCheckNumber']];
 
