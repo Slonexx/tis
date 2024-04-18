@@ -118,7 +118,7 @@ class integrationTicketService
         try {
             $model = new html_integration();
 
-            $model->account_id = $this->data->accountId;
+            $model->accountId = $this->data->accountId;
             $model->kkm_id = $postTicket->data->check_number;
             $model->html =  $postTicket->data->html;
 
