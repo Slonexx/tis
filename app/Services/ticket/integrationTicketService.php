@@ -49,7 +49,7 @@ class integrationTicketService
         ]);
 
 
-        dd(1, $Body);
+        //dd(1, $Body);
 
         try {
             if ( $data->accountId == '1dd5bd55-d141-11ec-0a80-055600047495') $postTicket = $ClientTIS->POSTClient($Config->test_apiURL_ukassa . 'v2/operation/ticket/', $Body);

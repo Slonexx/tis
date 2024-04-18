@@ -96,8 +96,11 @@ class connectController extends Controller
     }
     public function sendTicket(Request $request): JsonResponse
     {
+        $service = (new integrationTicketService());
+        $data = json_decode(json_encode($request->all()));
+
         try {
-            return (new integrationTicketService())->createTicket(json_decode(json_encode($request->all())));
+            return response()->json($service->createTicket($data));
         } catch (BadResponseException $e){
             return response()->json([
                 'status' => false,
