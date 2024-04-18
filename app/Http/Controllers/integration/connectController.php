@@ -100,7 +100,7 @@ class connectController extends Controller
         $data = json_decode(json_encode($request->all()));
 
         try {
-            return response()->json($service->createTicket($data));
+            return $service->createTicket($data);
         } catch (BadResponseException $e){
             return response()->json([
                 'status' => false,
