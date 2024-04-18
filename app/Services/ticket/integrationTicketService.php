@@ -65,6 +65,12 @@ class integrationTicketService
 
         try {
             $putBody = $this->putBodyMS($entity_type, $Body, $postTicket, $oldBody, $positions);
+            if ($putBody == null)  return response()->json([
+                'status' => false,
+                'code' => 300,
+                'message' => "Чек отправился в Учёт.ТИС, но нет изменения в МоемСкладе, просьба обратитесь к разработчикам",
+                'errors_' => "Чек отправился в Учёт.ТИС, но нет изменения в МоемСкладе, просьба обратитесь к разработчикам",
+            ]);
             $put =  $this->msClient->put('https://api.moysklad.ru/api/remap/1.2/entity/'.$entity_type.'/'.$id_entity, $putBody);
         } catch (BadResponseException $e) {
             return response()->json([
@@ -262,22 +268,20 @@ class integrationTicketService
 
     }
 
-    private function putBodyMS($entity_type, mixed $Body, mixed $postTicket, mixed $oldBody, mixed $positionsBody): array
+    private function putBodyMS($entity_type, mixed $Body, mixed $postTicket, mixed $oldBody, mixed $positionsBody): ?array
     {   $result = null;
         $Result_attributes = $this->setAttributesToPutBody($Body, $postTicket, $entity_type);
+        if ($Result_attributes == null) return null;
 
-        if ($this->data->accountId == '686ca08f-eb47-11e8-9109-f8fc00009aa4'){ } else {
+        if ($this->data->accountId != '686ca08f-eb47-11e8-9109-f8fc00009aa4')
             $result['description'] = $this->descriptionToCreate($oldBody, $postTicket, 'Продажа, Фискальный номер: ');
-        }
-        //$Resul_positions = $this->setPositionsToPutBody($positions, $positionsBody);
 
-        if ($Result_attributes != null){ $result['attributes'] = $Result_attributes; }
-        //if ($Resul_positions != null){ $result['positions'] = $Resul_positions; }
+        $result['attributes'] = $Result_attributes;
 
         return $result;
     }
 
-    private function setAttributesToPutBody(mixed $Body, mixed $postTicket, string $entityType): array
+    private function setAttributesToPutBody(mixed $Body, mixed $postTicket, string $entityType)
     {
         $body = null;
         $meta = $this->getMeta($entityType);
