@@ -76,26 +76,59 @@ class integrationTicketService
             ]);
         }
 
-        if ($this->data->accountId != "f0eb536d-d41f-11e6-7a69-971100005224")
-            if ($payType == 'return') {
-                $this->createReturnDocument($put, $postTicket, $putBody, $entity_type);
-                $put = $this->msClient->put('https://api.moysklad.ru/api/remap/1.2/entity/' . $entity_type . '/' . $id_entity, [
-                    'description' => $this->descriptionToCreate($oldBody, $postTicket, 'Возврат, фискальный номер: '),
-                ]);
-            }
+        try {
+            if ($this->data->accountId != "f0eb536d-d41f-11e6-7a69-971100005224")
+                if ($payType == 'return') {
+                    $this->createReturnDocument($put, $postTicket, $putBody, $entity_type);
+                    $put = $this->msClient->put('https://api.moysklad.ru/api/remap/1.2/entity/' . $entity_type . '/' . $id_entity, [
+                        'description' => $this->descriptionToCreate($oldBody, $postTicket, 'Возврат, фискальный номер: '),
+                    ]);
+                }
+        } catch (BadResponseException $e) {
+            return response()->json([
+                'info'    => 'При сохранении данных в МС return',
+                'status'    => false,
+                'code'      => $e->getCode(),
+                'message'    => json_decode($e->getResponse()->getBody()->getContents(), true),
+                'postTicket'    => $postTicket,
+            ]);
+        }
 
 
 
-        if ($this->data->setting_document->paymentDocument != null) $this->createPaymentDocument($entity_type, $put, $Body['payments']);
+        try {
+            if ($this->data->setting_document->paymentDocument != null) $this->createPaymentDocument($entity_type, $put, $Body['payments']);
+        } catch (BadResponseException $e) {
+            return response()->json([
+                'info'    => 'При сохранении данных в МС createPaymentDocument',
+                'status'    => false,
+                'code'      => $e->getCode(),
+                'message'    => json_decode($e->getResponse()->getBody()->getContents(), true),
+                'postTicket'    => $postTicket,
+            ]);
+        }
 
 
-        $model = new html_integration();
+        try {
+            $model = new html_integration();
 
-        $model->account_id = $this->data->accountId;
-        $model->kkm_id = $postTicket->Data->CheckNumber;
-        $model->html =  $postTicket->data->html;
+            $model->account_id = $this->data->accountId;
+            $model->kkm_id = $postTicket->Data->CheckNumber;
+            $model->html =  $postTicket->data->html;
 
-        $model->save();
+            $model->save();
+        } catch (BadResponseException $e) {
+            return response()->json([
+                'info'    => 'При сохранении данных в model',
+                'status'    => false,
+                'code'      => $e->getCode(),
+                'message'    => json_decode($e->getResponse()->getBody()->getContents(), true),
+                'postTicket'    => $postTicket,
+            ]);
+        }
+
+
+
 
         return response()->json([
             'status' => true,
