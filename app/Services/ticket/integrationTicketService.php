@@ -547,7 +547,7 @@ class integrationTicketService
                             'rate' => $rate
                         ];
                         if ($body['rate'] == null) unset($body['rate']);
-                        $this->msClient->newPost($url_to_body, $body);
+                        dd( $this->msClient->newPost($url_to_body, $body) );
                     }
                 }
                 break;
