@@ -499,19 +499,52 @@ class integrationTicketService
                 $url_to_body = null;
                 foreach ($payments as $item) {
                     $change = 0;
-                    $operation = $item['payment_type'] == 0 ? 'OperationCash' : 'OperationCard';
-
-
-
-                    switch ($this->data->setting_document->$operation) {
-                        case 1:
-                            $url_to_body = $url . ($item['payment_type'] == 0 ? 'cashin' : 'cashout');
-                            break;
-                        case 2:
-                            $url_to_body = $url . ($item['payment_type'] == 0 ? 'paymentin' : 'paymentout');
-                            break;
-                        default:
-                            break;
+                    if ($item['payment_type'] == 0) {
+                        if ($entity_type != 'salesreturn') {
+                            if ($this->data->setting_document->OperationCash == 1) {
+                                $url_to_body = $url . 'cashin';
+                            }
+                            if ($this->data->setting_document->OperationCash == 2) {
+                                $url_to_body = $url . 'paymentin';
+                            }
+                            if ($this->data->setting_document->OperationCash == 0) {
+                                continue;
+                            }
+                        } else {
+                            if ($this->data->setting_document->OperationCash == 1) {
+                                $url_to_body = $url . 'cashout';
+                            }
+                            if ($this->data->setting_document->OperationCash == 2) {
+                                $url_to_body = $url . 'paymentout';
+                            }
+                            if ($this->data->setting_document->OperationCash == 0) {
+                                continue;
+                            }
+                        }
+                        if (isset($item['change'])) $change = $item['change'];
+                    }
+                    else {
+                        if ($entity_type != 'salesreturn') {
+                            if ($this->data->setting_document->OperationCard == 1) {
+                                $url_to_body = $url . 'cashin';
+                            }
+                            if ($this->data->setting_document->OperationCard == 2) {
+                                $url_to_body = $url . 'paymentin';
+                            }
+                            if ($this->data->setting_document->OperationCard == 0) {
+                                continue;
+                            }
+                        } else {
+                            if ($this->data->setting_document->OperationCard == 1) {
+                                $url_to_body = $url . 'cashout';
+                            }
+                            if ($this->data->setting_document->OperationCard == 2) {
+                                $url_to_body = $url . 'paymentout';
+                            }
+                            if ($this->data->setting_document->OperationCard == 0) {
+                                continue;
+                            }
+                        }
                     }
 
                     if (isset($item['change'])) {
