@@ -565,10 +565,10 @@ class integrationTicketService
                             'code' => 'Возврат ' . Uuid::uuid4()->toString(),
                             'externalCode' => 'Возврат ' . Uuid::uuid4()->toString(),
                         ]);
-                        $body['expenseItem'] = $expenseItem->data;
+                        $body['expenseItem']['meta'] = $expenseItem->data->meta;
                     }
 
-                    if ($this->data->accountId == '1dd5bd55-d141-11ec-0a80-055600047495') dd($url_to_body, $body);
+                    //if ($this->data->accountId == '1dd5bd55-d141-11ec-0a80-055600047495') dd($url_to_body, $body);
 
                     $this->msClient->newPost($url_to_body, $body);
                 }
