@@ -10,6 +10,7 @@ use App\Http\Controllers\globalObjectController;
 use App\Models\html_integration;
 use GuzzleHttp\Exception\BadResponseException;
 use Illuminate\Http\JsonResponse;
+use Ramsey\Uuid\Uuid;
 
 
 class integrationTicketService
@@ -554,6 +555,17 @@ class integrationTicketService
 
                     if ($body['rate'] == null) {
                         unset($body['rate']);
+                    }
+
+                    if ($url_to_body == 'https://api.moysklad.ru/api/remap/1.2/entity/paymentout' or $url_to_body == 'https://api.moysklad.ru/api/remap/1.2/entity/cashout') {
+                        $UUID = Uuid::uuid4();
+                        $expenseItem =  $this->msClient->newPost('https://api.moysklad.ru/api/remap/1.2/entity/expenseitem', [
+                            'name' => 'Возврат ' . Uuid::uuid4()->toString(),
+                            'description' => 'Возврат ' . Uuid::uuid4()->toString(),
+                            'code' => 'Возврат ' . Uuid::uuid4()->toString(),
+                            'externalCode' => 'Возврат ' . Uuid::uuid4()->toString(),
+                        ]);
+                        $body['expenseItem'] = $expenseItem->data;
                     }
 
                     if ($this->data->accountId == '1dd5bd55-d141-11ec-0a80-055600047495') dd($url_to_body, $body);
