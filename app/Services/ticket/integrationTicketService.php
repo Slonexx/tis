@@ -522,6 +522,7 @@ class integrationTicketService
                     $rate_body = $this->msClient->get("https://api.moysklad.ru/api/remap/1.2/entity/currency/")->rows;
                     $rate = null;
                     foreach ($rate_body as $item_rate) {
+                        if (property_exists($item_rate, 'fullName'))
                         if ($item_rate->name == "тенге" or $item_rate->fullName == "Казахстанский тенге") {
                             $rate =
                                 ['meta' => [
