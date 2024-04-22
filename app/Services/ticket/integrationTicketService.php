@@ -503,9 +503,20 @@ class integrationTicketService
                             if ($this->data->setting_document->OperationCash == 0) {
                                 continue;
                             }
+                        } else {
+                            if ($this->data->setting_document->OperationCash == 1) {
+                                $url_to_body = $url . 'cashout';
+                            }
+                            if ($this->data->setting_document->OperationCash == 2) {
+                                $url_to_body = $url . 'paymentout';
+                            }
+                            if ($this->data->setting_document->OperationCash == 0) {
+                                continue;
+                            }
                         }
                         if (isset($item['change'])) $change = $item['change'];
-                    } else {
+                    }
+                    else {
                         if ($entity_type != 'salesreturn') {
                             if ($this->data->setting_document->OperationCard == 1) {
                                 $url_to_body = $url . 'cashin';
@@ -516,54 +527,65 @@ class integrationTicketService
                             if ($this->data->setting_document->OperationCard == 0) {
                                 continue;
                             }
+                        } else {
+                            if ($this->data->setting_document->OperationCard == 1) {
+                                $url_to_body = $url . 'cashout';
+                            }
+                            if ($this->data->setting_document->OperationCard == 2) {
+                                $url_to_body = $url . 'paymentout';
+                            }
+                            if ($this->data->setting_document->OperationCard == 0) {
+                                continue;
+                            }
                         }
                     }
 
-                    $rate_body = $this->msClient->get("https://api.moysklad.ru/api/remap/1.2/entity/currency/")->rows;
-                    $rate = null;
-                    foreach ($rate_body as $item_rate) {
-                        if (property_exists($item_rate, 'fullName'))
-                        if ($item_rate->name == "тенге" or $item_rate->fullName == "Казахстанский тенге") {
-                            $rate =
-                                ['meta' => [
-                                    'href' => $item_rate->meta->href,
-                                    'metadataHref' => $item_rate->meta->metadataHref,
-                                    'type' => $item_rate->meta->type,
-                                    'mediaType' => $item_rate->meta->mediaType,
-                                ],
-                                ];
+                    if ($url_to_body != null) {
+                        $rate_body = $this->msClient->get("https://api.moysklad.ru/api/remap/1.2/entity/currency/")->rows;
+                        $rate = null;
+                        foreach ($rate_body as $item_rate) {
+                            if (property_exists($item_rate, 'fullName'))
+                                if ($item_rate->name == "тенге" or $item_rate->fullName == "Казахстанский тенге") {
+                                    $rate =
+                                        ['meta' => [
+                                            'href' => $item_rate->meta->href,
+                                            'metadataHref' => $item_rate->meta->metadataHref,
+                                            'type' => $item_rate->meta->type,
+                                            'mediaType' => $item_rate->meta->mediaType,
+                                        ],
+                                        ];
+                                }
                         }
+
+                        $body = [
+                            'organization' => ['meta' => [
+                                'href' => $OldBody->organization->meta->href,
+                                'type' => $OldBody->organization->meta->type,
+                                'mediaType' => $OldBody->organization->meta->mediaType,
+                            ]],
+                            'agent' => ['meta' => [
+                                'href' => $OldBody->agent->meta->href,
+                                'type' => $OldBody->agent->meta->type,
+                                'mediaType' => $OldBody->agent->meta->mediaType,
+                            ]],
+                            'sum' => ($item['total'] - $change) * 100,
+                            'operations' => [
+                                0 => [
+                                    'meta' => [
+                                        'href' => $OldBody->meta->href,
+                                        'metadataHref' => $OldBody->meta->metadataHref,
+                                        'type' => $OldBody->meta->type,
+                                        'mediaType' => $OldBody->meta->mediaType,
+                                        'uuidHref' => $OldBody->meta->uuidHref,
+                                    ],
+                                    'linkedSum' => ($item['total'] - $change) * 100
+                                ],],
+                            'rate' => $rate
+                        ];
+                        if ($body['rate'] == null) unset($body['rate']);
+                        dd($url_to_body);
+                        dd($this->msClient->newPost($url_to_body, $body));
                     }
-
-                    $body = [
-                        'organization' => ['meta' => [
-                            'href' => $OldBody->organization->meta->href,
-                            'type' => $OldBody->organization->meta->type,
-                            'mediaType' => $OldBody->organization->meta->mediaType,
-                        ]],
-                        'agent' => ['meta' => [
-                            'href' => $OldBody->agent->meta->href,
-                            'type' => $OldBody->agent->meta->type,
-                            'mediaType' => $OldBody->agent->meta->mediaType,
-                        ]],
-                        'sum' => ($item['total'] - $change) * 100,
-                        'operations' => [
-                            0 => [
-                                'meta' => [
-                                    'href' => $OldBody->meta->href,
-                                    'metadataHref' => $OldBody->meta->metadataHref,
-                                    'type' => $OldBody->meta->type,
-                                    'mediaType' => $OldBody->meta->mediaType,
-                                    'uuidHref' => $OldBody->meta->uuidHref,
-                                ],
-                                'linkedSum' => ($item['total'] - $change) * 100
-                            ],],
-                        'rate' => $rate
-                    ];
-                    if ($body['rate'] == null) unset($body['rate']);
-                    dd($url_to_body);
-                    dd($this->msClient->newPost($url_to_body, $body));
-
                 }
                 break;
             }
