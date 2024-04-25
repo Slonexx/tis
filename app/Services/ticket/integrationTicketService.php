@@ -280,8 +280,10 @@ class integrationTicketService
         $Result_attributes = $this->setAttributesToPutBody($Body, $postTicket, $entity_type);
         if ($Result_attributes == null) return null;
 
-        if ($this->data->accountId != '686ca08f-eb47-11e8-9109-f8fc00009aa4')
-            $result['description'] = $this->descriptionToCreate($oldBody, $postTicket, 'Продажа, Фискальный номер: ');
+        if ($this->data->accountId != '686ca08f-eb47-11e8-9109-f8fc00009aa4') {
+            if ($this->data->data->pay_type == 'sell') $result['description'] = $this->descriptionToCreate($oldBody, $postTicket, 'Продажа, Фискальный номер: ');
+            else  $result['description'] = $this->descriptionToCreate($oldBody, $postTicket, 'Возврат продажи, Фискальный номер: ');
+        }
 
         $result['attributes'] = $Result_attributes;
 
