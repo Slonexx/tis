@@ -74,7 +74,7 @@ class mainController extends Controller
                 'accountId' => $accountId,
                 'isAdmin' => $isAdmin,
 
-                'message' => 'ошибка: ' . $e->getCode(),
+                'message' => 'ошибка: ' . $e->getMessage(),
                 'token' => null,
             ]);
         }
