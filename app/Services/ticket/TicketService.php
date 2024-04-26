@@ -264,7 +264,14 @@ class TicketService
             $name = $row->name; // Получаем имя объекта из второго массива
 
             if ($name == "фискальный номер (ТИС)") $att[] = ['meta'=>$row->meta, 'value' => "" . $postTicket->data->fixed_check];
-            if ($name == "Ссылка для QR-кода (ТИС)") $att[] = ['meta'=>$row->meta, 'value' => $postTicket->data->link];
+
+            if ($this->accountId == '975f9e6b-5d22-11ee-0a80-01fa00004c07') {
+                if ($name == "Ссылка для QR-кода (ТИС)") $att[] = ['meta'=>$row->meta, 'value' => $postTicket->data->link];
+            } else {
+                if ($name == "Ссылка на чек") $att[] = ['meta'=>$row->meta, 'value' => $postTicket->data->link];
+            }
+
+
             if ($name == "Фискализация (ТИС)") $att[] = ['meta'=>$row->meta, 'value' => true];
             if ($name == "ID (ТИС)") $att[] = ['meta'=>$row->meta, 'value' => "".$postTicket->data->id];
             if ($name == "Тип Оплаты (ТИС)") $att[] = ['meta'=>$row->meta, 'value' => $this->sumAmountMeta($postTicket)];
@@ -569,16 +576,32 @@ class TicketService
                         'value' => $putBody->data->fixed_check,
                     ];
                 }
-                if ($item->name == 'Ссылка для QR-кода (ТИС)') {
-                    $attributes[] = [
-                        'meta' => [
-                            'href' => $item->meta->href,
-                            'type' => $item->meta->type,
-                            'mediaType' => $item->meta->mediaType,
-                        ],
-                        'value' => $putBody->data->link,
-                    ];
+
+                if ($this->accountId == '975f9e6b-5d22-11ee-0a80-01fa00004c07') {
+                    if ($item->name == 'Ссылка на чек') {
+                        $attributes[] = [
+                            'meta' => [
+                                'href' => $item->meta->href,
+                                'type' => $item->meta->type,
+                                'mediaType' => $item->meta->mediaType,
+                            ],
+                            'value' => $putBody->data->link,
+                        ];
+                    }
+                } else {
+                    if ($item->name == 'Ссылка для QR-кода (ТИС)') {
+                        $attributes[] = [
+                            'meta' => [
+                                'href' => $item->meta->href,
+                                'type' => $item->meta->type,
+                                'mediaType' => $item->meta->mediaType,
+                            ],
+                            'value' => $putBody->data->link,
+                        ];
+                    }
                 }
+
+
                 if ($item->name == 'Фискализация (ТИС)') {
                     $attributes[] = [
                         'meta' => [
