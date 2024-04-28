@@ -15,9 +15,14 @@ $accountId = $pp[$n - 1];
 $url = 'https://smarttis.kz//api/moysklad/vendor/1.0/apps/'.$appId.'/'.$accountId;
 $curl = curl_init($url);
 
+
+$requestBody = file_get_contents('php://input');
+
+$data = json_decode($requestBody);
+
 // Установка опций для сессии cURL
 curl_setopt($curl, CURLOPT_CUSTOMREQUEST, $method); // Устанавливаем метод PUT
-curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query(file_get_contents('php://input'))); // Устанавливаем тело запроса
+curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query($data)); // Устанавливаем тело запроса
 
 // Выполнение запроса
 $response = curl_exec($curl);
