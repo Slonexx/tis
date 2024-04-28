@@ -12,28 +12,10 @@ $n = count($pp);
 $appId = $pp[$n - 2];
 $accountId = $pp[$n - 1];
 
-$url = 'https://smarttis.kz/api/moysklad/vendor/1.0/apps/'.$appId.'/'.$accountId;
-$curl = curl_init($url);
 
 
-$requestBody = file_get_contents('php://input');
 
-$data = json_decode($requestBody);
-
-// Установка опций для сессии cURL
-curl_setopt($curl, CURLOPT_CUSTOMREQUEST, $method); // Устанавливаем метод PUT
-curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query($data)); // Устанавливаем тело запроса
-
-// Выполнение запроса
-$response = curl_exec($curl);
-
-// Закрытие сессии cURL
-curl_close($curl);
-header("Content-Type: application/json");
-echo '{"status": "SettingsRequired"}';
-
-
-/*$app = AppInstanceContoller::load($appId, $accountId);
+$app = AppInstanceContoller::load($appId, $accountId);
 $replyStatus = true;
 
 switch ($method) {
@@ -53,6 +35,21 @@ switch ($method) {
         }
         $url = 'https://smarttis.kz/setAttributes/' . $accountId . '/' . $accessToken;
         $install = file_get_contents($url);
+
+
+        $url = 'https://smarttis.kz/api/moysklad/vendor/1.0/apps/'.$appId.'/'.$accountId;
+        $curl = curl_init($url);
+
+        curl_setopt($curl, CURLOPT_CUSTOMREQUEST, $method); // Устанавливаем метод PUT
+        curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query($data)); // Устанавливаем тело запроса
+
+        $response = curl_exec($curl);
+
+        curl_close($curl);
+        header("Content-Type: application/json");
+        echo '{"status": "SettingsRequired"}';
+
+
         break;
     case 'GET':
         break;
@@ -67,6 +64,6 @@ if (!$app->getStatusName()) {
 } else if ($replyStatus) {
     header("Content-Type: application/json");
     echo '{"status": "' . $app->getStatusName() . '"}';
-}*/
+}
 
 
