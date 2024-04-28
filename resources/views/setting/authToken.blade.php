@@ -69,80 +69,81 @@
         </div>
     </div>
 
-    <script>
-        let token = window.document.getElementById('token')
-        if (token.value !== ''){
 
-        } else {  sendCollection('show') }
-
-        function sendToken(){
-            let email = document.getElementById('sendEmail')
-            let password = document.getElementById('sendPassword')
-            let message = document.getElementById('message')
-
-            if (email.value === '' || password.value === '' ){
-                message.innerText = 'Введите логин или пароль'
-                message.style.display = 'block'
-            } else {
-                message.innerText = ''
-                message.style.display = 'none'
-
-                let params = { email: email.value, password: password.value };
-                let final = url + 'get/createAuthToken/'+ accountId + formatParams(params);
-
-                console.log("url sendToken = " + final);
-
-                let xmlHttpRequest = new XMLHttpRequest();
-                xmlHttpRequest.addEventListener("load", function () {
-                    let json = JSON.parse(this.responseText);
-                    console.log(json);
-                    console.log(JSON.stringify(json));
-                    if (json.status === 200) {
-                        message.style.display = 'none'
-                        window.document.getElementById('token').value = json.auth_token
-                        window.document.getElementById('mainMessage').innerText = json.full_name + ' ваш токен создан, не забудьте нажать на кнопку сохранить'
-                        window.document.getElementById('mainMessage').style.display = 'block'
-                        $('.close').click();
-                    } else {
-                        message.innerText = 'Не верный email или пароль'
-                        message.style.display = 'block'
-                    }
-                });
-                xmlHttpRequest.open("GET", final);
-                xmlHttpRequest.send();
-            }
-        }
-
-        function eye_password(){
-            let input = document.getElementById('sendPassword')
-            console.log('Object.type = ' + input.type)
-            if (input.type === "password"){
-                input.type = "text"
-            } else {
-                input.type = "password"
-            }
-        }
-        function sendCollection(hideOrShow){
-            console.log('its sendCollection = ' + hideOrShow)
-            if (hideOrShow === 'show') {
-                $('#sendTokenByEmailAndPassword').modal({backdrop: 'static', keyboard: false})
-                $('#sendTokenByEmailAndPassword').modal('show')
-            }
-
-            if (hideOrShow === 'hide') {
-                $('#sendTokenByEmailAndPassword').modal('hide')
-            }
-
-        }
-        function formatParams(params) {
-            return "?" + Object
-                .keys(params)
-                .map(function (key) {
-                    return key + "=" + encodeURIComponent(params[key])
-                })
-                .join("&")
-        }
-    </script>
 
 @endsection
 
+<script>
+    let token = window.document.getElementById('token')
+    if (token.value !== ''){
+
+    } else {  sendCollection('show') }
+
+    function sendToken(){
+        let email = document.getElementById('sendEmail')
+        let password = document.getElementById('sendPassword')
+        let message = document.getElementById('message')
+
+        if (email.value === '' || password.value === '' ){
+            message.innerText = 'Введите логин или пароль'
+            message.style.display = 'block'
+        } else {
+            message.innerText = ''
+            message.style.display = 'none'
+
+            let params = { email: email.value, password: password.value };
+            let final = url + 'get/createAuthToken/'+ accountId + formatParams(params);
+
+            console.log("url sendToken = " + final);
+
+            let xmlHttpRequest = new XMLHttpRequest();
+            xmlHttpRequest.addEventListener("load", function () {
+                let json = JSON.parse(this.responseText);
+                console.log(json);
+                console.log(JSON.stringify(json));
+                if (json.status === 200) {
+                    message.style.display = 'none'
+                    window.document.getElementById('token').value = json.auth_token
+                    window.document.getElementById('mainMessage').innerText = json.full_name + ' ваш токен создан, не забудьте нажать на кнопку сохранить'
+                    window.document.getElementById('mainMessage').style.display = 'block'
+                    $('.close').click();
+                } else {
+                    message.innerText = 'Не верный email или пароль'
+                    message.style.display = 'block'
+                }
+            });
+            xmlHttpRequest.open("GET", final);
+            xmlHttpRequest.send();
+        }
+    }
+
+    function eye_password(){
+        let input = document.getElementById('sendPassword')
+        console.log('Object.type = ' + input.type)
+        if (input.type === "password"){
+            input.type = "text"
+        } else {
+            input.type = "password"
+        }
+    }
+    function sendCollection(hideOrShow){
+        console.log('its sendCollection = ' + hideOrShow)
+        if (hideOrShow === 'show') {
+            $('#sendTokenByEmailAndPassword').modal({backdrop: 'static', keyboard: false})
+            $('#sendTokenByEmailAndPassword').modal('show')
+        }
+
+        if (hideOrShow === 'hide') {
+            $('#sendTokenByEmailAndPassword').modal('hide')
+        }
+
+    }
+    function formatParams(params) {
+        return "?" + Object
+            .keys(params)
+            .map(function (key) {
+                return key + "=" + encodeURIComponent(params[key])
+            })
+            .join("&")
+    }
+</script>
