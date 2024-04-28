@@ -15,14 +15,21 @@ class globalObjectController extends Controller
     /**
      * @param $URL_ukassa
      */
-    public function __construct()
+    public function __construct($bool = false)
     {
-        $this->URL_ukassa = 'https://ukassa.kz/';
-        //$this->apiURL_ukassa = 'https://test.ukassa.kz/api/';
-        $this->apiURL_ukassa = 'https://ukassa.kz/api/';
+        if ($bool) {
+            $this->URL_ukassa = 'https://ukassa.kz/';
+            $this->apiURL_ukassa = 'https://ukassa.kz/api/';
 
-        $this->test_URL_ukassa = 'https://test.ukassa.kz/';
-        $this->test_apiURL_ukassa = 'https://test.ukassa.kz/api/';
+            $this->test_URL_ukassa = 'https://test.ukassa.kz/';
+            $this->test_apiURL_ukassa = 'https://test.ukassa.kz/api/';
+        } else {
+            $this->URL_ukassa = 'https://test.ukassa.kz/';;
+            $this->apiURL_ukassa = 'https://test.ukassa.kz/api/';
+
+            $this->test_URL_ukassa = 'https://test.ukassa.kz/';
+            $this->test_apiURL_ukassa = 'https://test.ukassa.kz/api/';
+        }
 
     }
 
