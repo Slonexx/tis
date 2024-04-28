@@ -12,9 +12,6 @@ $n = count($pp);
 $appId = $pp[$n - 2];
 $accountId = $pp[$n - 1];
 
-$url = 'https://smarttis.kz/setAttributes/' . $method . '/'.$path;
-$install = file_get_contents($url);
-
 $app = AppInstanceContoller::load($appId, $accountId);
 $replyStatus = true;
 
