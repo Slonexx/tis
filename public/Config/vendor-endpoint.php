@@ -12,7 +12,7 @@ $n = count($pp);
 $appId = $pp[$n - 2];
 $accountId = $pp[$n - 1];
 
-$url = 'https://smarttis.kz//api/moysklad/vendor/1.0/apps/'.$appId.'/'.$accountId;
+$url = 'https://smarttis.kz/api/moysklad/vendor/1.0/apps/'.$appId.'/'.$accountId;
 $curl = curl_init($url);
 
 
