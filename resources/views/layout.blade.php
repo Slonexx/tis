@@ -1,63 +1,45 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" style="background-color:#dcdcdc;">
 @include('head')
-<body style="background-color:#dcdcdc;">
+<body>
 
 <div class="page headfull">
     <div class="sidenav">
         <div class="p-2 gradient pb-3 ">
-            <img src="https://tisuchet.kz/images/Tis%20logo.svg" width="90%"  alt="">
+            <img src="https://tisuchet.kz/images/Tis%20logo.svg" width="90%" alt="">
         </div>
         <br>
-        <a id="link_1" href="/{{$accountId}}?isAdmin={{ request()->isAdmin }}">Главная </a>
-        @if ( request()->isAdmin == null )
-        @else
-            @if( request()->isAdmin == 'ALL')
-                <button id="btn_1" class="mt-1 dropdown-btn">Настройки <i class="fa fa-caret-down"></i> </button>
-                <div class="dropdown-container">
-                    <a id="link_2" class="mt-1" href="/Setting/createAuthToken/{{$accountId}}?isAdmin={{ request()->isAdmin }}"> Основное </a>
-                    <a id="link_3" class="mt-1" href="/Setting/Kassa/{{$accountId}}?isAdmin={{ request()->isAdmin }}"> Касса </a>
-                    <a id="link_4" class="mt-1" href="/Setting/Document/{{$accountId}}?isAdmin={{ request()->isAdmin }}"> Документ </a>
-                    <a id="link_5" class="mt-1" href="/Setting/Worker/{{$accountId}}?isAdmin={{ request()->isAdmin }}"> Доступ </a>
-                    <a id="link_6" class="mt-1" href="/Setting/Automation/{{$accountId}}?isAdmin={{ request()->isAdmin }}"> Автоматизация </a>
-                </div>
-            @endif
-        @endif
-        <a id="link_7" class="mt-1" href="/kassa/change/{{$accountId}}?isAdmin={{ request()->isAdmin }}"> Смена </a>
-        <button class="mt-1 dropdown-btn"> Помощь <i class="fa fa-caret-down"></i> </button>
-        <div class="dropdown-container">
-            <a target="_blank" href="https://smartuchettis.bitrix24.site/contact/">
-                <i class="fa-solid fa-address-book"></i> Контакты </a>
-            <a target="_blank" href="https://api.whatsapp.com/send/?phone=77232400545&text=" >
-                <i class="fa-brands fa-whatsapp"></i> Написать на WhatsApp </a>
-            <a target="_blank" href="https://smartuchettis.bitrix24.site/instruktsiiponastroyke" >
-                <i class="fa-solid fa-chalkboard-user"></i> Инструкция </a>
+        <a id="link_1" href="/{{$accountId}}?isAdmin={{$isAdmin}}">Возможности приложения </a>
+        <div id="isAdmin" style="display: none">
+           {{-- <a id="link_2" class="mt-1" href="/Setting/initSetting/{{$accountId}}?isAdmin={{$isAdmin}}"> Настройки </a>--}}
+
+
+            <button id="btn_1" class="mt-1 dropdown-btn">Настройки <i class="fa fa-caret-down"></i></button>
+            <div class="dropdown-container">
+                <a id="link_2" class="mt-1" href="/Setting/createAuthToken/{{$accountId}}?isAdmin={{$isAdmin}}">
+                    Основное </a>
+                <a id="link_3" class="mt-1" href="/Setting/Kassa/{{$accountId}}?isAdmin={{$isAdmin}}"> Касса </a>
+                <a id="link_4" class="mt-1" href="/Setting/Document/{{$accountId}}?isAdmin={{$isAdmin}}"> Документ </a>
+                <a id="link_5" class="mt-1" href="/Setting/Worker/{{$accountId}}?isAdmin={{$isAdmin}}"> Доступ </a>
+                <a id="link_6" class="mt-1" href="/Setting/Automation/{{$accountId}}?isAdmin={{$isAdmin}}">
+                    Автоматизация </a>
+            </div>
         </div>
+
+        <a id="link_7" class="mt-1" href="/kassa/change/{{$accountId}}?isAdmin={{$isAdmin}}"> Смена </a>
+
+        @include('contact', ['address' => 'https://smartuchettis.bitrix24.site/contact/']);
     </div>
+    <div id="main_heading" class="main"> <br> @yield('content') </div>
 </div>
-<div class="main head-full" style=""> @yield('content') </div>
 </body>
 </html>
 
 <script>
+    let isAdmin = '{{$isAdmin}}';
+    if (isAdmin === 'ALL') window.document.getElementById('isAdmin').style.display = 'block'
 
-    let item = '@yield('item')'
-
-    window.document.getElementById(item).classList.add('active_sprint')
-    if (item.replace(/[^+\d]/g, '') > 1 && item.replace(/[^+\d]/g, '') <= 6){
-        this_click(window.document.getElementById('btn_1'))
-    }
-
-    function this_click(btn){
-        btn.classList.toggle("active");
-        let dropdownContent = btn.nextElementSibling;
-        if (dropdownContent.style.display === "block") {
-            dropdownContent.style.display = "none";
-        } else {
-            dropdownContent.style.display = "block";
-        }
-    }
-
+    let item_sidenav = '@yield('item')'
 </script>
 
 @include('style')

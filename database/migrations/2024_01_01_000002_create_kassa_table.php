@@ -8,14 +8,10 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('main_settings', function (Blueprint $table) {
+        Schema::create('info_list', function (Blueprint $table) {
             $table->string('accountId')->unique()->primary();
             $table->string('tokenMs');
             $table->string('authtoken')->nullable();
-
-            $table->integer('max');
-            $table->boolean('isActivity');
-
             $table->timestamps();
         });
     }

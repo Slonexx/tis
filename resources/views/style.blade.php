@@ -1,14 +1,17 @@
 <style>
-    .head-full {
-        height: 1080px;
-    }
 
     body {
         font-family: 'Helvetica', 'Arial', sans-serif;
         color: #444444;
-        font-size: 8pt;
-        background-color: #FAFAFA;
+        background-color:#dcdcdc;
+        height: 800px;
+        max-height: 2280px;
+
+
+        font-size: 0.9rem;
+        min-font-size: 14px;
     }
+
 
     .gradient{
         background-image: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
@@ -17,7 +20,79 @@
         background-image: linear-gradient(135deg, #c3cfe2 0%, #f5f7fa 100%);
     }
 
-    /* Фиксированный боковых навигационных ссылок, полной высоты */
+
+
+    .main-container {
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+    }
+    .content-container {
+        overflow-y: auto;
+        overflow-x: hidden;
+        flex-grow: 1;
+    }
+
+    .gradient_focus:hover{
+        color: white;
+        border: 0;
+        background-image: linear-gradient(147deg, #ffb13b 0%, #FF2525 74%);
+    }
+
+    .gradient_focus:active{
+        background-image: linear-gradient(147deg, #ffb13b 0%, #FF2525 74%);
+        border: 0;
+        background-size: 100%;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        -moz-text-fill-color: transparent;
+    }
+
+    .gradient_focus:focus{
+        background-color: #fff;
+        border-color: #dbdbdb;
+        border-width: 1px;
+        box-shadow: 0 0 0 0 !important;
+    }
+
+    .gradient_a a.is-active {
+        background-image: linear-gradient(147deg, #ffb13b 0%, #FF2525 74%);
+        background-clip: text !important;
+        -webkit-background-clip: text !important;
+        color: transparent !important;
+        border-bottom-color: #000000;
+    }
+
+    .gradient_a a:hover{
+        background-image: linear-gradient(147deg, #ffb13b 0%, #FF2525 74%);
+        background-clip: text !important;
+        -webkit-background-clip: text !important;
+        color: transparent !important;
+    }
+
+</style>
+
+<style>
+    /* Основное содержание */
+    .main {
+        margin-left: 15%;
+        padding: 0 10px;
+    }
+
+    .dropdown-container {
+        display: none;
+        background-color:#dcdcdc;
+        padding: 5px;
+    }
+
+    /* Необязательно: стиль курсора вниз значок */
+    .fa-caret-down {
+        float: right;
+        padding-right: 8px;
+    }
+
+</style>
+<style>
     .sidenav {
         height: 100%;
         width: 15%;
@@ -30,7 +105,6 @@
         padding-top: 20px;
     }
 
-    /* Стиль боковых навигационных ссылок и раскрывающейся кнопки */
     .sidenav a, .dropdown-btn {
         padding: 6px 8px 6px 16px;
         text-decoration: none;
@@ -44,52 +118,25 @@
         cursor: pointer;
         outline: none;
     }
-
-    /* При наведении курсора мыши */
     .sidenav a:hover, .dropdown-btn:hover {
         background-image: linear-gradient(147deg, #ffb13b 0%, #FF2525 74%);
         border-radius: 10px 10px 0px 0px;
         color: white;
         width: 100%;
     }
-
-    /* Основное содержание */
-    .main {
-        margin-left: 15%; /* То же, что и ширина боковой навигации */
-        font-size: 18px; /* Увеличенный текст для включения прокрутки */
-        padding: 0 10px;
-    }
-
-    /* Добавить активный класс для кнопки активного выпадающего списка */
     .sidenav .active_sprint {
         background-image: linear-gradient(147deg, #ffb13b 0%, #FF2525 74%);
         border-radius: 10px 10px 0px 0px ;
         color: white ;
         width: 100% ;
     }
+</style>
 
-    /* Выпадающий контейнер (по умолчанию скрыт). Необязательно: добавьте более светлый цвет фона и некоторые левые отступы, чтобы изменить дизайн выпадающего содержимого */
-    .dropdown-container {
-        display: none;
-        background-color: #d5d5d5;
-        padding: 5px;
+{{--ADD--}}
+<style>
+    .addStyleColumns{
+        padding-bottom: 0.2rem !important;
+        padding-top: 0.2rem !important;
+        text-decoration: none;
     }
-
-    /* Необязательно: стиль курсора вниз значок */
-    .fa-caret-down {
-        float: right;
-        padding-right: 8px;
-    }
-
-    .main-container {
-        display: flex;
-        flex-direction: column;
-        height: 100vh;
-    }
-    .content-container {
-        overflow-y: auto;
-        overflow-x: hidden;
-        flex-grow: 1;
-    }
-
 </style>

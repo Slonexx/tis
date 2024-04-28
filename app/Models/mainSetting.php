@@ -14,5 +14,20 @@ class mainSetting extends Model
         'authtoken',
     ];
 
-    use HasFactory;
+    public static function accId($accountId): object
+    {
+        $model = mainSetting::where('accountId',  $accountId )->get()->first();
+        if ($model != null) {
+            return (object) [
+                'query' => $model,
+                'toArray' => $model->toArray(),
+            ];
+        } else {
+            return (object) [
+                'query' => $model,
+                'toArray' => null,
+            ];
+        }
+    }
+
 }

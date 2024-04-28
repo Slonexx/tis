@@ -37,15 +37,16 @@ class indexController extends Controller
     public function indexShow($accountId, Request $request)
     {
         $isAdmin = $request->isAdmin;
-        $getPersonal = new getPersonal($accountId);
-        if ($getPersonal->status == "деактивированный" or $getPersonal->status == null){
-            $hideOrShow = "show";
-        } else  $hideOrShow = "hide";
+        $message = $request->message;
+        if ($isAdmin != 'ALL') $message = "У вас нет доступа к настройкам приложения";
 
-        return view("main.index" , [
+
+        return view("setting.v2.info_app" , [
             'accountId' => $accountId,
             'isAdmin' => $isAdmin,
-            'hideOrShow' => $hideOrShow,
+
+            'class_message' => $request->class_message ?? 'is-info',
+            'message' => $message
         ] );
     }
 
