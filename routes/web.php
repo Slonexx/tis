@@ -7,6 +7,7 @@ use App\Http\Controllers\Popup\demandController;
 use App\Http\Controllers\Popup\fiscalizationController;
 use App\Http\Controllers\Popup\salesreturnController;
 use App\Http\Controllers\Popup\sendController;
+use App\Http\Controllers\vendor\vendorEndpoint;
 use App\Http\Controllers\Web\AutomationController;
 use App\Http\Controllers\Web\cash_operationController;
 use App\Http\Controllers\Web\changeController;
@@ -18,10 +19,20 @@ use App\Http\Controllers\Web\Setting\documentController;
 use App\Http\Controllers\Web\Setting\errorSettingController;
 use App\Http\Controllers\Web\Setting\KassaController;
 use App\Http\Controllers\Web\Setting\mainController;
+use App\Http\Controllers\Web\v2\connectV2Controller;
+use App\Http\Controllers\Web\v2\initController;
+use App\Http\Controllers\Web\v2\kassaV2Controller;
 use App\Http\Controllers\Widget\customerorderEditController;
 use App\Http\Controllers\Widget\demandEditController;
 use App\Http\Controllers\Widget\salesreturnEditController;
 use Illuminate\Support\Facades\Route;
+
+
+Route::group(["prefix" => "/Config/vendor-endpoint.php/api/moysklad/vendor/1.0/apps"], function () {
+    Route::put('/{apps}/{accountId}', [vendorEndpoint::class, 'put']);
+    Route::delete('/{apps}/{accountId}', [vendorEndpoint::class, 'delete']);
+});
+
 
 Route::get('delete/{accountId}/', [DeleteVendorApiController::class, 'delete']);
 Route::get('setAttributes/{accountId}/{tokenMs}', [AttributeController::class, 'setAllAttributesVendor']);
@@ -39,22 +50,46 @@ Route::get('/{accountId}/', [indexController::class, 'indexShow'])->name('main')
 
 Route::get('/Setting/error/{accountId}', [errorSettingController::class, 'getError'])->name('errorSetting');
 
-Route::get('/Setting/createAuthToken/{accountId}', [mainController::class, 'getMain']);
-Route::post('/Setting/createAuthToken/{accountId}', [mainController::class, 'postMain']);
+/**V2 route */
+Route::group(["prefix" => "Setting"], function () {
+    Route::get('/initSetting/{accountId}', [initController::class, 'initSetting'])->name('init');
 
-Route::get('/Setting/Kassa/{accountId}', [KassaController::class, 'getKassa'])->name('getKassa');
-Route::post('/Setting/Kassa/{accountId}', [KassaController::class, 'postKassa']);
-
-Route::get('/Setting/Document/{accountId}', [documentController::class, 'getDocument'])->name('getDocument');
-Route::post('/Setting/Document/{accountId}', [documentController::class, 'postDocument']);
+    Route::get('/createSetting/{accountId}', [initController::class, 'create'])->name('create');
+    Route::post('/createSetting/{accountId}', [initController::class, 'post']);
 
 
-Route::get('/Setting/Worker/{accountId}', [AccessController::class, 'getWorker'])->name('getWorker');
-Route::post('/Setting/Worker/{accountId}', [AccessController::class, 'postWorker']);
+    Route::group(["prefix" => "Update"], function () {
+        Route::get('connect/{uid}/{accountId}', [connectV2Controller::class, 'view'])->name('connect');
+        Route::post('connect/{uid}/{accountId}', [connectV2Controller::class, 'save']);
 
 
-Route::get('/Setting/Automation/{accountId}', [AutomationController::class, 'getAutomation'])->name('getAutomation');
-Route::post('/Setting/Automation/{accountId}', [AutomationController::class, 'postAutomation']);
+        Route::get('kassa/{uid}/{accountId}', [kassaV2Controller::class, 'view'])->name('kassa');
+        Route::post('kassa/{uid}/{accountId}', [kassaV2Controller::class, 'save']);
+    });
+
+});
+
+Route::group(["prefix" => "Setting"], function () {
+    Route::get('/createAuthToken/{accountId}', [mainController::class, 'getMain']);
+    Route::post('/createAuthToken/{accountId}', [mainController::class, 'postMain']);
+
+    Route::get('/Kassa/{accountId}', [KassaController::class, 'getKassa'])->name('getKassa');
+    Route::post('/Kassa/{accountId}', [KassaController::class, 'postKassa']);
+
+    Route::get('/Document/{accountId}', [documentController::class, 'getDocument'])->name('getDocument');
+    Route::post('/Document/{accountId}', [documentController::class, 'postDocument']);
+
+
+    Route::get('/Worker/{accountId}', [AccessController::class, 'getWorker'])->name('getWorker');
+    Route::post('/Worker/{accountId}', [AccessController::class, 'postWorker']);
+
+
+    Route::get('/Automation/{accountId}', [AutomationController::class, 'getAutomation'])->name('getAutomation');
+    Route::post('/Automation/{accountId}', [AutomationController::class, 'postAutomation']);
+});
+
+
+
 
 
 
