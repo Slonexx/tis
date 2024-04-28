@@ -32,29 +32,17 @@ class vendorEndpoint extends Controller
             $app->persist();
 
 
-            $client = new newMsClient($accountId);
-            $employee = $client->getForToken($data->access[0]->resource.'entity/employee?filter=uid~=admin', $accessToken)->rows;
-
             $modelQ = mainSetting::accId($accountId);
 
-            if ($modelQ->toArray == null) {
-                $model = new mainSetting();
+            if ($modelQ->toArray == null) $model = new mainSetting();
+            else $model = $modelQ->query;
 
-                $model->accountId = $accountId;
-                $model->tokenMs = $data->access[0]->access_token;
-                $model->authtoken = null;
+            $model->accountId = $accountId;
+            $model->tokenMs = $data->access[0]->access_token;
+            $model->authtoken = null;
 
-                $model->save();
-            }
-            else {
-                $model = $modelQ->query;
+            $model->save();
 
-                $model->accountId = $accountId;
-                $model->tokenMs = $data->access[0]->access_token;
-                $model->authtoken = null;
-
-                $model->save();
-            }
 
         }
 
