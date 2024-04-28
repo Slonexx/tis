@@ -35,8 +35,8 @@ class AutomatingServices
 
         $this->msOldBodyEntity = $ObjectBODY;
         $this->settingAutomation = json_decode(json_encode($BDFFirst));
-        $this->Config = new globalObjectController();
-
+        if ($this->accountId = '1dd5bd55-d141-11ec-0a80-055600047495') $this->Config = new globalObjectController(false);
+        else $this->Config = new globalObjectController();
         //dd($ObjectBODY);
 
         return $this->createAutomating();

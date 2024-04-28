@@ -39,7 +39,8 @@ class integrationTicketService
         $positions = $data->data->position;
 
 
-        $Config = new globalObjectController();
+        if ($accountId = '1dd5bd55-d141-11ec-0a80-055600047495') $Config = new globalObjectController(false);
+        else $Config = new globalObjectController();
         $oldBody = $this->msClient->get('https://api.moysklad.ru/api/remap/1.2/entity/' . $entity_type . '/' . $id_entity);
         $Body = $this->setBodyToPostClient($id_entity, $entity_type, $money_card, $money_cash, $payType, $total, $positions);
 

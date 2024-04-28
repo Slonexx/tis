@@ -57,14 +57,11 @@ class connectController extends Controller
     }
     public function getUserAndDepartment(Request $request, $accountId): JsonResponse
     {
-        $config = new globalObjectController();
+        if ($accountId = '1dd5bd55-d141-11ec-0a80-055600047495') $Config = new globalObjectController(false);
+        else $Config = new globalObjectController();
 
         $ClientTIS = new KassClient($request->authtoken ?? '');
-        if ($accountId == '1dd5bd55-d141-11ec-0a80-055600047495') {
-            $url = $config->test_apiURL_ukassa;
-        } else {
-            $url = $config->apiURL_ukassa;
-        }
+        $url = $Config->apiURL_ukassa;
 
 
         try {

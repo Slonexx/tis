@@ -48,7 +48,8 @@ class KassaController extends Controller
             return to_route('getDocument', ['accountId' => $accountId, 'isAdmin' => $isAdmin]);
         } catch (\Throwable $e){
             $SettingBD = new getMainSettingBD($accountId);
-            $Config = new globalObjectController();
+            if ($accountId = '1dd5bd55-d141-11ec-0a80-055600047495') $Config = new globalObjectController(false);
+            else $Config = new globalObjectController();
             $ClientTIS = new KassClient($SettingBD->authtoken);
 
             $get_user = $ClientTIS->GETClient($Config->apiURL_ukassa.'auth/get_user/');

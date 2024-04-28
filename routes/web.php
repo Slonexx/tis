@@ -32,42 +32,16 @@ Route::group(["prefix" => "/api/moysklad/vendor/1.0/apps"], function () {
     Route::put('/{apps}/{accountId}', [vendorEndpoint::class, 'put']);
     Route::delete('/{apps}/{accountId}', [vendorEndpoint::class, 'delete']);
 });
-
-
-Route::get('delete/{accountId}/', [DeleteVendorApiController::class, 'delete']);
 Route::get('setAttributes/{accountId}/{tokenMs}', [AttributeController::class, 'setAllAttributesVendor']);
-//для админа
-Route::get('/web/getPersonalInformation/', [collectionOfPersonalController::class, 'getPersonal']);
-Route::get('/collectionOfPersonalInformation/{accountId}/', [collectionOfPersonalController::class, 'getCollection']);
-Route::get('web/getInstallPersonalForID/{accountId}/', [collectionOfPersonalController::class, 'getInstallPersonalForID']);
 
 
 
 Route::get('/', [indexController::class, 'index']);
 Route::get('/{accountId}/', [indexController::class, 'indexShow'])->name('main');
-//Route::get('/Admin/setAttributes/ALL', [indexController::class, 'ALL']);
-
 
 Route::get('/Setting/error/{accountId}', [errorSettingController::class, 'getError'])->name('errorSetting');
 
-/**V2 route */
-Route::group(["prefix" => "Setting"], function () {
-    Route::get('/initSetting/{accountId}', [initController::class, 'initSetting'])->name('init');
 
-    Route::get('/createSetting/{accountId}', [initController::class, 'create'])->name('create');
-    Route::post('/createSetting/{accountId}', [initController::class, 'post']);
-
-
-    Route::group(["prefix" => "Update"], function () {
-        Route::get('connect/{uid}/{accountId}', [connectV2Controller::class, 'view'])->name('connect');
-        Route::post('connect/{uid}/{accountId}', [connectV2Controller::class, 'save']);
-
-
-        Route::get('kassa/{uid}/{accountId}', [kassaV2Controller::class, 'view'])->name('kassa');
-        Route::post('kassa/{uid}/{accountId}', [kassaV2Controller::class, 'save']);
-    });
-
-});
 
 Route::group(["prefix" => "Setting"], function () {
     Route::get('/createAuthToken/{accountId}', [mainController::class, 'getMain']);
@@ -144,3 +118,32 @@ Route::get('/Popup/salesreturn', [salesreturnController::class, 'salesreturnPopu
 Route::get('/Popup/salesreturn/show', [salesreturnController::class, 'ShowSalesreturnPopup']);
 Route::post('/Popup/salesreturn/send', [salesreturnController::class, 'SendSalesreturnPopup']);
 Route::get('/Popup/salesreturn/print/{accountId}', [salesreturnController::class, 'printSalesreturnPopup']);
+
+
+
+/**V2 route */
+Route::group(["prefix" => "Setting"], function () {
+    Route::get('/initSetting/{accountId}', [initController::class, 'initSetting'])->name('init');
+
+    Route::get('/createSetting/{accountId}', [initController::class, 'create'])->name('create');
+    Route::post('/createSetting/{accountId}', [initController::class, 'post']);
+
+
+    Route::group(["prefix" => "Update"], function () {
+        Route::get('connect/{uid}/{accountId}', [connectV2Controller::class, 'view'])->name('connect');
+        Route::post('connect/{uid}/{accountId}', [connectV2Controller::class, 'save']);
+
+
+        Route::get('kassa/{uid}/{accountId}', [kassaV2Controller::class, 'view'])->name('kassa');
+        Route::post('kassa/{uid}/{accountId}', [kassaV2Controller::class, 'save']);
+    });
+
+});
+
+
+
+
+/*//для админа
+Route::get('/web/getPersonalInformation/', [collectionOfPersonalController::class, 'getPersonal']);
+Route::get('/collectionOfPersonalInformation/{accountId}/', [collectionOfPersonalController::class, 'getCollection']);
+Route::get('web/getInstallPersonalForID/{accountId}/', [collectionOfPersonalController::class, 'getInstallPersonalForID']);*/

@@ -17,9 +17,8 @@ class get_shift_reportController extends Controller
     {
         $isAdmin = $request->isAdmin;
         $SettingBD = new getMainSettingBD($accountId);
-        $Config = new globalObjectController();
-
-        $Config = new globalObjectController();
+        if ($accountId = '1dd5bd55-d141-11ec-0a80-055600047495') $Config = new globalObjectController(false);
+        else $Config = new globalObjectController();
 
         $ClientTIS = new KassClient($SettingBD->authtoken);
         try {
@@ -81,7 +80,8 @@ class get_shift_reportController extends Controller
     }
     public function infoXShift(Request $request, $accountId){
         $SettingBD = new getMainSettingBD($accountId);
-        $Config = new globalObjectController();
+        if ($accountId = '1dd5bd55-d141-11ec-0a80-055600047495') $Config = new globalObjectController(false);
+        else $Config = new globalObjectController();
         $ClientTIS = new KassClient($SettingBD->authtoken);
         try {
             $body = ['kassa'=> $request->idKassa, 'html_code'=>false];

@@ -17,7 +17,8 @@ class close_z_shiftController extends Controller
     {
         $isAdmin = $request->isAdmin;
         $SettingBD = new getMainSettingBD($accountId);
-        $Config = new globalObjectController();
+        if ($accountId = '1dd5bd55-d141-11ec-0a80-055600047495') $Config = new globalObjectController(false);
+        else $Config = new globalObjectController();
 
         $ClientTIS = new KassClient($SettingBD->authtoken);
         try {
