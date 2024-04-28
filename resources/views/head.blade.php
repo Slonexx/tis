@@ -26,5 +26,7 @@
     {{--MS--}}
     <script type="text/javascript" src="https://apps-api.moysklad.ru/js/ns/appstore/app/v1/moysklad-iframe-expand-3.js"></script>
 
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
 </head>
 {{--BY SLONEX--}}
