@@ -19,7 +19,7 @@
         <div id="mainMessage" class="mt-2 alert alert-warning alert-dismissible fade show in text-center" style="display: none">  </div>
 
         <form class="mt-3" action="/Setting/createAuthToken/{{ $accountId }}?isAdmin={{ $isAdmin }}" method="post">
-        @csrf <!-- {{ csrf_field() }} -->
+            @csrf <!-- {{ csrf_field() }} -->
             <div class="mb-3 row">
                 <label for="token" class="col-3 col-form-label"> Токен учет онлайн кассы </label>
                 <div class="col-9">
@@ -55,7 +55,7 @@
                         <label class="col-3 col-form-label"> Пароль </label>
                         <div class="col-9">
                             <div class="input-group">
-                            <input id="sendPassword" type="password" name="password" placeholder=" *********** " class="form-control form-control-orange">
+                                <input id="sendPassword" type="password" name="password" placeholder=" *********** " class="form-control form-control-orange">
                                 <div class="input-group-append">
                                     <button onclick="eye_password()" class="btn btn-outline-secondary" type="button"><i class="fa-solid fa-eye"></i></button>
                                 </div>
@@ -69,84 +69,79 @@
         </div>
     </div>
 
-
-
     <script>
+        let token = window.document.getElementById('token')
+        if (token.value !== ''){
 
-        document.addEventListener("DOMContentLoaded", function() {
-            let token = window.document.getElementById('token')
-            if (token.value !== ''){
+        } else {  sendCollection('show') }
 
-            } else {  sendCollection('show') }
+        function sendToken(){
+            let email = document.getElementById('sendEmail')
+            let password = document.getElementById('sendPassword')
+            let message = document.getElementById('message')
 
-            function sendToken(){
-                let email = document.getElementById('sendEmail')
-                let password = document.getElementById('sendPassword')
-                let message = document.getElementById('message')
+            if (email.value === '' || password.value === '' ){
+                message.innerText = 'Введите логин или пароль'
+                message.style.display = 'block'
+            } else {
+                message.innerText = ''
+                message.style.display = 'none'
 
-                if (email.value === '' || password.value === '' ){
-                    message.innerText = 'Введите логин или пароль'
-                    message.style.display = 'block'
-                } else {
-                    message.innerText = ''
-                    message.style.display = 'none'
+                let params = { email: email.value, password: password.value };
+                let final = url + 'get/createAuthToken/'+ accountId + formatParams(params);
 
-                    let params = { email: email.value, password: password.value };
-                    let final = url + 'get/createAuthToken/'+ accountId + formatParams(params);
+                console.log("url sendToken = " + final);
 
-                    console.log("url sendToken = " + final);
+                let xmlHttpRequest = new XMLHttpRequest();
+                xmlHttpRequest.addEventListener("load", function () {
+                    let json = JSON.parse(this.responseText);
+                    console.log(json);
+                    console.log(JSON.stringify(json));
+                    if (json.status === 200) {
+                        message.style.display = 'none'
+                        window.document.getElementById('token').value = json.auth_token
+                        window.document.getElementById('mainMessage').innerText = json.full_name + ' ваш токен создан, не забудьте нажать на кнопку сохранить'
+                        window.document.getElementById('mainMessage').style.display = 'block'
+                        $('.close').click();
+                    } else {
+                        message.innerText = 'Не верный email или пароль'
+                        message.style.display = 'block'
+                    }
+                });
+                xmlHttpRequest.open("GET", final);
+                xmlHttpRequest.send();
+            }
+        }
 
-                    let xmlHttpRequest = new XMLHttpRequest();
-                    xmlHttpRequest.addEventListener("load", function () {
-                        let json = JSON.parse(this.responseText);
-                        console.log(json);
-                        console.log(JSON.stringify(json));
-                        if (json.status === 200) {
-                            message.style.display = 'none'
-                            window.document.getElementById('token').value = json.auth_token
-                            window.document.getElementById('mainMessage').innerText = json.full_name + ' ваш токен создан, не забудьте нажать на кнопку сохранить'
-                            window.document.getElementById('mainMessage').style.display = 'block'
-                            $('.close').click();
-                        } else {
-                            message.innerText = 'Не верный email или пароль'
-                            message.style.display = 'block'
-                        }
-                    });
-                    xmlHttpRequest.open("GET", final);
-                    xmlHttpRequest.send();
-                }
+        function eye_password(){
+            let input = document.getElementById('sendPassword')
+            console.log('Object.type = ' + input.type)
+            if (input.type === "password"){
+                input.type = "text"
+            } else {
+                input.type = "password"
+            }
+        }
+        function sendCollection(hideOrShow){
+            console.log('its sendCollection = ' + hideOrShow)
+            if (hideOrShow === 'show') {
+                $('#sendTokenByEmailAndPassword').modal({backdrop: 'static', keyboard: false})
+                $('#sendTokenByEmailAndPassword').modal('show')
             }
 
-            function eye_password(){
-                let input = document.getElementById('sendPassword')
-                console.log('Object.type = ' + input.type)
-                if (input.type === "password"){
-                    input.type = "text"
-                } else {
-                    input.type = "password"
-                }
+            if (hideOrShow === 'hide') {
+                $('#sendTokenByEmailAndPassword').modal('hide')
             }
-            function sendCollection(hideOrShow){
-                console.log('its sendCollection = ' + hideOrShow)
-                if (hideOrShow === 'show') {
-                    $('#sendTokenByEmailAndPassword').modal({backdrop: 'static', keyboard: false})
-                    $('#sendTokenByEmailAndPassword').modal('show')
-                }
 
-                if (hideOrShow === 'hide') {
-                    $('#sendTokenByEmailAndPassword').modal('hide')
-                }
-
-            }
-            function formatParams(params) {
-                return "?" + Object
-                    .keys(params)
-                    .map(function (key) {
-                        return key + "=" + encodeURIComponent(params[key])
-                    })
-                    .join("&")
-            }
-        });
+        }
+        function formatParams(params) {
+            return "?" + Object
+                .keys(params)
+                .map(function (key) {
+                    return key + "=" + encodeURIComponent(params[key])
+                })
+                .join("&")
+        }
     </script>
 
 @endsection
