@@ -80,7 +80,7 @@
             let password = document.getElementById('sendPassword')
             let message = document.getElementById('message')
 
-            if (email.value === '' || password.value === '' ){
+            if (email.value == '' || password.value == '' ){
                 message.innerText = 'Введите логин или пароль'
                 message.style.display = 'block'
             } else {
@@ -97,7 +97,7 @@
                     let json = JSON.parse(this.responseText);
                     console.log(json);
                     console.log(JSON.stringify(json));
-                    if (json.status === 200) {
+                    if (json.status) {
                         message.style.display = 'none'
                         window.document.getElementById('token').value = json.auth_token
                         window.document.getElementById('mainMessage').innerText = json.full_name + ' ваш токен создан, не забудьте нажать на кнопку сохранить'
