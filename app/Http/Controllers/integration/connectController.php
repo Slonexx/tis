@@ -57,7 +57,7 @@ class connectController extends Controller
     }
     public function getUserAndDepartment(Request $request, $accountId): JsonResponse
     {
-        if ($accountId = '1dd5bd55-d141-11ec-0a80-055600047495') $Config = new globalObjectController(false);
+        if ($accountId == '1dd5bd55-d141-11ec-0a80-055600047495') $Config = new globalObjectController(false);
         else $Config = new globalObjectController();
 
         $ClientTIS = new KassClient($request->authtoken ?? '');

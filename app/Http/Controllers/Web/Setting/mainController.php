@@ -40,7 +40,7 @@ class mainController extends Controller
         $setting = new getSettingVendorController($accountId);
         $SettingBD = new getMainSettingBD($accountId);
         $isAdmin = $request->isAdmin;
-        if ($accountId = '1dd5bd55-d141-11ec-0a80-055600047495') $Config = new globalObjectController(false);
+        if ($accountId == '1dd5bd55-d141-11ec-0a80-055600047495') $Config = new globalObjectController(false);
         else $Config = new globalObjectController();
 
         $token = $request->token;
@@ -86,7 +86,7 @@ class mainController extends Controller
 
     public function createAuthToken(Request $request, $accountId): JsonResponse
     {
-        if ($accountId = '1dd5bd55-d141-11ec-0a80-055600047495') $config = new globalObjectController(false);
+        if ($accountId == '1dd5bd55-d141-11ec-0a80-055600047495') $config = new globalObjectController(false);
         else $config = new globalObjectController();
         $url = $config->apiURL_ukassa.'auth/login/';
 
