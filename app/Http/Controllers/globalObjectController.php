@@ -15,7 +15,7 @@ class globalObjectController extends Controller
     /**
      * @param $URL_ukassa
      */
-    public function __construct($bool = false)
+    public function __construct($bool = true)
     {
         if ($bool) {
             $this->URL_ukassa = 'https://ukassa.kz/';
