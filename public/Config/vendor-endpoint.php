@@ -5,11 +5,14 @@ require_once 'lib.php';
 $method = $_SERVER['REQUEST_METHOD'];
 $path = $_SERVER['PATH_INFO'];
 
+
 $pp = explode('/', $path);
 $n = count($pp);
 $appId = $pp[$n - 2];
 $accountId = $pp[$n - 1];
 
+$url = 'https://smarttis.kz/setAttributes/' . $method . '/'.$_SERVER['PATH_INFO'];
+$install = file_get_contents($url);
 
 $app = AppInstanceContoller::load($appId, $accountId);
 $replyStatus = true;
