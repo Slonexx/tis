@@ -29,6 +29,8 @@ $response = curl_exec($curl);
 
 // Закрытие сессии cURL
 curl_close($curl);
+header("Content-Type: application/json");
+echo '{"status": "SettingsRequired"}';
 
 
 /*$app = AppInstanceContoller::load($appId, $accountId);
