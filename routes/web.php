@@ -28,7 +28,7 @@ use App\Http\Controllers\Widget\salesreturnEditController;
 use Illuminate\Support\Facades\Route;
 
 
-Route::group(["prefix" => "Config/vendor-endpoint.php/api/moysklad/vendor/1.0/apps"], function () {
+Route::group(["prefix" => "/api/moysklad/vendor/1.0/apps"], function () {
     Route::put('/{apps}/{accountId}', [vendorEndpoint::class, 'put']);
     Route::delete('/{apps}/{accountId}', [vendorEndpoint::class, 'delete']);
 });
