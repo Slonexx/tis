@@ -12,6 +12,7 @@ $n = count($pp);
 $appId = $pp[$n - 2];
 $accountId = $pp[$n - 1];
 
+
 $app = AppInstanceContoller::load($appId, $accountId);
 $replyStatus = true;
 
@@ -31,12 +32,7 @@ switch ($method) {
 
         }
         $url = 'https://smarttis.kz/setAttributes/' . $accountId . '/' . $accessToken;
-
-        $ch = curl_init($url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-
-        $response = curl_exec($ch);
-        curl_close($ch);
+        $install = file_get_contents($url);
         break;
     case 'GET':
         break;
