@@ -86,7 +86,8 @@ class mainController extends Controller
 
     public function createAuthToken(Request $request, $accountId): JsonResponse
     {
-        $config = new globalObjectController();
+        if ($accountId = '1dd5bd55-d141-11ec-0a80-055600047495') $config = new globalObjectController(false);
+        else $config = new globalObjectController();
         $url = $config->apiURL_ukassa.'auth/login/';
 
         $client = new Client();
