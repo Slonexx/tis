@@ -24,27 +24,30 @@ class vendorEndpoint extends Controller
         $data = json_decode(json_encode($request->all()));
         $app = Lib::load($apps, $accountId);
 
-        $accessToken = $data->access[0]->access_token;
+        if (property_exists($data, 'access')) {
+            $accessToken = $data->access[0]->access_token;
 
-        if (!$app->getStatusName()) {
-            $app->TokenMoySklad = $accessToken;
-            $app->status = Lib::SETTINGS_REQUIRED;
-            $app->persist();
-
-
-            $modelQ = mainSetting::accId($accountId);
-
-            if ($modelQ->toArray == null) $model = new mainSetting();
-            else $model = $modelQ->query;
-
-            $model->accountId = $accountId;
-            $model->tokenMs = $data->access[0]->access_token;
-            $model->authtoken = null;
-
-            $model->save();
+            if (!$app->getStatusName()) {
+                $app->TokenMoySklad = $accessToken;
+                $app->status = Lib::SETTINGS_REQUIRED;
+                $app->persist();
 
 
+                $modelQ = mainSetting::accId($accountId);
+
+                if ($modelQ->toArray == null) $model = new mainSetting();
+                else $model = $modelQ->query;
+
+                $model->accountId = $accountId;
+                $model->tokenMs = $data->access[0]->access_token;
+                $model->authtoken = null;
+
+                $model->save();
+
+
+            }
         }
+
 
         if (!$app->getStatusName()) {
             http_response_code(404);
