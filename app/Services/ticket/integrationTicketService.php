@@ -30,7 +30,7 @@ class integrationTicketService
 
         $money_card = $data->data->money_card;
         $money_cash = $data->data->money_cash;
-        //$money_mobile = $data->data->money_mobile;
+        $money_mobile = $data->data->money_mobile ?? 0;
 
         $total = $data->data->total;
         $payType = $data->data->pay_type;
@@ -41,7 +41,7 @@ class integrationTicketService
         if ($data->accountId == '1dd5bd55-d141-11ec-0a80-055600047495') $Config = new globalObjectController(false);
         else $Config = new globalObjectController();
         $oldBody = $this->msClient->get('https://api.moysklad.ru/api/remap/1.2/entity/' . $entity_type . '/' . $id_entity);
-        $Body = $this->setBodyToPostClient($id_entity, $entity_type, $money_card, $money_cash, $payType, $total, $positions);
+        $Body = $this->setBodyToPostClient($id_entity, $entity_type, $money_card, $money_cash, $money_mobile, $payType, $total, $positions);
 
 
         if (isset($Body['Status'])) return response()->json([
@@ -145,11 +145,11 @@ class integrationTicketService
     }
 
 
-    private function setBodyToPostClient(mixed $id_entity, mixed $entity_type, mixed $money_card, mixed $money_cash, mixed $payType, mixed $total, mixed $positions): array
+    private function setBodyToPostClient(mixed $id_entity, mixed $entity_type, mixed $money_card, mixed $money_cash, $money_mobile, mixed $payType, mixed $total, mixed $positions): array
     {
 
         $operation = $this->getOperation($payType);
-        $payments = $this->getPayments($money_card, $money_cash, $total);
+        $payments = $this->getPayments($money_card, $money_cash,$money_mobile, $total);
         $items = $this->getItems($positions, $id_entity, $entity_type);
         $customer = $this->getCustomer($id_entity, $entity_type);
 
@@ -180,7 +180,7 @@ class integrationTicketService
         };
     }
 
-    private function getPayments($card, $cash, $total): array
+    private function getPayments($card, $cash, $mobile, $total): array
     {
         //dd($card, $cash, $total);
 
@@ -208,7 +208,14 @@ class integrationTicketService
                 'amount' => (float)$card,
             ];
         }
+        if ($mobile > 0) {
 
+            $result[] = [
+                'payment_type' => 4,
+                'total' => (float)$mobile,
+                'amount' => (float)$mobile,
+            ];
+        }
         return $result;
     }
 
